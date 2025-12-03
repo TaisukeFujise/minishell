@@ -6,10 +6,19 @@ This project is about creating a simple shell.
 
 
 ## ブランチルール
-基本以下のブランチに切り離して作業
 
-- tafujise
-- fendo
+- ベースブランチ：**main**
+    - PRのreview終了後にmerge可能
+- 作業ブランチ：
+    - 機能追加：**feature / 内容**
+    - バグ修正：**fix / 内容**
+    - 実験：**tmp / 内容（PR不要）**
+
+  - 例）ブランチ例
+    - feature/parser-redirection
+    - fix/heredoc-leak
+    - refactor/parser-cleanup
+    - tmp/tafujise-test
 
 ## コミットルール
 
