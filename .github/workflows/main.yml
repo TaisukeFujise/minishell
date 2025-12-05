@@ -31,6 +31,9 @@ jobs:
     # 5. Makeを実行する
     - name: Run Make
       run: make
+
+
+
     # 6. discord 通知
     - name: Discord Notification
       uses: sarisia/actions-status-discord@v1
@@ -39,8 +42,10 @@ jobs:
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
         nodetail: true
         title: "Build & Norm Check"
+        
         description: |
           実行結果: ${{ job.status }}
           コミッター: ${{ github.actor }}
-          メッセージ: ${{ github.event_name == 'pull_request' && github.event.pull_request.title || github.event.head_commit.message }}
+          コミット内容：
+          **${{ env.MSG_TITLE }}**
           URL: ${{ github.event_name == 'pull_request' && github.event.pull_request.html_url || github.event.head_commit.url }}
