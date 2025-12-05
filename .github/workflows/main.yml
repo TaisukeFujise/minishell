@@ -42,5 +42,6 @@ jobs:
         # 以下通知内容
         title: "Build & Norm Check"
         description: |
-          Result: ${{ job.status }}
-          Commit: ${{ github.event.head_commit.message }}
+          実行結果: ${{ job.status }}
+          コミッター: ${{ github.actor }}
+          コミット内容: ${{ github.event.head_commit.message }}
