@@ -42,8 +42,8 @@ jobs:
         nodetail: true
         # 以下通知内容
         title: "Build & Norm Check"
+        url: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
         description: |
           実行結果: ${{ job.status }}
           コミッター: ${{ github.actor }}
           コミット内容: ${{ github.event.head_commit.message }}
-          url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
