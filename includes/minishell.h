@@ -6,12 +6,11 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/02 20:41:25 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/05 18:33:52 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
-#define MINISHELL_H
-
+# define MINISHELL_H
 
 #endif

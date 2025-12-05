@@ -6,7 +6,14 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/02 20:42:00 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/05 18:34:51 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+int	main(int argc, char **argv, char **envp)
+{
+	(void)argc;
+	(void)argv;
+	(void)envp;
+	return (0);
+}
