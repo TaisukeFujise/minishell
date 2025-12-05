@@ -33,3 +33,16 @@ jobs:
     # 5. Makeを実行する
     - name: Run Make
       run: make
+    # 6. Discord通知 (ここを追加！)
+    - name: Discord Notification
+      uses: sarisia/actions-status-discord@v1
+      if: always()  # 重要: 途中でエラーが起きても必ず実行
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        # 以下通知内容
+        title: "Norminette & Build Check"
+        description: |
+          Result: ${{ job.status }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+        # 成功なら緑、失敗なら赤などの色は自動で付く
