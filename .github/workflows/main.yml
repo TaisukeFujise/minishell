@@ -40,9 +40,7 @@ jobs:
       with:
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
         # 以下通知内容
-        title: "Norminette & Build Check"
+        title: "Build & Norm Check"
         description: |
           Result: ${{ job.status }}
-          Branch: ${{ github.ref_name }}
-          Commit: ${{ github.sha }}
-        # 成功なら緑、失敗なら赤などの色は自動で付く
+          Commit: ${{ github.event.head_commit.message }}
