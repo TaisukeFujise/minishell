@@ -5,10 +5,6 @@
 - 
 - 
 
-例：
-- parserに'>>'リダイレクト対応の処理を追加
-- heredocのSIGINT挙動を修正
-
 ## レビューしてほしい点 (option)
 
 ## 備考 (option)
