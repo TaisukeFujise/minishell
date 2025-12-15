@@ -3,6 +3,7 @@
 This project is about creating a simple shell.
 
 ## ディレクトリ構成
+```
 /
 ├─ src/
 │  ├─ main.c
@@ -19,7 +20,7 @@ This project is about creating a simple shell.
 │        └─ Makefile
 ├─ Makefile
 └─ .gitignore
-
+```
 ## ブランチルール
 
 - ベースブランチ：**main**
