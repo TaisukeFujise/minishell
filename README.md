@@ -2,8 +2,23 @@
 
 This project is about creating a simple shell.
 
-## ディレクトリ構成（未）
-
+## ディレクトリ構成
+/
+├─ src/
+│  ├─ main.c
+│  └─ module1/
+│     └─ module1-0.c
+├─ includes/
+│  └─ module1.h
+├─ test/
+│  ├─ integration_test/
+│  │  └─ pending...
+│  └─ unit_test/
+│     └─ category1/
+│        ├─ category.c
+│        └─ Makefile
+├─ Makefile
+└─ .gitignore
 
 ## ブランチルール
 
