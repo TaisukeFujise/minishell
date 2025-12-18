@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:33 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/18 21:56:12 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/18 22:37:58 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ struct s_token
 		t_op_redir		op_redir;	
 		int				io_num;
 		int				err;
-	}	u_payload;
+	}	u_token;
 };
 
 #endif
