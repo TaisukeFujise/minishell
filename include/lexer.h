@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:33 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/17 03:06:05 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/18 18:59:04 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@
 typedef enum e_token_kind
 {
 	TK_WORD,
-	TK_OP,
+	TK_CONNECT,
+	TK_GROUP,
+	TK_REDIR,
 	TK_IO_NUMBER,
 	TK_NEWLINE,
 	TK_EOF,
@@ -33,11 +35,13 @@ typedef struct s_token
 	t_token			*next;
 	union
 	{
-		t_word_desc	wd;
-		t_op		op;
-		int			io_num;
-		int			err;
-	};
+		t_word_desc		wd;
+		t_op_connect	op_bin;
+		t_op_group		op_group;
+		t_op_redir		op_redir;	
+		int				io_num;
+		int				err;
+	} u_token;
 }	t_token;
 
 #endif
