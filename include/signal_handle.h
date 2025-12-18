@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.h                                           :+:      :+:    :+:   */
+/*   handle.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42jp>           +#+  +:+       +#+        */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/18 21:37:42 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/18 22:23:27 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/18 22:52:17 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#ifndef SIGNAL_H
-# define SIGNAL_H
+#ifndef HANDLE_H
+# define HANDLE_H
 
 # include <signal.h>
 # include <readline/readline.h>

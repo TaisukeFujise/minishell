@@ -6,14 +6,14 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/18 22:21:24 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/18 22:56:39 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-#include "../include/signal.h"
+#include "../include/signal_handle.h"
 
-volatile __sig_atomic_t	g_signum = 0;
+volatile sig_atomic_t	g_signum = 0;
 
 int	main(void)//int argc, char **argv, char **envp)
 {
