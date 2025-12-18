@@ -6,7 +6,7 @@
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2025/12/18 22:52:45 by tafujise         ###   ########.fr        #
+#    Updated: 2025/12/18 23:59:36 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME:=minishell
 
 SRCDIR:=src
 SRCS:=main.c\
-	  signal/signal.c
+	  signal/signal_handle.c
 
 HEADDIR:=include
 HEADERS:=minishell.h\

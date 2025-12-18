@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/18 22:56:39 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/19 00:04:01 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,10 @@ int	main(void)//int argc, char **argv, char **envp)
 			break; // ctrl-D sends EOF, and readline returns NULL receiving EOF.
 		if (*user_input)
 			add_history(user_input);
-	
-		if (g_signum != 0 || isatty(STDIN_FILENO) == 1)
-		{
-			g_signum = 0;
-			// tokenize(user_input, &token);
-			// parse(token, &ast); 
-			// execute(&ast);
-		}
+		g_signum = 0;
+		// tokenize(user_input, &token);
+		// parse(token, &ast); 
+		// execute(&ast);
 		free(user_input);
 		// free memory in struct token and ast.
 	}
