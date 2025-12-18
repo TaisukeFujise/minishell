@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/18 19:31:47 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/18 21:46:35 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,10 @@ typedef struct s_word_desc
 
 typedef struct s_word_list t_word_list;
 
-typedef struct s_word_list
+struct s_word_list
 {
 	t_word_desc	wd;
 	t_word_list	*next;
-}	t_word_list;
+};
 
 #endif
