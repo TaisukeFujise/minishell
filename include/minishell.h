@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/17 03:07:11 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/18 17:17:57 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,26 @@
 # include <stdio.h>
 # include <stdlib.h>
 
-typedef enum e_op
+typedef enum e_connect
 {
-	OP_AND_IF,
-	OP_OR_IF,
-	OP_LESS,
-	OP_GRAET,
-	OP_DLESS,
-	OP_DGREAT,
-	OP_PIPE,
-	OP_RPAREN,
-	OP_LPAREN,
-}	t_op;
+	BIN_AND_IF,
+	BIN_OR_IF,
+	BIN_PIPE
+}	t_connect;
+
+typedef enum e_group
+{
+	GROUP_RPAREN,
+	GROUP_LPAREN
+}	t_group;
+
+typedef enum e_redir
+{
+	REDIR_LESS,
+	REDIR_GREAT,
+	REDIR_DLESS,
+	REDIR_DGREAT
+}	t_redir;
 
 typedef enum e_flag
 {
