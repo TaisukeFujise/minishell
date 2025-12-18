@@ -29,6 +29,8 @@ typedef struct s_simple_cmd
 	t_redirect	*redirects;
 }	t_simple_cmd;
 
+typedef struct s_program t_program;
+
 typedef struct s_subshell
 {
 	t_program	*program;

@@ -25,6 +25,8 @@ typedef enum e_token_kind
 	TK_ERR
 }	t_token_kind;
 
+typedef struct s_token t_token;
+
 typedef struct s_token
 {
 	t_token_kind	token_kind;
