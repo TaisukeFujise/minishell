@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/18 17:17:57 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/18 19:31:47 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,27 +16,30 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <stddef.h>
+# include <stdint.h>
 
-typedef enum e_connect
+typedef enum e_op_connect
 {
-	BIN_AND_IF,
-	BIN_OR_IF,
-	BIN_PIPE
-}	t_connect;
+	CONNECT_NONE,
+	CONNECT_AND_IF,
+	CONNECT_OR_IF,
+	CONNECT_PIPE
+}	t_op_connect;
 
-typedef enum e_group
+typedef enum e_op_group
 {
 	GROUP_RPAREN,
 	GROUP_LPAREN
-}	t_group;
+}	t_op_group;
 
-typedef enum e_redir
+typedef enum e_op_redir
 {
 	REDIR_LESS,
 	REDIR_GREAT,
 	REDIR_DLESS,
 	REDIR_DGREAT
-}	t_redir;
+}	t_op_redir;
 
 typedef enum e_flag
 {
@@ -54,8 +57,16 @@ typedef struct s_word
 
 typedef struct s_word_desc
 {
-	t_word	word;
-	size_t	flag;
+	t_word		word;
+	uint32_t	flag;
 }	t_word_desc;
+
+typedef struct s_word_list t_word_list;
+
+typedef struct s_word_list
+{
+	t_word_desc	wd;
+	t_word_list	*next;
+}	t_word_list;
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:37 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/18 17:43:17 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/18 19:37:22 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef enum e_node_kind
 
 typedef struct s_redirect
 {
-	t_redir		op;
+	t_op_redir		op;
 	t_word_desc	target; // filename or delimiter
 	int			fd;
 }	t_redirect;
@@ -46,7 +46,7 @@ typedef struct s_subshell
 
 typedef struct s_and_or
 {
-	t_connect	*ops;
+	t_op_connect	*ops;
 }	t_and_or;
 
 typedef struct s_node

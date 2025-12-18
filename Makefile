@@ -12,10 +12,10 @@
 
 NAME:=minishell
 
-SRCDIR:=srcs
+SRCDIR:=src
 SRCS:=main.c\
 
-HEADDIR:=includes
+HEADDIR:=include
 HEADERS:=$(HEADDIR)/minishell.h
 
 LIBFT_DIR:=libft
@@ -27,7 +27,7 @@ OBJS:=$(addprefix $(OBJDIR)/,$(SRCS:%.c=%.o))
 
 CC:=cc
 
-CCFLAGS:=-Wall -Wextra -Werror -I$(HEADDIR) -I$(LIBFT_DIR)
+CCFLAGS:=-Wall -Wextra -Werror -I$(HEADDIR) -I$(LIBFT_DIR) 
 
 DEBUG_FLAGS:=-g -O0
 
@@ -38,7 +38,7 @@ $(LIBFT): FORCE
 FORCE:
 
 $(NAME): $(OBJS) $(LIBFT)
-	$(CC) -o $(NAME) $(OBJS) $(LIBFT)
+	$(CC) -o $(NAME) $(OBJS) $(LIBFT) -lreadline
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
 	@mkdir -p $(dir $@)
