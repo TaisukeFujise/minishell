@@ -2,6 +2,8 @@
 
 This project is about creating a simple shell.
 
+![image](./images/image.png)
+
 ## ディレクトリ構成
 ```
 /
