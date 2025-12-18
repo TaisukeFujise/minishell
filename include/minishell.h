@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/17 03:07:11 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/18 22:21:14 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include "../libft/libft.h"
+# define SUCCESS 0
+# define FAILURE -1
+
+extern volatile __sig_atomic_t	g_signum;
 
 typedef enum e_op
 {
