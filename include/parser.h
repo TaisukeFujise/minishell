@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:37 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/18 19:37:22 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/20 00:20:58 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ typedef struct s_and_or
 {
 	t_op_connect	*ops;
 }	t_and_or;
+
+typedef struct s_node t_node;
 
 typedef struct s_node
 {

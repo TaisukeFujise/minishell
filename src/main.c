@@ -6,12 +6,13 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/19 00:04:01 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/19 22:53:58 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 #include "../include/signal_handle.h"
+#include "../include/execute.h"
 
 volatile sig_atomic_t	g_signum = 0;
 
@@ -20,6 +21,7 @@ int	main(void)//int argc, char **argv, char **envp)
 	char	*user_input;
 	// Token	token;
 	// t_node	ast;
+	// t_exec	executor; 
 
 	if (set_signal() == FAILURE)
 		return (1);
@@ -36,9 +38,9 @@ int	main(void)//int argc, char **argv, char **envp)
 		g_signum = 0;
 		// tokenize(user_input, &token);
 		// parse(token, &ast); 
-		// execute(&ast);
+		// execute(&ast, &executor);
 		free(user_input);
-		// free memory in struct token and ast.
+		// Here, free other objects in token, ast, executor.
 	}
 	rl_clear_history();
 	return (0);
