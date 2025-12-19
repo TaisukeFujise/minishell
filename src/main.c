@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/19 00:04:01 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/20 07:53:56 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ int	main(void)//int argc, char **argv, char **envp)
 		return (1);
 	while (1)
 	{
-		if (isatty(STDIN_FILENO) == 1) // if user_input is sent by pipe.
+		if (isatty(STDIN_FILENO) == 1) // if user_input is sent by tty.
 			user_input = readline("minishell$ ");
 		else
-			user_input = get_next_line(STDIN_FILENO); // if user_input is sent by tty
+			user_input = get_next_line(STDIN_FILENO); // if user_input is sent by pipe
 		if (user_input == NULL)
 			break; // ctrl-D sends EOF, and readline returns NULL receiving EOF.
 		if (*user_input)
