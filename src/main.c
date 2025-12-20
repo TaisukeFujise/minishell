@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/20 19:28:25 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/20 20:10:49 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,18 @@
 
 volatile sig_atomic_t	g_signum = 0;
 
-int	main(void)//int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
+	// t_hashmap_list	*map_list;
 	char	*user_input;
 	// Token	token;
 	// t_node	ast;
 	// t_exec	executor; 
 
+	(void)argc;
+	(void)argv;
+	// if (set_hashmap(envp) == FAILURE)
+	// 	return (1);
 	if (set_signal() == FAILURE)
 		return (1);
 	while (1)
