@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42jp>           +#+  +:+       +#+        */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/19 22:53:53 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/20 19:54:06 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define EXECUTE_H
 
 #include "./parser.h"
+#include <sys/types.h>
 
 // hash table 
 typedef struct s_entry t_entry;
@@ -31,10 +32,18 @@ struct	s_hashmap {
 	int		size;	
 };
 
+typedef struct s_hashmap_list t_hashmap_list;
+
+struct s_hashmap_list
+{
+	t_hashmap		*map;
+	t_hashmap_list	*next;
+};
+
 typedef	struct s_exec
 {
 	int			exit_code;
-	t_hashmap	*env;	
+	t_hashmap	;
 }	t_exec;
 
 void	execute(t_node *node, t_exec *executor);
