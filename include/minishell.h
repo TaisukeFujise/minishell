@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/18 22:46:02 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/20 17:53:54 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,13 @@ typedef enum e_flag
 	W_DQ	= 1u << 1,
 	W_DOLL	= 1u << 2,
 	W_WILD	= 1u << 3,
+	W_DELIM	= 1u << 4
 }	t_flag;
 
 typedef struct s_word
 {
 	char	*str;
-	size_t	len;
+	int		len;
 }	t_word;
 
 typedef struct s_word_desc
@@ -67,12 +68,12 @@ typedef struct s_word_desc
 	uint32_t	flag;
 }	t_word_desc;
 
-typedef struct s_word_list t_word_list;
+typedef struct s_word_list	t_word_list;
 
-typedef struct s_word_list
+struct s_word_list
 {
 	t_word_desc	wd;
 	t_word_list	*next;
-}	t_word_list;
+};
 
 #endif
