@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:37 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/20 18:44:29 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/20 19:10:07 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ struct s_node
 		t_and_or		and_or;
 		t_subshell		subshell;
 		t_simple_cmd	simple_command;
-	}	u_cmd;
+	}	u_node;
 };
 
 #endif
