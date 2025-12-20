@@ -37,7 +37,7 @@ void	exec_andor(t_node *node, t_exec *executor)
 	}	
 }	
 //
- void	exec_pipe(t_node *node, t_exec *executor)
+void	exec_pipe(t_node *node, t_exec *executor)
 {
 	int		pipe_fd[2];
 	int		prev_read_fd;
