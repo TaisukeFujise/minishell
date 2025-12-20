@@ -37,30 +37,34 @@ void	exec_andor(t_node *node, t_exec *executor)
 	}	
 }	
 //
-//  void	exec_pipe(t_node *node, t_exec *executor)
-// {
-// 	while (node != NULL)
-// 	{
-// 			
-// 	}	
-// }	
-//
-// void	exec_subshell(t_node *node, t_exec *executor)
-// {
-//
-// }	
-//
+ void	exec_pipe(t_node *node, t_exec *executor)
+{
+	int		pipe_fd[2];
+	int		prev_read_fd;
+	pid_t	*pid;
+
+	while (node != NULL)
+	{
+		// first and last simple cmds requires separate process
+		// other simple cmds has the same process
+	}
+}	
+
+void	exec_simple(t_node *node, t_exec *executor)
+{
+	// "built-in" or "execve"
+}
+
+void	exec_subshell(t_node *node, t_exec *executor)
+{
+	// subshell
+}	
+
+// Only dispatch exec_hogehoge by node_kind. (No recursive call of execute here)
 void	execute(t_node *node, t_exec *executor)
 {
 	if (node == NULL) // when user_input is empty, ast root node is NULL.
 		return ;  // it's NULL guard for thath
-	if (node->node_kind == NODE_SIMPLE)
-	{
-		exec_cmd(node, executor); // execute commands connected by pipe 
-	}
-	execute(node->children, executor);
-	// if (node->node_kind == NODE_PROGRAM)
-		// exec_program(node, executor); //  
 	if (node->node_kind == NODE_COMPS) 
 		exec_complete(node, executor);
 	else if (node->node_kind == NODE_ANDOR)
@@ -69,6 +73,8 @@ void	execute(t_node *node, t_exec *executor)
 		exec_pipe(node, executor);
 	else if (node->node_kind == NODE_SUBSHELL)
 		exec_subshell(node, executor);
+	else if (node->node_kind == NODE_SIMPLE)
+		exec_simple(node, executor); 
 	else
 		exit(1);	
 }

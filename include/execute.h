@@ -42,6 +42,6 @@ void	exec_complete(t_node *node, t_exec *executor);
 void	exec_andor(t_node *node, t_exec *executor);
 void	exec_pipe(t_node *node, t_exec *executor);
 void	exec_subshell(t_node *node, t_exec *executor);
-void	exec_cmd(t_node *node, t_exec *executor);
+void	exec_simple(t_node *node, t_exec *executor);
 
 #endif
