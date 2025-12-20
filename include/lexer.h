@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:33 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/18 22:37:58 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/20 17:53:41 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef enum e_token_kind
 	TK_ERR
 }	t_token_kind;
 
-typedef struct s_token t_token;
+typedef struct s_token	t_token;
 
 struct s_token
 {

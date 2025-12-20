@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:37 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/20 17:49:01 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/20 17:56:01 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,13 @@ typedef struct s_and_or
 	t_op_connect	op;
 }	t_and_or;
 
-typedef struct s_node	t_node;
+typedef struct s_node		t_node;
 
 struct s_node
 {
 	t_node_kind	node_kind;
-	t_node	*child;
-	t_node	*next;
+	t_node		*child;
+	t_node		*next;
 	union
 	{
 		t_and_or		and_or;
