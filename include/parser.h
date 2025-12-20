@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:37 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/18 22:45:03 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/20 17:49:01 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 typedef enum e_node_kind
 {
 	NODE_PROGRAM,
-	NODE_COMPS,
+	NODE_COMPLETE,
 	NODE_ANDOR,
 	NODE_PIPE,
 	NODE_SUBSHELL,
