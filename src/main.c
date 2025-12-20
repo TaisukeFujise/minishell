@@ -6,62 +6,40 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/05 18:34:51 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/20 07:53:56 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+#include "../include/signal_handle.h"
 
-// Add the following header include statement to minishell.h
-#include <signal.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-
-volatile sig_atomic_t	e_flag = 0;
-
-void	handler(int signum)
-{
-	e_flag = signum;
-}
-
-static int	check_state()
-{
-	if (e_flag == SIGINT)
-	{
-		e_flag = 0;
-		// rl_on_new_line();
-		// rl_replace_line("", 0);
-		// rl_redisplay();
-		rl_done = 1;
-	}
-	return (0);
-}
-
+volatile sig_atomic_t	g_signum = 0;
 
 int	main(void)//int argc, char **argv, char **envp)
 {
-	char				*user_input;
-	struct sigaction	sa;
+	char	*user_input;
+	// Token	token;
+	// t_node	ast;
 
-	// if (argc != 1)
-	// 	return (1);
-	if (sigemptyset(&sa.sa_mask) == -1)
-		return (perror("error"), 1);
-	// if (sigaddset(&sa.sa_mask, SIGINT))
-	sa.sa_handler = handler;
-	sa.sa_flags = 0;
-	if (sigaction(SIGINT, &sa, NULL) == -1)
+	if (set_signal() == FAILURE)
 		return (1);
-	rl_event_hook = check_state;
 	while (1)
 	{
-		user_input = readline("minishell$ ");
+		if (isatty(STDIN_FILENO) == 1) // if user_input is sent by tty.
+			user_input = readline("minishell$ ");
+		else
+			user_input = get_next_line(STDIN_FILENO); // if user_input is sent by pipe
 		if (user_input == NULL)
-			break;
+			break; // ctrl-D sends EOF, and readline returns NULL receiving EOF.
 		if (*user_input)
 			add_history(user_input);
+		g_signum = 0;
+		// tokenize(user_input, &token);
+		// parse(token, &ast); 
+		// execute(&ast);
 		free(user_input);
-	}	
+		// free memory in struct token and ast.
+	}
 	rl_clear_history();
 	return (0);
 }

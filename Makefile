@@ -6,7 +6,7 @@
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2025/12/02 20:58:23 by tafujise         ###   ########.fr        #
+#    Updated: 2025/12/20 07:52:09 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,9 +14,12 @@ NAME:=minishell
 
 SRCDIR:=src
 SRCS:=main.c\
+	  signal/signal_handle.c
 
 HEADDIR:=include
-HEADERS:=$(HEADDIR)/minishell.h
+HEADERS:=minishell.h\
+		 signal_handle.h
+HEADERS:=$(addprefix $(HEADDIR)/, $(HEADERS))
 
 LIBFT_DIR:=libft
 LIBFT:=$(LIBFT_DIR)/libft.a

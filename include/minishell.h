@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
 /*   Updated: 2025/12/20 17:53:54 by fendo            ###   ########.fr       */
@@ -16,6 +16,12 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <signal.h>
+# include "../libft/libft.h"
+# define SUCCESS 0
+# define FAILURE -1
+
+extern volatile sig_atomic_t	g_signum;
 # include <stddef.h>
 # include <stdint.h>
 
