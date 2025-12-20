@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/20 19:54:06 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/20 20:15:10 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ struct s_hashmap_list
 typedef	struct s_exec
 {
 	int			exit_code;
-	t_hashmap	;
+	t_hashmap_list *map_list;
 }	t_exec;
 
 void	execute(t_node *node, t_exec *executor);

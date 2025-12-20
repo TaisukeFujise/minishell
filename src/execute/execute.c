@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/20 19:51:02 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/20 20:16:04 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	exec_pipe(t_node *node, t_exec *executor)
 
 	while (node != NULL)
 	{
-		
+		// TODO
 		// first and last simple cmds requires separate process
 		// other simple cmds has the same process
 		// also subshell may happens here 
@@ -55,11 +55,13 @@ void	exec_pipe(t_node *node, t_exec *executor)
 
 void	exec_simple(t_node *node, t_exec *executor)
 {
+	// TODO
 	// "built-in" or "execve"
 }
 
 void	exec_subshell(t_node *node, t_exec *executor)
 {
+	// TODO
 	// subshell
 }	
 
