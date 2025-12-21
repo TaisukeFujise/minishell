@@ -6,51 +6,65 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:32:33 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/21 21:54:37 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/21 22:28:29 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdbool.h>
 #include "minishell.h"
 #include "lexer_internal.h"
 #include "utils.h"
 
-static t_token	*new_token(t_token_kind tk, char *str, int len, t_flag flag)
-{
-	t_token	*token;
-
-	token = malloc(sizeof(t_token));
-	if (!token)
-		return (NULL);
-	token->token_kind = tk;
-	if (tk == TK_ERR || tk == TK_EOF || tk == TK_NEWLINE)
-		return (token);
-}
-
 static t_lexeme	peek_lexeme(char *line)
 {
+	t_lexeme	lexeme;
+
 	skip_space(&line);
 	
 }
 
-t_token	*consume_lexeme(char **line, t_lexeme lexeme)
+static t_token	*consume_lexeme(char **line, t_lexeme *lxm)
 {
 	t_token	*token;
 
 	token = malloc(sizeof(t_token));
-	if (!token)
+	if (!token || !line)
 		return (NULL);
-	token->token_kind = lexeme;
-	if (tk == TK_ERR || tk == TK_EOF || tk == TK_NEWLINE)
+	token->token_kind = lxm->tk;
+	if (lxm->tk == TK_ERR || lxm->tk == TK_EOF || lxm->tk == TK_NEWLINE)
 		return (token);
+	if (lxm->tk == TK_CONNECT)
+	{
+		
+		return (token);
+	}
+	if (lxm->tk == TK_GROUP)
+	{
+		return (token);
+	}
+	if (lxm->tk == TK_CONNECT)
+	{
+		return (token);
+	}
+	if (lxm->tk == TK_CONNECT)
+	{
+		return (token);
+	}
+	if (lxm->tk == TK_CONNECT)
+	{
+		return (token);
+	}
 }
 
 static t_token	*generate_token(char **line)
 {
+	t_lexeme lexeme;
+
 	if (*line == NULL)
-		return (new_token(TK_ERR, NULL, 0, 0));
-	if (**line == '\0')
-		return (new_token(TK_EOF, NULL, 0, 0));
-	if ()
+		return (consume_lexeme(NULL, NULL));
+	lexeme = peek_lexeme(line);
+	if (lexeme.tk == TK_ERR)
+		return (consume_lexeme(TK_ERR, NULL));
 }
 
 void	free_tokens(t_token *head)
@@ -76,7 +90,7 @@ t_token	*tokenize(char *line)
 
 	head = NULL;
 	tail = &head;
-	while (1)
+	while (true)
 	{
 		token = prepare_token(&line);
 		if (!token || token->token_kind == TK_ERR)

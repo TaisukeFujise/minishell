@@ -6,10 +6,21 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 19:59:19 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/21 21:02:19 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/21 22:48:05 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "lexer.h"
 
+t_token	lex_word(char **str)
+{
+	
+}
+
+t_token	lex_op(char **str)
+{
+
+}
+
+t_token	lex_
