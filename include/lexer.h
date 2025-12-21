@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:33 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/20 17:53:41 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/21 21:50:51 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,8 @@ struct s_token
 		int				err;
 	}	u_token;
 };
+
+t_token	*tokenize(char *line);
+void	free_tokens(t_token *head);
 
 #endif

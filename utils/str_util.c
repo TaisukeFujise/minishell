@@ -1,24 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal_handle.h                                    :+:      :+:    :+:   */
+/*   str_util.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/18 21:37:42 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/20 22:19:33 by fendo            ###   ########.fr       */
+/*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
+/*   Updated: 2025/12/21 19:56:52 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
 
-#ifndef HANDLE_H
-# define HANDLE_H
-
-# include <signal.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-
-int	set_signal(void);
-int	handle_readline_signal(void);
-
-#endif
+// Refer to section "3.45 Blank Character (<blank>)" in https://pubs.opengroup.org/onlinepubs/9799919799/
+void	skip_space(char **line)
+{
+	while (**line != '\0' && ft_isblank(**line))
+		(*line)++;
+}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/20 07:53:56 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/20 20:49:38 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ volatile sig_atomic_t	g_signum = 0;
 int	main(void)//int argc, char **argv, char **envp)
 {
 	char	*user_input;
-	// Token	token;
+	// t_token	token;
 	// t_node	ast;
 
 	if (set_signal() == FAILURE)
