@@ -98,10 +98,10 @@ void	lex_io_number(char **line, t_token *token)
 
 	end = *line;
 	fd = str2fd(&end);
-	if (ft_strncmp(end + 1, ">>", 2)
-		|| ft_strncmp(end + 1, "<<", 2)
-		|| ft_strncmp(end + 1, ">", 1)
-		|| ft_strncmp(end + 1, "<", 1))
+	if (ft_strncmp(end, ">>", 2)
+		|| ft_strncmp(end, "<<", 2)
+		|| ft_strncmp(end, ">", 1)
+		|| ft_strncmp(end, "<", 1))
 	{
 		token->token_kind = TK_IO_NUMBER;
 		token->u_token.io_num = fd;
