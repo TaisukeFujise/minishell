@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:40:40 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/21 22:30:22 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/22 17:41:25 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,11 @@
 # include "minishell.h"
 # include "lexer.h"
 
-typedef struct s_lexeme
-{
-	t_token_kind	tk;
-	union
-	{
-		t_word_desc		wd;
-		t_op_connect	op_bin;
-		t_op_group		op_group;
-		t_op_redir		op_redir;
-		int				io_num;
-		int				err;
-	}	u_lxm;
-}	t_lexeme;
-
-
+void	lex_control(char **line, t_token *token);
+void	lex_connect(char **line, t_token *token);
+void	lex_group(char **line, t_token *token);
+void	lex_redirect(char **line, t_token *token);
+void	lex_io_number(char **line, t_token *token);
+void	lex_word(char **line, t_token *token);
 
 #endif
