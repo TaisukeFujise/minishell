@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_internal.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:40:40 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/22 17:41:25 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/24 17:28:07 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LEXER_INTERNAL_H
 # define LEXER_INTERNAL_H
 
-# include "minishell.h"
 # include "lexer.h"
 
 void	lex_control(char **line, t_token *token);

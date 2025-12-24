@@ -6,13 +6,12 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:32:33 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/24 00:24:04 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/24 17:28:16 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include <stdbool.h>
-#include "minishell.h"
 #include "lexer_internal/lexer_internal.h"
 #include "utils.h"
 #include "libft.h"
