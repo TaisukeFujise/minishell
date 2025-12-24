@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/24 17:29:08 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/24 17:30:21 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ unsigned int	str2fd(char **line)
 	return ((unsigned int)num);
 }
 
+// extended version of ft_strchr: search for a substring 'str' of length n in 'tbl'
 char	*strchunk(const char *tbl, const char *str, size_t n)
 {
 	size_t	i;
