@@ -3,24 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:32:33 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/22 22:48:20 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/24 00:24:04 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "lexer.h"
 #include <stdbool.h>
 #include "minishell.h"
-#include "../lexer_internal/lexer_internal.h"
+#include "lexer_internal/lexer_internal.h"
 #include "utils.h"
 #include "libft.h"
 
-static void	prepare_token(char **line, t_token *token)
+static t_token	*lex_step(char **line, t_token *token)
 {
 	if (!token)
-		return ;
-	token->next = NULL;
+		return (NULL);
+	token->token_kind = TK_UNSET;
 	skip_space(line);
 	lex_control(line, token);
 	if (token->token_kind != TK_UNSET)
@@ -63,13 +64,13 @@ t_token	*tokenize(char *line)
 	t_token	*token;
 
 	if (!line)
-		return ;
+		return (NULL);
 	head = NULL;
 	tail = &head;
 	while (true)
 	{
 		token = ft_calloc(1, sizeof(t_token));
-		prepare_token(&line, token);
+		lex_step(&line, token);
 		if (!token || token->token_kind == TK_ERR)
 		{
 			free_tokens(head);

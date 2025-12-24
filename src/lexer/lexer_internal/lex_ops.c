@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   lex_ops.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 19:59:19 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/22 22:47:38 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/24 17:19:37 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "lexer.h"
-#include "libft.h"
+#include "lexer_internal.h"
+#include "utils.h"
 
-void	*lex_control(char **line, t_token *token)
+void	lex_control(char **line, t_token *token)
 {
 	if (ft_strncmp(*line, "\0", 1))
 		token->token_kind = TK_EOF;
@@ -93,18 +93,15 @@ void	lex_redirect(char **line, t_token *token)
 
 void	lex_io_number(char **line, t_token *token)
 {
-	char			*end;
+	char			*endptr;
 	unsigned int	fd;
 
-	end = *line;
-	fd = str2fd(&end);
-	if (ft_strncmp(end, ">>", 2)
-		|| ft_strncmp(end, "<<", 2)
-		|| ft_strncmp(end, ">", 1)
-		|| ft_strncmp(end, "<", 1))
+	endptr = *line;
+	fd = str2fd(&endptr);
+	if ((endptr != *line && ft_strchr("><", **line)))
 	{
 		token->token_kind = TK_IO_NUMBER;
 		token->u_token.io_num = fd;
-		(*line) = end;
+		(*line) = endptr;
 	}
 }
