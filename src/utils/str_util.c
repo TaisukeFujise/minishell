@@ -6,11 +6,10 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/24 02:21:22 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/24 17:29:08 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
 #include "libft.h"
 #include <limits.h>
 #include <stddef.h>
