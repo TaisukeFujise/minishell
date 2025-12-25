@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:40:31 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/26 03:05:11 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/26 04:28:36 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@
 #include <stdlib.h>
 #define BUCKET_SIZE 128
 
-// data struct has value and exported flag which is used to distinguish "shell value" and "environ value"
+// t_data has value and exported flag
+// flag is used to distinguish "shell value" and "environ value"
 typedef struct s_data
 {
 	char	*value;
@@ -26,10 +27,10 @@ typedef struct s_data
 typedef struct s_bucket_contents t_bucket_contents;
 
 struct	s_bucket_contents {
+	t_bucket_contents	*next; // Link to next hashed key in this bucket.
 	char				*key; // entry key (What we look up.)
 	unsigned int		khash; // hashed key (What key hashes to)
 	t_data				*data; // entry data (What we really want.)
-	t_bucket_contents	*next; // Link to next hashed key in this bucket.
 };
 
 typedef struct s_hashtable t_hashtable;
@@ -42,9 +43,9 @@ struct	s_hashtable {
 
 /* hashmap_crud.c */
 t_hashtable			*hash_create(int bucket_size);
-t_bucket_contents	*hash_insert(char *string, t_hashtable *table);
 t_bucket_contents	*hash_search(char *string, t_hashtable *table);
 t_bucket_contents	*hash_remove(char *string, t_hashtable *table);
+t_bucket_contents	*hash_insert(char *string, t_hashtable *table);
 /* hashmap_free.c */
 typedef void		t_free_func (void *); // Any free function is appliable
 void				hash_flush (t_hashtable *table, t_free_func *free_data);
