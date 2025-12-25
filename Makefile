@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
+#    By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2025/12/20 07:52:09 by tafujise         ###   ########.fr        #
+#    Updated: 2025/12/25 16:23:22 by fendo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,12 +14,19 @@ NAME:=minishell
 
 SRCDIR:=src
 SRCS:=main.c\
-	  signal/signal_handle.c
+	  signal/signal_handle.c\
+	  lexer/lexer.c\
+	  lexer/lexer_internal/lex_ops.c\
+	  lexer/lexer_internal/lex_word.c\
+	  utils/str_util.c
 
 HEADDIR:=include
 HEADERS:=minishell.h\
-		 signal_handle.h
+		 signal_handle.h\
+		 lexer.h\
+		 utils.h
 HEADERS:=$(addprefix $(HEADDIR)/, $(HEADERS))
+EXTRA_HEADERS:=$(wildcard $(SRCDIR)/*/*_internal/*_internal.h)
 
 LIBFT_DIR:=libft
 LIBFT:=$(LIBFT_DIR)/libft.a
@@ -30,7 +37,7 @@ OBJS:=$(addprefix $(OBJDIR)/,$(SRCS:%.c=%.o))
 
 CC:=cc
 
-CCFLAGS:=-Wall -Wextra -Werror -I$(HEADDIR) -I$(LIBFT_DIR) 
+CCFLAGS:=-Wall -Wextra -Werror -I$(HEADDIR) -I$(LIBFT_DIR) -Isrc/lexer
 
 DEBUG_FLAGS:=-g -O0
 
@@ -43,7 +50,7 @@ FORCE:
 $(NAME): $(OBJS) $(LIBFT)
 	$(CC) -o $(NAME) $(OBJS) $(LIBFT) -lreadline
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS) $(EXTRA_HEADERS)
 	@mkdir -p $(dir $@)
 	$(CC) $(CCFLAGS) -c $< -o $@
 

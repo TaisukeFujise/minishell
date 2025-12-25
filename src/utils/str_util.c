@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/24 17:30:21 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/25 00:09:15 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 // Refer to section "3.45 Blank Character (<blank>)" 
 // in https://pubs.opengroup.org/onlinepubs/9799919799/
+
 void	skip_blank(char **line)
 {
 	while (**line != '\0' && ft_isblank(**line))
@@ -30,12 +31,16 @@ unsigned int	str2fd(char **line)
 	while (ft_isdigit(**line))
 	{
 		if (num > (UINT_MAX - (**line - '0')) / 10)
-			num = num * 10u + (*(*line)++ - '0');
+			num = UINT_MAX;
+		else
+			num = num * 10u + (**line - '0');
+		(*line)++;
 	}
 	return ((unsigned int)num);
 }
 
-// extended version of ft_strchr: search for a substring 'str' of length n in 'tbl'
+// Extended version of ft_strchr
+// Search for a substring 'str' of length n in 'tbl'
 char	*strchunk(const char *tbl, const char *str, size_t n)
 {
 	size_t	i;
