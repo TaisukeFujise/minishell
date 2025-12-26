@@ -14,15 +14,16 @@
 # define HASHMAP_H
 
 #include <stdlib.h>
+#include <stdbool.h>
 #define BUCKET_SIZE 128
 
 // t_data has value and exported flag
 // flag is used to distinguish "shell value" and "environ value"
-typedef struct s_data
-{
-	char	*value;
-	int		exported;
-} t_data;
+// typedef struct s_data
+// {
+// 	char	*value;
+// 	bool	exported;
+// } t_data;
 
 typedef struct s_bucket_contents t_bucket_contents;
 
@@ -30,7 +31,9 @@ struct	s_bucket_contents {
 	t_bucket_contents	*next; // Link to next hashed key in this bucket.
 	char				*key; // entry key (What we look up.)
 	unsigned int		khash; // hashed key (What key hashes to)
-	t_data				*data; // entry data (What we really want.)
+	// t_data				data; // entry data (What we really want.)
+	char				*value;
+	bool				exported;
 };
 
 typedef struct s_hashtable t_hashtable;

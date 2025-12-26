@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hashmap_free.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42jp>           +#+  +:+       +#+        */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 02:55:49 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/26 04:45:42 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/27 01:53:36 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,13 @@ void				hash_flush (t_hashtable *table, t_free_func *free_data)
 		while (bucket != NULL)
 		{
 			item = bucket;	
-			bucket = bucket->next;	
-			if (free_data != NULL)
-				(*free_data)(item->data);	
-			else
-				free(item->data);
+			bucket = bucket->next;
+			free(item->value);
+			// (void)free_data;
+			// if (free_data != NULL)
+			// 	(*free_data)(item->data);	
+			// else
+			// 	free(item->data);
 			free(item->key); // Can we free item's key here? Isn't it upper level's responsibility?
 			free(item);	
 		}

@@ -15,15 +15,15 @@
 #define FNV_OFFSET 2166136261
 
 // FNV-1a hash function
-unsigned int	hash_string(const char *string)
+unsigned int	hash_string(const char *s)
 {
 	unsigned int	i;
 
 	i = FNV_OFFSET;
-	while (*string != '\0')
+	while (*s != '\0')
 	{	
 		i += (i<<1) + (i<<4) + (i<<7) + (i<<8) + (i<<24);
-		i ^= *string;
+		i ^= *s++;
 	}
 	return i;
 }
