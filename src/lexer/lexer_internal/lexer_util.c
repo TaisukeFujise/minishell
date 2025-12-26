@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   str_util.c                                         :+:      :+:    :+:   */
+/*   lexer_util.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/25 00:09:15 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/26 22:46:08 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "lexer_internal.h"
 #include <limits.h>
 #include <stddef.h>
 
@@ -57,4 +58,9 @@ char	*strchunk(const char *tbl, const char *str, size_t n)
 		i += n;
 	}
 	return (NULL);
+}
+
+void	scan_asgn(char c, t_token *token, uint8_t *as)
+{
+	return ;
 }
