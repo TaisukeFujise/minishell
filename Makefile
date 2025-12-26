@@ -6,7 +6,7 @@
 #    By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2025/12/25 16:23:22 by fendo            ###   ########.fr        #
+#    Updated: 2025/12/25 23:00:03 by fendo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,6 @@ HEADERS:=minishell.h\
 		 lexer.h\
 		 utils.h
 HEADERS:=$(addprefix $(HEADDIR)/, $(HEADERS))
-EXTRA_HEADERS:=$(wildcard $(SRCDIR)/*/*_internal/*_internal.h)
 
 LIBFT_DIR:=libft
 LIBFT:=$(LIBFT_DIR)/libft.a

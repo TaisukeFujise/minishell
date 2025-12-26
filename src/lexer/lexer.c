@@ -6,15 +6,13 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:32:33 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/24 23:44:28 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/25 23:01:00 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
-#include <stdbool.h>
 #include "lexer_internal/lexer_internal.h"
 #include "utils.h"
-#include "libft.h"
+#include <stdbool.h>
 
 static t_token	*lex_step(char **line, t_token *token)
 {
