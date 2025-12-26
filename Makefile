@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+         #
+#    By: fendo <fendo@student.42.jp>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2025/12/25 23:00:03 by fendo            ###   ########.fr        #
+#    Updated: 2025/12/26 22:53:08 by fendo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,13 +18,12 @@ SRCS:=main.c\
 	  lexer/lexer.c\
 	  lexer/lexer_internal/lex_ops.c\
 	  lexer/lexer_internal/lex_word.c\
-	  utils/str_util.c
+	  lexer/lexer_internal/lex_util.c
 
 HEADDIR:=include
 HEADERS:=minishell.h\
 		 signal_handle.h\
-		 lexer.h\
-		 utils.h
+		 lexer.h
 HEADERS:=$(addprefix $(HEADDIR)/, $(HEADERS))
 
 LIBFT_DIR:=libft

@@ -10,7 +10,6 @@ ROOT_SRCS:=lexer/lexer.c \
 	lexer/lexer_internal/lex_ops.c \
 	lexer/lexer_internal/lex_word.c \
 	lexer/lexer_internal/lex_utils.c
-
 LOCAL_SRCS:=dump_tokens.c
 
 LINE_SRCS:=$(LOCAL_SRCS) dump_tokens_line.c
