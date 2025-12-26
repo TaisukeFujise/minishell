@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42jp>           +#+  +:+       +#+        */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/26 03:31:48 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/27 01:51:26 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,62 @@ int	init_executor(t_exec *executor, char **envp)
 	return (SUCCESS);
 }
 
+typedef struct s_entry_view
+{
+	char	*key;
+	int		key_len;
+	char	*value;
+	int		value_len;
+}	t_entry_view;
+
+void	extract_entry_view(char *entry, t_entry_view *entry_view)
+{
+	int				i;
+
+	entry_view->key = entry;
+	i = 0;
+	while (entry[i] != '=' && entry[i] != '\0')
+		i++;
+	entry_view->key_len = i;
+	if (entry[i] == '\0')
+		return ;
+	entry_view->value = &entry[i + 1];
+	entry_view->value_len = ft_strlen(&entry[i + 1]);
+}
+
 static int	_load_envp(t_hashtable *env_table, char **envp)
 {
 	// TODO
-	//
-	// hash function makes envp key to hash value, and then hash value divided by hash table size is index of hash table.
 	// hash table[index] has struct entry pointer.
+	t_entry_view		entry_view;
+	char				*key;
+	char				*value;
+	t_bucket_contents	*item;
+
+	if (envp == NULL || *envp == NULL)
+		return (FAILURE);
+	while (*envp != NULL)
+	{
+		if (ft_strchr(*envp, '=') == NULL) // envp is reliable value, so we ignore the entry if the *envp doesn't have "="
+			continue;
+		extract_entry_view(*envp, &entry_view);
+		key = ft_strndup(entry_view.key, entry_view.key_len);
+		if (key == NULL)
+			return (FAILURE); // free previous allocated memory!!!
+		item = hash_insert(key, env_table);
+		if (item == NULL)
+			return (FAILURE); // free previous allocated memory !!!
+		if (item->value != NULL)
+			free(item->value);
+		value = ft_strndup(entry_view.value, entry_view.value_len);
+		if (value == NULL)
+			return (FAILURE); // free previous allocated memory !!!
+		item->value = value;
+		item->exported = true;
+		envp++;
+		env_table->entry_count++;
+	}
 	return (SUCCESS);
 }
+
+

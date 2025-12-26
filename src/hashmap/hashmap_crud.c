@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:45:48 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/26 04:28:28 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/27 01:52:33 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ t_bucket_contents	*hash_search(char *string, t_hashtable *table)
 	t_bucket_contents	*list;
 
 	if (table == 0 || table->bucket_array == NULL)
-		return (NULL);	
+		return (NULL);
 	hash_value = hash_string(string);
 	bucket = hash_bucket(hash_value, table);	
 	list = table->bucket_array[bucket];	
