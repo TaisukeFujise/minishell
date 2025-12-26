@@ -6,21 +6,28 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/20 20:49:38 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/26 15:55:47 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 #include "../include/signal_handle.h"
+#include "../include/execute.h"
 
 volatile sig_atomic_t	g_signum = 0;
 
-int	main(void)//int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
+	// t_hashmap_list	*map_list;
 	char	*user_input;
 	// t_token	token;
 	// t_node	ast;
+	// t_exec	executor; 
 
+	(void)argc;
+	(void)argv;
+	// if (set_hashmap(envp) == FAILURE)
+	// 	return (1);
 	if (set_signal() == FAILURE)
 		return (1);
 	while (1)
@@ -36,9 +43,9 @@ int	main(void)//int argc, char **argv, char **envp)
 		g_signum = 0;
 		// tokenize(user_input, &token);
 		// parse(token, &ast); 
-		// execute(&ast);
+		// execute(&ast, &executor);
 		free(user_input);
-		// free memory in struct token and ast.
+		// Here, free other objects in token, ast, executor.
 	}
 	rl_clear_history();
 	return (0);
