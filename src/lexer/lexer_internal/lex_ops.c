@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lex_ops.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 19:59:19 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/24 23:51:28 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/26 20:23:57 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	lex_control(char **line, t_token *token)
 	else if (!ft_strncmp(*line, "\n", 1))
 	{
 		token->token_kind = TK_NEWLINE;
+		token->u_token.nl_ptr = *line;
 		(*line)++;
 	}
 }

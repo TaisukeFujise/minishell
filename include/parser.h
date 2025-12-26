@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:37 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/20 19:28:15 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/26 20:11:04 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ struct s_redirect
 {
 	t_op_redir	op;
 	t_word_desc	target; // filename or delimiter
-	int			fd;		// -1 if IO_NUMBER is not specified
+	int			src_fd;		// -1 if IO_NUMBER is not specified
+	int			dest_fd;
 	t_redirect	*next;
 };
 
