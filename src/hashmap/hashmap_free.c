@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 02:55:49 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/27 16:10:27 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/27 16:51:38 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ void	hash_flush(t_hashtable *table, t_free_func *free_data)
 			bucket = bucket->next;
 			if (free_data != NULL)
 				(*free_data)(&item->data);
+			else
+				free(item->data.value);
 			free(item->key);
 			free(item);
 		}

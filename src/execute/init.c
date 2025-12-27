@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/27 16:19:27 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/27 16:58:29 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,12 @@ void	extract_entry_view(char *entry, t_entry_view *entry_view)
 	while (entry[i] != '=' && entry[i] != '\0')
 		i++;
 	entry_view->key_len = i;
-	if (entry[i] == '\0')
-		return ;
+	// if (entry[i] == '\0')
+	// {
+	// 	entry_view->value = NULL;
+	// 	entry_view->value_len = 0;
+	// 	return ;
+	// }
 	entry_view->value = &entry[i + 1];
 	entry_view->value_len = ft_strlen(&entry[i + 1]);
 }
