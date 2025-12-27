@@ -6,7 +6,7 @@
 #    By: fendo <fendo@student.42.jp>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2025/12/27 15:22:35 by fendo            ###   ########.fr        #
+#    Updated: 2025/12/27 17:46:30 by fendo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ OBJS:=$(addprefix $(OBJDIR)/,$(SRCS:%.c=%.o))
 
 CC:=cc
 
-CCFLAGS:=-Wall -Wextra -Werror -I$(HEADDIR) -I$(LIBFT_DIR) -Isrc/lexer
+CCFLAGS:=-Wall -Wextra -Werror -I$(HEADDIR) -I$(LIBFT_DIR)
 
 DEBUG_FLAGS:=-g -O0
 
@@ -48,7 +48,7 @@ FORCE:
 $(NAME): $(OBJS) $(LIBFT)
 	$(CC) -o $(NAME) $(OBJS) $(LIBFT) -lreadline
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS) $(EXTRA_HEADERS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
 	@mkdir -p $(dir $@)
 	$(CC) $(CCFLAGS) -c $< -o $@
 
