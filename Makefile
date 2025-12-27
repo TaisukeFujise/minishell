@@ -6,7 +6,7 @@
 #    By: fendo <fendo@student.42.jp>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2025/12/26 22:53:08 by fendo            ###   ########.fr        #
+#    Updated: 2025/12/27 15:22:35 by fendo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ SRCS:=main.c\
 	  lexer/lexer.c\
 	  lexer/lexer_internal/lex_ops.c\
 	  lexer/lexer_internal/lex_word.c\
-	  lexer/lexer_internal/lex_util.c
+	  lexer/lexer_internal/lexer_utils.c
 
 HEADDIR:=include
 HEADERS:=minishell.h\

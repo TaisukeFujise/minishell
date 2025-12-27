@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dump_tokens.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 17:38:31 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/24 23:37:40 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/27 17:29:50 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,13 @@ static void	print_word_flags(uint16_t flag)
 		printf("WILD");
 		first = 0;
 	}
+	if (flag & W_ASSIGN)
+	{
+		if (!first)
+			printf("|");
+		printf("ASSIGN");
+		first = 0;
+	}
 	if (first)
 		printf("NONE");
 }
@@ -119,8 +126,13 @@ void	dump_tokens(t_token *head)
 			printf("  flags: ");
 			print_word_flags(curr->u_token.wd.flag);
 			printf("\n");
-			printf("  word : \"%.*s\"\n", curr->u_token.wd.word.len,
+			printf("  word : %.*s\n", curr->u_token.wd.word.len,
 				curr->u_token.wd.word.str);
+			if (curr->u_token.wd.flag &= W_ASSIGN)
+			{
+				printf("  position of \'=\' : \"%zu\"\n",
+					curr->u_token.wd.eq_ptr - curr->u_token.wd.word.str);
+			}
 		}
 		else if (curr->token_kind == TK_CONNECT)
 			printf("  op   : %s\n", connect_name(curr->u_token.op_connect));

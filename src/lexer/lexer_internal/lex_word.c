@@ -6,15 +6,14 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 22:44:56 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/26 22:48:57 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/27 16:58:16 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
 #include "minishell.h"
-#include "utils.h"
 
-static void	case_single_quote(char **line, uint8_t *state, t_token *token)
+static void	_case_single_quote(char **line, uint8_t *state, t_token *token)
 {
 	if (ft_strncmp(*line, "\'", 1) == 0)
 	{
@@ -24,7 +23,7 @@ static void	case_single_quote(char **line, uint8_t *state, t_token *token)
 	(*line)++;
 }
 
-static void	case_double_quote(char **line, uint8_t *state, t_token *token)
+static void	_case_double_quote(char **line, uint8_t *state, t_token *token)
 {
 	if (ft_strncmp(*line, "\"", 1) == 0)
 	{
@@ -37,9 +36,10 @@ static void	case_double_quote(char **line, uint8_t *state, t_token *token)
 	return ;
 }
 
-static void	case_none(char **line, uint8_t *state, t_token *token, uint8_t *as)
+static void	_case_none(char **line, uint8_t *state,
+			t_token *token, t_assign_state *as)
 {
-	scan_asgn(**line, token, as);
+	validate_assign(*line, token, as);
 	if (ft_strncmp(*line, "\'", 1) == 0)
 		*state = W_SQ;
 	else if (ft_strncmp(*line, "\"", 1) == 0)
@@ -51,7 +51,7 @@ static void	case_none(char **line, uint8_t *state, t_token *token, uint8_t *as)
 	(*line)++;
 }
 
-static void	set_word_token(char *beginptr, char *endptr,
+static void	_set_word_token(char *begin_ptr, char *end_ptr,
 		uint8_t state, t_token *token)
 {
 	if (state != W_NONE)
@@ -61,33 +61,34 @@ static void	set_word_token(char *beginptr, char *endptr,
 		return ;
 	}
 	token->token_kind = TK_WORD;
-	token->u_token.wd.word.str = beginptr;
-	token->u_token.wd.word.len = endptr - beginptr;
+	token->u_token.wd.word.str = begin_ptr;
+	token->u_token.wd.word.len = end_ptr - begin_ptr;
 }
 
 void	lex_word(char **line, t_token *token)
 {
-	char		*beginptr;
-	uint8_t		state;
-	uint8_t		as;
+	char				*begin_ptr;
+	uint8_t				state;
+	t_assign_state		as;
 
-	beginptr = *line;
+	begin_ptr = *line;
 	state = W_NONE;
-	token->u_token.wd.flag = W_NONE;
 	as = AS_INIT;
+	token->u_token.wd.flag = W_NONE;
+	token->u_token.wd.eq_ptr = NULL;
 	while (**line != '\0')
 	{
 		if (state == W_SQ)
-			case_single_quote(line, &state, token);
+			_case_single_quote(line, &state, token);
 		else if (state == W_DQ)
-			case_double_quote(line, &state, token);
+			_case_double_quote(line, &state, token);
 		else
 		{
 			if ((ft_strchr(" \t\n|()><", **line)
 					|| strchunk("&&||>><<", *line, 2)))
 				break ;
-			case_none(line, &state, token, &as);
+			_case_none(line, &state, token, &as);
 		}
 	}
-	set_word_token(beginptr, *line, state, token);
+	_set_word_token(begin_ptr, *line, state, token);
 }

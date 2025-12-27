@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/26 19:49:33 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/27 16:55:55 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	main(int argc, char **argv, char **envp)
 			add_history(user_input);
 		g_signum = 0;
 		token = tokenize(user_input);
+		(void) token;
 		// parse(token, &ast); 
 		// execute(&ast, &executor);
 		free(user_input);

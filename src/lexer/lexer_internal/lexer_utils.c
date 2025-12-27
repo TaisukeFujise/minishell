@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_util.c                                       :+:      :+:    :+:   */
+/*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/26 22:46:08 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/27 17:13:46 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,30 @@ char	*strchunk(const char *tbl, const char *str, size_t n)
 	return (NULL);
 }
 
-void	scan_asgn(char c, t_token *token, uint8_t *as)
+void	validate_assign(char *cur_ptr, t_token *token, t_assign_state *as)
 {
-	return ;
+	if (*as == AS_DONE || *as == AS_INVALID)
+		return ;
+	if (!ft_strncmp(cur_ptr, "=", 1))
+	{
+		if (*as == AS_VALID)
+		{
+			token->u_token.wd.eq_ptr = cur_ptr;
+			token->u_token.wd.flag |= W_ASSIGN;
+		}
+		*as = AS_DONE;
+		return ;
+	}
+	if (*as == AS_INIT)
+	{
+		if (ft_isalpha(*cur_ptr) || ft_strncmp(cur_ptr, "_", 1))
+			*as = AS_VALID;
+		else
+			*as = AS_INVALID;
+	}
+	else
+	{
+		if (!(ft_isalnum(*cur_ptr) || ft_strncmp(cur_ptr, "_", 1)))
+			*as = AS_INVALID;
+	}
 }

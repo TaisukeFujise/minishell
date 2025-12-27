@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/26 22:25:30 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/27 16:52:45 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,13 @@
 # include <stdlib.h>
 # include <signal.h>
 # include "../libft/libft.h"
+# include <stddef.h>
+# include <stdint.h>
+
 # define SUCCESS 0
 # define FAILURE -1
 
 extern volatile sig_atomic_t	g_signum;
-# include <stddef.h>
-# include <stdint.h>
 
 typedef enum e_op_connect
 {
@@ -49,12 +50,12 @@ typedef enum e_op_redir
 
 typedef enum e_flag
 {
-	W_NONE	= 0u,
-	W_SQ	= 1u << 0,
-	W_DQ	= 1u << 1,
-	W_DOLL	= 1u << 2,
-	W_WILD	= 1u << 3,
-	W_ASGN	= 1u << 4
+	W_NONE		= 0u,
+	W_SQ		= 1u << 0,
+	W_DQ		= 1u << 1,
+	W_DOLL		= 1u << 2,
+	W_WILD		= 1u << 3,
+	W_ASSIGN	= 1u << 4
 }	t_flag;
 
 typedef struct s_word
@@ -67,6 +68,7 @@ typedef struct s_word_desc
 {
 	t_word		word;
 	uint8_t		flag;
+	char		*eq_ptr;
 }	t_word_desc;
 
 typedef struct s_word_list	t_word_list;
