@@ -3,24 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 08:13:37 by tafujise          #+#    #+#             */
-/*   Updated: 2025/11/04 07:24:05 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/20 20:15:27 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-static int	ft_isspace(char c)
-{
-	if (c == ' ' || c == '\f'
-		|| c == '\n' || c == '\r'
-		|| c == '\t' || c == '\v')
-		return (1);
-	else
-		return (0);
-}
 
 int	round_int_limits(long int num)
 {

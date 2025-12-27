@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
+#    By: fendo <fendo@student.42.jp>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2025/12/20 07:52:09 by tafujise         ###   ########.fr        #
+#    Updated: 2025/12/27 17:46:30 by fendo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,11 +14,16 @@ NAME:=minishell
 
 SRCDIR:=src
 SRCS:=main.c\
-	  signal/signal_handle.c
+	  signal/signal_handle.c\
+	  lexer/lexer.c\
+	  lexer/lexer_internal/lex_ops.c\
+	  lexer/lexer_internal/lex_word.c\
+	  lexer/lexer_internal/lexer_utils.c
 
 HEADDIR:=include
 HEADERS:=minishell.h\
-		 signal_handle.h
+		 signal_handle.h\
+		 lexer.h
 HEADERS:=$(addprefix $(HEADDIR)/, $(HEADERS))
 
 LIBFT_DIR:=libft
@@ -30,7 +35,7 @@ OBJS:=$(addprefix $(OBJDIR)/,$(SRCS:%.c=%.o))
 
 CC:=cc
 
-CCFLAGS:=-Wall -Wextra -Werror -I$(HEADDIR) -I$(LIBFT_DIR) 
+CCFLAGS:=-Wall -Wextra -Werror -I$(HEADDIR) -I$(LIBFT_DIR)
 
 DEBUG_FLAGS:=-g -O0
 
