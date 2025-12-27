@@ -79,7 +79,6 @@ static int	_load_envp(t_hashtable *env_table, char **envp)
 		item->value = value;
 		item->exported = true;
 		envp++;
-		env_table->entry_count++;
 	}
 	return (SUCCESS);
 }

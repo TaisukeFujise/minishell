@@ -30,7 +30,7 @@ void				hash_flush (t_hashtable *table, t_free_func *free_data)
 			item = bucket;	
 			bucket = bucket->next;
 			free(item->value);
-			// (void)free_data;
+			(void)free_data;
 			// if (free_data != NULL)
 			// 	(*free_data)(item->data);	
 			// else
