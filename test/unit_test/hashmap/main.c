@@ -9,5 +9,7 @@ int main(int argc, char **argv, char **envp)
 	printf("**init_executor**");
 	printf("return value: %d\n", init_executor(&executor, envp));
 	print_executor(&executor);
+	hash_flush(executor.env_table, NULL);
+	hash_dispose(executor.env_table);
 	return (0);
 }

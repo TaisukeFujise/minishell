@@ -13,7 +13,10 @@ void	print_bucket_array(t_bucket_contents **bucket_array, int bucket_size)
 	t_bucket_contents	*list;
 
 	if (bucket_array == NULL || *bucket_array == NULL)
+	{
 		puts("bucket_array: NULL");
+		return ;
+	}
 	i = 0;
 	while (i < bucket_size)
 	{
@@ -46,7 +49,10 @@ void	print_table(t_hashtable *table)
 void	print_executor(t_exec *executor)
 {
 	if (executor == NULL)
+	{
 		puts("executor: NULL");
+		return ;
+	}
 	puts("==executor==");
 	printf("exit_code: %d\n", executor->exit_code);
 	print_table(executor->env_table);
