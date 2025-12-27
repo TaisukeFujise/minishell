@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:40:31 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/27 16:36:10 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/27 18:21:29 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,9 @@ typedef void						t_free_func(void *);// Any free function
 void				hash_flush(t_hashtable *table, t_free_func *free_data);
 void				hash_dispose(t_hashtable *table);
 /* hashmap_utils.c */
+typedef int							t_hash_wfunc(t_bucket_contents *);
 unsigned int		hash_string(const char *s); // Convert string to hash value
 int					hash_bucket(unsigned int hash_value, t_hashtable *table);
 								// hash value to index in table
-// int				hash_size(t_hashtable *table); // Returns table->entry_count
 
 #endif

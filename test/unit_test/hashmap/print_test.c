@@ -15,7 +15,7 @@ void	print_bucket_array(t_bucket_contents **bucket_array, int bucket_size)
 	if (bucket_array == NULL || *bucket_array == NULL)
 	{
 		puts("bucket_array: NULL");
-		return ;
+		// return ;
 	}
 	i = 0;
 	while (i < bucket_size)
@@ -51,7 +51,7 @@ void	print_executor(t_exec *executor)
 	if (executor == NULL)
 	{
 		puts("executor: NULL");
-		return ;
+		// return ;
 	}
 	puts("==executor==");
 	printf("exit_code: %d\n", executor->exit_code);
