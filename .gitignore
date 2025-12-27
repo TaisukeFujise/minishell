@@ -10,6 +10,10 @@ test/unit_test/lexer/obj/
 test/unit_test/lexer/dump_tokens_line
 test/unit_test/lexer/dump_tokens_repl
 test/unit_test/lexer/lexer_tests
+minishell
 
 # Library
 libft/libft.a
+
+# CodeQL
+_codeql_detected_source_root
