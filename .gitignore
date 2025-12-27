@@ -1,0 +1,15 @@
+# Object files
+*.o
+*.a
+
+# Build directories
+obj/
+test/unit_test/lexer/obj/
+
+# Executables
+test/unit_test/lexer/dump_tokens_line
+test/unit_test/lexer/dump_tokens_repl
+test/unit_test/lexer/lexer_tests
+
+# Library
+libft/libft.a

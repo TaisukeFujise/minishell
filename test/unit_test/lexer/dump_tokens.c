@@ -128,7 +128,7 @@ void	dump_tokens(t_token *head)
 			printf("\n");
 			printf("  word : %.*s\n", curr->u_token.wd.word.len,
 				curr->u_token.wd.word.str);
-			if (curr->u_token.wd.flag &= W_ASSIGN)
+			if (curr->u_token.wd.flag & W_ASSIGN)
 			{
 				printf("  position of \'=\' : \"%zu\"\n",
 					curr->u_token.wd.eq_ptr - curr->u_token.wd.word.str);

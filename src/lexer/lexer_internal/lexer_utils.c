@@ -76,14 +76,14 @@ void	validate_assign(char *cur_ptr, t_token *token, t_assign_state *as)
 	}
 	if (*as == AS_INIT)
 	{
-		if (ft_isalpha(*cur_ptr) || ft_strncmp(cur_ptr, "_", 1))
+		if (ft_isalpha(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1))
 			*as = AS_VALID;
 		else
 			*as = AS_INVALID;
 	}
 	else
 	{
-		if (!(ft_isalnum(*cur_ptr) || ft_strncmp(cur_ptr, "_", 1)))
+		if (!(ft_isalnum(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1)))
 			*as = AS_INVALID;
 	}
 }
