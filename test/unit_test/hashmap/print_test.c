@@ -1,13 +1,11 @@
 #include "hashmap_test.h"
 
-// void	print_data(t_data *data)
-// {
-// 	if (data == NULL)
-// 		puts("data: NULL");
-// 	puts("==data==");
-// 	printf("value: %s\n", data->value);
-// 	printf("exported: %d\n", data->exported);
-// }
+void	print_data(t_data data)
+{
+	puts("==data==");
+	printf("value: %s\n", data.value);
+	printf("exported: %d\n", data.exported);
+}
 
 void	print_bucket_array(t_bucket_contents **bucket_array, int bucket_size)
 {
@@ -25,9 +23,7 @@ void	print_bucket_array(t_bucket_contents **bucket_array, int bucket_size)
 			puts("==list==");
 			printf("key: %s\n", list->key);
 			printf("khash: %u\n", list->khash);
-			// print_data(list->data);
-			printf("value: %s\n", list->value);
-			printf("exported: %d\n", list->exported);
+			print_data(list->data);
 			list = list->next;
 		}
 		i++;

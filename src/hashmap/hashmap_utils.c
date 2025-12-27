@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hashmap_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42jp>           +#+  +:+       +#+        */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 02:41:16 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/26 03:05:27 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/27 15:43:55 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ unsigned int	hash_string(const char *s)
 
 	i = FNV_OFFSET;
 	while (*s != '\0')
-	{	
-		i += (i<<1) + (i<<4) + (i<<7) + (i<<8) + (i<<24);
+	{
+		i += (i << 1) + (i << 4) + (i << 7) + (i << 8) + (i << 24);
 		i ^= *s++;
 	}
-	return i;
+	return (i);
 }
 
 // hash value to index in table
@@ -33,4 +33,3 @@ int	hash_bucket(unsigned int hash_value, t_hashtable *table)
 {
 	return (hash_value % table->bucket_size);
 }
-

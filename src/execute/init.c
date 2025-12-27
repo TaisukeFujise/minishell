@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/27 01:51:26 by tafujise         ###   ########.fr       */
+/*   Updated: 2025/12/27 16:19:27 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,9 @@ int	init_executor(t_exec *executor, char **envp)
 	return (SUCCESS);
 }
 
-typedef struct s_entry_view
-{
-	char	*key;
-	int		key_len;
-	char	*value;
-	int		value_len;
-}	t_entry_view;
-
 void	extract_entry_view(char *entry, t_entry_view *entry_view)
 {
-	int				i;
+	int	i;
 
 	entry_view->key = entry;
 	i = 0;
@@ -49,10 +41,9 @@ void	extract_entry_view(char *entry, t_entry_view *entry_view)
 	entry_view->value_len = ft_strlen(&entry[i + 1]);
 }
 
+// envp is reliable value, so we ignore the entry if the *envp doesn't have "="
 static int	_load_envp(t_hashtable *env_table, char **envp)
 {
-	// TODO
-	// hash table[index] has struct entry pointer.
 	t_entry_view		entry_view;
 	char				*key;
 	char				*value;
@@ -62,25 +53,23 @@ static int	_load_envp(t_hashtable *env_table, char **envp)
 		return (FAILURE);
 	while (*envp != NULL)
 	{
-		if (ft_strchr(*envp, '=') == NULL) // envp is reliable value, so we ignore the entry if the *envp doesn't have "="
-			continue;
+		if (ft_strchr(*envp, '=') == NULL)
+			continue ;
 		extract_entry_view(*envp, &entry_view);
 		key = ft_strndup(entry_view.key, entry_view.key_len);
 		if (key == NULL)
-			return (FAILURE); // free previous allocated memory!!!
+			return (FAILURE); //free previous allocated memory!!!
 		item = hash_insert(key, env_table);
 		if (item == NULL)
 			return (FAILURE); // free previous allocated memory !!!
-		if (item->value != NULL)
-			free(item->value);
+		if (item->data.value != NULL)
+			free(item->data.value);
 		value = ft_strndup(entry_view.value, entry_view.value_len);
 		if (value == NULL)
 			return (FAILURE); // free previous allocated memory !!!
-		item->value = value;
-		item->exported = true;
+		item->data.value = value;
+		item->data.exported = true;
 		envp++;
 	}
 	return (SUCCESS);
 }
-
-
