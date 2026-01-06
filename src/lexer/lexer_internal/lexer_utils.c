@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/27 17:13:46 by fendo            ###   ########.fr       */
+/*   Updated: 2026/01/06 16:37:02 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,14 +76,14 @@ void	validate_assign(char *cur_ptr, t_token *token, t_assign_state *as)
 	}
 	if (*as == AS_INIT)
 	{
-		if (ft_isalpha(*cur_ptr) || ft_strncmp(cur_ptr, "_", 1))
+		if (ft_isalpha(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1))
 			*as = AS_VALID;
 		else
 			*as = AS_INVALID;
 	}
 	else
 	{
-		if (!(ft_isalnum(*cur_ptr) || ft_strncmp(cur_ptr, "_", 1)))
+		if (!(ft_isalnum(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1)))
 			*as = AS_INVALID;
 	}
 }

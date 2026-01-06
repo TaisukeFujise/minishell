@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 17:38:31 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/27 17:29:50 by fendo            ###   ########.fr       */
+/*   Updated: 2026/01/06 16:37:18 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	dump_tokens(t_token *head)
 			printf("\n");
 			printf("  word : %.*s\n", curr->u_token.wd.word.len,
 				curr->u_token.wd.word.str);
-			if (curr->u_token.wd.flag &= W_ASSIGN)
+			if (curr->u_token.wd.flag & W_ASSIGN)
 			{
 				printf("  position of \'=\' : \"%zu\"\n",
 					curr->u_token.wd.eq_ptr - curr->u_token.wd.word.str);
