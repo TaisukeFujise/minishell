@@ -6,36 +6,35 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:32:33 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/27 13:32:39 by fendo            ###   ########.fr       */
+/*   Updated: 2026/01/08 16:42:17 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal/lexer_internal.h"
 #include <stdbool.h>
 
-static t_token	*lex_step(char **line, t_token *token)
+void	lex_step(char **line, t_token *token)
 {
 	if (!token)
-		return (NULL);
+		return ;
 	token->token_kind = TK_UNSET;
 	skip_blank(line);
 	lex_control(line, token);
 	if (token->token_kind != TK_UNSET)
-		return (token);
+		return ;
 	lex_connect(line, token);
 	if (token->token_kind != TK_UNSET)
-		return (token);
+		return ;
 	lex_group(line, token);
 	if (token->token_kind != TK_UNSET)
-		return (token);
+		return ;
 	lex_redirect(line, token);
 	if (token->token_kind != TK_UNSET)
-		return (token);
+		return ;
 	lex_io_number(line, token);
 	if (token->token_kind != TK_UNSET)
-		return (token);
+		return ;
 	lex_word(line, token);
-	return (token);
 }
 
 void	free_tokens(t_token *head)

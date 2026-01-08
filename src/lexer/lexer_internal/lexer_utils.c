@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2026/01/06 16:37:02 by fendo            ###   ########.fr       */
+/*   Updated: 2026/01/08 16:40:38 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,20 +41,20 @@ unsigned int	str2fd(char **line)
 }
 
 // Extended version of ft_strchr
-// Search for a substring 'str' of length n in 'tbl'
-char	*strchunk(const char *tbl, const char *str, size_t n)
+// Search for a substring 'str' of length n in 'table'
+char	*strchunk(const char *table, const char *str, size_t n)
 {
 	size_t	i;
-	size_t	len_tbl;
+	size_t	len_table;
 
-	if (!tbl || !str || n == 0)
+	if (!table || !str || n == 0)
 		return (NULL);
 	i = 0;
-	len_tbl = ft_strlen(tbl);
-	while (i + n <= len_tbl)
+	len_table = ft_strlen(table);
+	while (i + n <= len_table)
 	{
-		if (ft_strncmp(tbl + i, str, n) == 0)
-			return ((char *)(tbl + i));
+		if (ft_strncmp(table + i, str, n) == 0)
+			return ((char *)(table + i));
 		i += n;
 	}
 	return (NULL);

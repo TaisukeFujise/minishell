@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:37 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/26 20:11:04 by fendo            ###   ########.fr       */
+/*   Updated: 2026/01/08 16:24:09 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ struct s_redirect
 {
 	t_op_redir	op;
 	t_word_desc	target; // filename or delimiter
-	int			src_fd;		// -1 if IO_NUMBER is not specified
+	int			src_fd;	// -1 if IO_NUMBER is not specified
 	int			dest_fd;
 	t_redirect	*next;
 };
