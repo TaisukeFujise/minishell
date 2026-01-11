@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
+#    By: fendo <fendo@student.42.jp>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/12 09:41:21 by fujisetaisu       #+#    #+#              #
-#    Updated: 2025/11/18 22:27:48 by tafujise         ###   ########.fr        #
+#    Updated: 2025/12/20 20:16:10 by fendo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,9 @@ SRCS := ft_isalpha.c\
 		ft_isdigit.c\
 		ft_isalnum.c\
 		ft_isascii.c\
+		ft_isblank.c\
 		ft_isprint.c\
+		ft_isspace.c\
 		ft_strlen.c\
 		ft_memset.c\
 		ft_bzero.c\

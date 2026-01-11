@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:33 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/20 17:53:41 by fendo            ###   ########.fr       */
+/*   Updated: 2025/12/26 19:45:06 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,11 @@
 
 # include "minishell.h"
 
+# define ERR_UNCLOSED_QUOTE 1
+
 typedef enum e_token_kind
 {
+	TK_UNSET,
 	TK_WORD,
 	TK_CONNECT,
 	TK_GROUP,
@@ -36,12 +39,16 @@ struct s_token
 	union
 	{
 		t_word_desc		wd;
-		t_op_connect	op_bin;
+		t_op_connect	op_connect;
 		t_op_group		op_group;
-		t_op_redir		op_redir;	
+		t_op_redir		op_redir;
 		int				io_num;
+		char			*nl_ptr;
 		int				err;
 	}	u_token;
 };
+
+t_token	*tokenize(char *line);
+void	free_tokens(t_token *head);
 
 #endif

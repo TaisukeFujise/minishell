@@ -6,22 +6,23 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/26 03:06:27 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/11 20:51:07 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 #include "../include/signal_handle.h"
 #include "../include/execute.h"
+#include "../include/lexer.h"
 
-volatile sig_atomic_t	g_signum = 0;
+volatile sig_atomic_t g_signum = 0;
 
-int	main(int argc, char **argv, char **envp)
+int main(int argc, char **argv, char **envp)
 {
-	char	*user_input;
-	// t_token	token;
+	char *user_input;
+	t_token *token;
 	// t_node	ast;
-	t_exec	executor; 
+	t_exec executor;
 
 	(void)argc;
 	(void)argv;
@@ -40,8 +41,9 @@ int	main(int argc, char **argv, char **envp)
 		if (*user_input)
 			add_history(user_input);
 		g_signum = 0;
-		// tokenize(user_input, &token);
-		// parse(token, &ast); 
+		token = tokenize(user_input);
+		(void)token;
+		// parse(token, &ast);
 		// execute(&ast, &executor);
 		free(user_input);
 		// Here, free other objects in token, ast, executor.
