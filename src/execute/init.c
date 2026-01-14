@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/14 13:49:32 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/14 20:17:38 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@ static int	_load_envp(t_hashtable *env_table, char **envp);
 int	init_executor(t_exec *executor, char **envp)
 {
 	ft_bzero(executor, sizeof(t_exec));
+	/* init fd used for pipe process */
+	executor->input_fd = -1;
+	executor->output_fd = -1;
+	/* init env_table by envp */
 	executor->env_table = hash_create(BUCKET_SIZE);
 	if (executor->env_table == NULL)
 		return (FAILURE);

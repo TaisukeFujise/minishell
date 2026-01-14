@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/14 13:03:36 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/14 20:14:09 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 typedef struct s_exec
 {
 	int			exit_code;
+	int			input_fd;
+	int			output_fd;
 	t_hashtable	*env_table;
 	t_hashtable	*temp_table;
 }	t_exec;
