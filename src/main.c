@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/14 12:39:13 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/14 13:05:06 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ volatile sig_atomic_t g_signum = 0;
 
 int main(int argc, char **argv, char **envp)
 {
-	char *user_input;
-	t_token *token;
+	char	*user_input;
+	t_token	*token;
 	// t_node	ast;
-	t_exec executor;
+	t_exec	executor;
 
 	(void)argc;
 	(void)argv;
