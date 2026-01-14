@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/11 20:51:07 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/14 12:39:13 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ int main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	if (init_executor(&executor, envp) == FAILURE)
-		return (1);
 	if (set_signal() == FAILURE)
+		return (1);
+	if (init_executor(&executor, envp) == FAILURE)
 		return (1);
 	while (1)
 	{
