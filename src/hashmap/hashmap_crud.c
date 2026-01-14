@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:45:48 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/27 16:07:34 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/14 13:35:58 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ t_hashtable	*hash_create(int bucket_size)
 	new_table->bucket_array = ft_calloc(bucket_size,
 			sizeof(t_bucket_contents *));
 	if (new_table->bucket_array == NULL)
-		return (NULL);
+		return (free(new_table), NULL);
 	new_table->bucket_size = bucket_size;
 	return (new_table);
 }
@@ -34,7 +34,7 @@ t_hashtable	*hash_create(int bucket_size)
 t_bucket_contents	*hash_search(char *string, t_hashtable *table)
 {
 	unsigned int		hash_value;
-	int					bucket;		
+	int					bucket;
 	t_bucket_contents	*list;
 
 	if (table == 0 || table->bucket_array == NULL)
@@ -81,7 +81,11 @@ t_bucket_contents	*hash_remove(char *string, t_hashtable *table)
 	return (NULL);
 }
 
-// Add new key or Overwrite existing key.
+/*
+	Add new key or Overwrite existing key.
+	It returns NULL if the table is not initialized, or
+	memory allocation for item fails
+*/
 t_bucket_contents	*hash_insert(char *string, t_hashtable *table)
 {
 	t_bucket_contents	*item;
