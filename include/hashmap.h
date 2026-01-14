@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:40:31 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/27 18:21:29 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/14 13:04:11 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,6 @@ struct	s_hashtable
 	int					bucket_size;// how many buckets does this table have.
 	int					entry_count;// how many entries does this table have. 
 };
-
-typedef struct s_entry_view
-{
-	char	*key;
-	int		key_len;
-	char	*value;
-	int		value_len;
-}	t_entry_view;
 
 /* hashmap_crud.c */
 t_hashtable			*hash_create(int bucket_size);

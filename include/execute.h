@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/27 16:41:29 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/14 13:03:36 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,14 @@ typedef struct s_exec
 	t_hashtable	*env_table;
 	t_hashtable	*temp_table;
 }	t_exec;
+
+typedef struct s_entry_view
+{
+	char	*key;
+	int		key_len;
+	char	*value;
+	int		value_len;
+}	t_entry_view;
 
 /* init.c */
 int		init_executor(t_exec *executor, char **envp);
