@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/15 21:55:59 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/15 22:02:09 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,11 @@ static int	_load_envp(t_hashtable *env_table, char **envp)
 		}
 		value = ft_strndup(entry_view.value, entry_view.value_len);
 		if (value == NULL)
+		{
+			free(key);
+			key = NULL;
 			return (FAILURE);
+		}
 		item->data.value = value;
 		item->data.exported = true;
 		envp++;
