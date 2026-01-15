@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/14 20:17:38 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/15 21:55:59 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,26 +43,33 @@ static int	_load_envp(t_hashtable *env_table, char **envp)
 	char				*value;
 	t_bucket_contents	*item;
 
-	if (envp == NULL || *envp == NULL)
+	if (envp == NULL)
 		return (FAILURE);
 	while (*envp != NULL)
 	{
 		if (_extract_entry_view(*envp, &entry_view) == FAILURE)
 		{
 			envp++;
-			continue;
+			continue ;
 		}
 		key = ft_strndup(entry_view.key, entry_view.key_len);
 		if (key == NULL)
 			return (FAILURE);
 		item = hash_insert(key, env_table);
 		if (item == NULL)
-			return (free(key), FAILURE);
+		{
+			free(key);
+			key = NULL;
+			return (FAILURE);
+		}
 		if (item->data.value != NULL)
+		{
 			free(item->data.value);
+			item->data.value = NULL;
+		}
 		value = ft_strndup(entry_view.value, entry_view.value_len);
 		if (value == NULL)
-			return (free(key), FAILURE); 
+			return (FAILURE);
 		item->data.value = value;
 		item->data.exported = true;
 		envp++;
@@ -72,7 +79,7 @@ static int	_load_envp(t_hashtable *env_table, char **envp)
 
 static int	_extract_entry_view(char *entry, t_entry_view *entry_view)
 {
-	int i;
+	int	i;
 
 	entry_view->key = entry;
 	i = 0;
