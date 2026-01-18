@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 19:08:49 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 19:54:17 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../../include/hashmap.h"
 
 static int	_extract_entry_view(char *entry, t_entry_view *entry_view);
-static int	_load_envp(t_hashtable *env_table, char **envp);
+static int	_load_envp_to_table(t_hashtable *env_table, char **envp);
 
 int	init_ctx(t_ctx *ctx, char **envp)
 {
@@ -30,7 +30,7 @@ int	init_ctx(t_ctx *ctx, char **envp)
 	ctx->env_table = hash_create(BUCKET_SIZE);
 	if (ctx->env_table == NULL)
 		return (FAILURE);
-	if (_load_envp(ctx->env_table, envp) == FAILURE)
+	if (_load_envp_to_table(ctx->env_table, envp) == FAILURE)
 	{
 		hash_flush(ctx->env_table, NULL);
 		hash_dispose(ctx->env_table);
@@ -40,7 +40,7 @@ int	init_ctx(t_ctx *ctx, char **envp)
 }
 
 // envp is reliable value, so we ignore the entry if the *envp doesn't have "="
-static int	_load_envp(t_hashtable *env_table, char **envp)
+static int	_load_envp_to_table(t_hashtable *env_table, char **envp)
 {
 	t_entry_view		entry_view;
 	char				*key;

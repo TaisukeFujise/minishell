@@ -6,10 +6,11 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 19:01:45 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 21:05:29 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../include/minishell.h"
 #include "../../include/execute.h"
 #include "../../include/parser.h"
 
@@ -67,7 +68,7 @@ void	exec_pipe(t_node *node, t_exec *executor, t_ctx *ctx)
 	// free(pids)
 }
 
-void	exec_simple(t_node *node, t_exec *executor, t_ctx *ctx)
+void	exec_simple(t_simple_cmd *cmd, t_exec *executor, t_ctx *ctx)
 {
 	/*
 		Todo
@@ -77,6 +78,10 @@ void	exec_simple(t_node *node, t_exec *executor, t_ctx *ctx)
 		- Execute cmd, which is "built-in" or "execve",
 			using executor->input_fd and executor->output_fd.
 	*/
+	if (load_assigns_to_table(executor->tmp_table, cmd->assigns) == FAILURE)
+		return ;
+	if (expand(cmd, executor, ctx) == FAILURE)
+		return ;
 }
 
 void	exec_subshell(t_node *node, t_exec *executor, t_ctx *ctx)
@@ -99,7 +104,7 @@ void	execute(t_node *node, t_exec *executor, t_ctx *ctx)
 	else if (node->node_kind == NODE_SUBSHELL)
 		exec_subshell(node, executor, ctx);
 	else if (node->node_kind == NODE_SIMPLE)
-		exec_simple(node, executor, ctx);
+		exec_simple(&(node->u_node.simple_command), executor, ctx);
 	else
 		exit(1);
 }
