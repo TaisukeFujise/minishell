@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 21:25:28 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 21:56:06 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ void	handle_execute_error(t_status status, t_node *node, t_ctx *ctx)
 
 int main(int argc, char **argv, char **envp)
 {
-	t_ctx	ctx;
-	char	*user_input;
-	int	status;
-	t_node	ast;
-	t_exec	executor;
+	t_ctx		ctx;
+	char		*user_input;
+	t_status	status;
+	t_node		ast;
+	t_exec		executor;
 
 	(void)argc;
 	(void)argv;
