@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 19:54:17 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 21:43:29 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	init_ctx(t_ctx *ctx, char **envp)
 	/* init env_table by envp */
 	ctx->env_table = hash_create(BUCKET_SIZE);
 	if (ctx->env_table == NULL)
-		return (FAILURE);
+		return (hash_dispose(ctx->var_table), FAILURE);
 	if (_load_envp_to_table(ctx->env_table, envp) == FAILURE)
 	{
 		hash_flush(ctx->env_table, NULL);

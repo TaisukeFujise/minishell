@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 21:29:32 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 21:41:45 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ t_status	exec_pipe(t_node *node, t_exec *executor, t_ctx *ctx)
 
 	pids = malloc(sizeof(pid_t) * count_simple_cmds(node));// nodeのポインタを進めないように内部でt_node *tmpに渡す
 	if (pids == NULL)
-		return ;
+		return (ST_FATAL);
 	while (node != NULL)
 	{
 		/*
@@ -79,9 +79,9 @@ t_status	exec_simple(t_simple_cmd *cmd, t_exec *executor, t_ctx *ctx)
 			using executor->input_fd and executor->output_fd.
 	*/
 	if (load_assigns_to_table(executor->tmp_table, cmd->assigns) == FAILURE)
-		return ;
+		return (ST_FATAL);
 	if (expand(cmd, executor, ctx) == FAILURE)
-		return ;
+		return (ST_FATAL);
 }
 
 t_status	exec_subshell(t_node *node, t_exec *executor, t_ctx *ctx)
