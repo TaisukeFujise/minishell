@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 20:58:35 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 21:26:31 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,11 @@ typedef struct s_entry_view
 /* init.c */
 int		init_ctx(t_ctx *ctx, char **envp);
 /* execute.c */
-void	execute(t_node *node, t_exec *executor, t_ctx *ctx);
-void	exec_complete(t_node *node, t_exec *executor, t_ctx *ctx);
-void	exec_andor(t_node *node, t_exec *executor, t_ctx *ctx);
-void	exec_pipe(t_node *node, t_exec *executor, t_ctx *ctx);
-void	exec_subshell(t_node *node, t_exec *executor, t_ctx *ctx);
-void	exec_simple(t_simple_cmd *cmd, t_exec *executor, t_ctx *ctx);
+t_status	execute(t_node *node, t_exec *executor, t_ctx *ctx);
+t_status	exec_complete(t_node *node, t_exec *executor, t_ctx *ctx);
+t_status	exec_andor(t_node *node, t_exec *executor, t_ctx *ctx);
+t_status	exec_pipe(t_node *node, t_exec *executor, t_ctx *ctx);
+t_status	exec_subshell(t_node *node, t_exec *executor, t_ctx *ctx);
+t_status	exec_simple(t_simple_cmd *cmd, t_exec *executor, t_ctx *ctx);
 
 #endif

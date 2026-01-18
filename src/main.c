@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 21:05:58 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 21:25:28 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@ volatile sig_atomic_t g_signum = 0;
 	Todo
 	- handle error関連
 */
-void	handle_parse_error(int status, t_node *node, t_ctx *ctx)
+void	handle_parse_error(t_status status, t_node *node, t_ctx *ctx)
 {
 	(void)status;
 	(void)node;
 	(void)ctx;
 }
 
-void	handle_execute_error(int status, t_node *node, t_ctx *ctx)
+void	handle_execute_error(t_status status, t_node *node, t_ctx *ctx)
 {
 	(void)status;
 	(void)node;

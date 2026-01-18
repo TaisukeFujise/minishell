@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 21:05:29 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 21:29:32 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 	返り値の確認をして正常なステータス以外であれば、そこでreturnする設計に変更
 */
 
-void	exec_complete(t_node *node, t_exec *executor, t_ctx *ctx)
+t_status	exec_complete(t_node *node, t_exec *executor, t_ctx *ctx)
 {
 	while (node != NULL)
 	{
@@ -28,7 +28,7 @@ void	exec_complete(t_node *node, t_exec *executor, t_ctx *ctx)
 	}
 }
 
-void	exec_andor(t_node *node, t_exec *executor, t_ctx *ctx)
+t_status	exec_andor(t_node *node, t_exec *executor, t_ctx *ctx)
 {
 	while (node != NULL)
 	{
@@ -45,7 +45,7 @@ void	exec_andor(t_node *node, t_exec *executor, t_ctx *ctx)
 	}
 }
 //
-void	exec_pipe(t_node *node, t_exec *executor, t_ctx *ctx)
+t_status	exec_pipe(t_node *node, t_exec *executor, t_ctx *ctx)
 {
 	int		pipe_fd[2];
 	int		prev_read_fd;
@@ -68,7 +68,7 @@ void	exec_pipe(t_node *node, t_exec *executor, t_ctx *ctx)
 	// free(pids)
 }
 
-void	exec_simple(t_simple_cmd *cmd, t_exec *executor, t_ctx *ctx)
+t_status	exec_simple(t_simple_cmd *cmd, t_exec *executor, t_ctx *ctx)
 {
 	/*
 		Todo
@@ -84,14 +84,14 @@ void	exec_simple(t_simple_cmd *cmd, t_exec *executor, t_ctx *ctx)
 		return ;
 }
 
-void	exec_subshell(t_node *node, t_exec *executor, t_ctx *ctx)
+t_status	exec_subshell(t_node *node, t_exec *executor, t_ctx *ctx)
 {
 	// Todo
 	// subshell
 }
 
 // Only dispatch exec_hogehoge by node_kind. (No recursive call of execute here)
-void	execute(t_node *node, t_exec *executor, t_ctx *ctx)
+t_status	execute(t_node *node, t_exec *executor, t_ctx *ctx)
 {
 	if (node == NULL) // when user_input is empty, ast root node is NULL.
 		return ; // it's NULL guard.
