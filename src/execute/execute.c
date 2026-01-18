@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 21:41:45 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 22:00:06 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,20 @@ t_status	exec_simple(t_simple_cmd *cmd, t_exec *executor, t_ctx *ctx)
 		- Execute cmd, which is "built-in" or "execve",
 			using executor->input_fd and executor->output_fd.
 	*/
-	if (load_assigns_to_table(executor->tmp_table, cmd->assigns) == FAILURE)
-		return (ST_FATAL);
-	if (expand(cmd, executor, ctx) == FAILURE)
-		return (ST_FATAL);
+	t_status	status;
+
+	status = load_assigns_to_table(executor->tmp_table, cmd->assigns);
+	if (status != ST_SUCCESS)
+		return (status);
+	status = expand_args(cmd, executor, ctx);
+	if (status != ST_SUCCESS)
+		return (status);
+	status = apply_redirects(cmd, executor, ctx);
+	if (status != ST_SUCCESS)
+		return (status);
+	status = execute_cmd(cmd, executor, ctx);
+	if (status != ST_SUCCESS)
+		return (status);
 }
 
 t_status	exec_subshell(t_node *node, t_exec *executor, t_ctx *ctx)
