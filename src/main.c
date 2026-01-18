@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 19:09:28 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 21:05:58 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,30 @@
 
 volatile sig_atomic_t g_signum = 0;
 
+/*
+	Todo
+	- handle error関連
+*/
+void	handle_parse_error(int status, t_node *node, t_ctx *ctx)
+{
+	(void)status;
+	(void)node;
+	(void)ctx;
+}
+
+void	handle_execute_error(int status, t_node *node, t_ctx *ctx)
+{
+	(void)status;
+	(void)node;
+	(void)ctx;
+}
+
 int main(int argc, char **argv, char **envp)
 {
-	t_ctx	*ctx;
+	t_ctx	ctx;
 	char	*user_input;
-	t_token	*token;
-	// t_node	ast;
+	int	status;
+	t_node	ast;
 	t_exec	executor;
 
 	(void)argc;
@@ -42,13 +60,17 @@ int main(int argc, char **argv, char **envp)
 		if (*user_input)
 			add_history(user_input);
 		g_signum = 0;
-		token = tokenize(user_input);
-		(void)token;
-		// parse(token, &ast);
-		// execute(&ast, &executor, &ctx);
+		status = parse(user_input, &ast, &ctx);
+		if (status != ST_SUCCESS)
+			handle_parse_error(status, &ast, &ctx);
+		status = execute(&ast, &executor, &ctx);
+		if (status != ST_SUCCESS)
+			handle_execute_error(status, &executor, &ctx);
 		free(user_input);
 		// Here, free other objects in token, ast, executor.
 	}
 	rl_clear_history();
 	return (0);
 }
+
+
