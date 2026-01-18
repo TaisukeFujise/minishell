@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/14 13:05:06 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 19:09:28 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ volatile sig_atomic_t g_signum = 0;
 
 int main(int argc, char **argv, char **envp)
 {
+	t_ctx	*ctx;
 	char	*user_input;
 	t_token	*token;
 	// t_node	ast;
@@ -28,7 +29,7 @@ int main(int argc, char **argv, char **envp)
 	(void)argv;
 	if (set_signal() == FAILURE)
 		return (1);
-	if (init_executor(&executor, envp) == FAILURE)
+	if (init_ctx(&ctx, envp) == FAILURE)
 		return (1);
 	while (1)
 	{
@@ -44,7 +45,7 @@ int main(int argc, char **argv, char **envp)
 		token = tokenize(user_input);
 		(void)token;
 		// parse(token, &ast);
-		// execute(&ast, &executor);
+		// execute(&ast, &executor, &ctx);
 		free(user_input);
 		// Here, free other objects in token, ast, executor.
 	}

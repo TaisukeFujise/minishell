@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/15 22:02:09 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 19:08:49 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,24 @@
 static int	_extract_entry_view(char *entry, t_entry_view *entry_view);
 static int	_load_envp(t_hashtable *env_table, char **envp);
 
-int	init_executor(t_exec *executor, char **envp)
+int	init_ctx(t_ctx *ctx, char **envp)
 {
-	ft_bzero(executor, sizeof(t_exec));
-	/* init fd used for pipe process */
-	executor->input_fd = -1;
-	executor->output_fd = -1;
-	/* init env_table by envp */
-	executor->env_table = hash_create(BUCKET_SIZE);
-	if (executor->env_table == NULL)
+	ft_bzero(ctx, sizeof(t_ctx));
+	// /* init fd used for pipe process */
+	// executor->input_fd = -1;
+	// executor->output_fd = -1;
+
+	ctx->var_table = hash_crate(BUCKET_SIZE);
+	if (ctx->var_table == NULL)
 		return (FAILURE);
-	if (_load_envp(executor->env_table, envp) == FAILURE)
+	/* init env_table by envp */
+	ctx->env_table = hash_create(BUCKET_SIZE);
+	if (ctx->env_table == NULL)
+		return (FAILURE);
+	if (_load_envp(ctx->env_table, envp) == FAILURE)
 	{
-		hash_flush(executor->env_table, NULL);
-		hash_dispose(executor->env_table);
+		hash_flush(ctx->env_table, NULL);
+		hash_dispose(ctx->env_table);
 		return (FAILURE);
 	}
 	return (SUCCESS);
