@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 20:49:45 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 21:27:49 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include "../libft/libft.h"
 # include <stddef.h>
 # include <stdint.h>
+# include "./hashmap.h"
 
 # define SUCCESS 0
 # define FAILURE -1
@@ -38,7 +39,7 @@ typedef enum e_status
 	ST_SUCCESS,
 	ST_FAILURE,
 	ST_FATAL
-}	t_stats;
+}	t_status;
 
 typedef enum e_op_connect
 {
