@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 19:47:18 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/18 20:58:35 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,13 @@
 # include "./parser.h"
 # include <sys/types.h>
 # include "./hashmap.h"
-
-typedef struct s_ctx
-{
-	int			exit_code;
-	t_hashtable	*env_table;//When execve, this is converted to envp.
-	t_hashtable	*var_table;//this is not.
-}	t_ctx;
+# include "./minishell.h"
 
 typedef struct s_exec
 {
 	int			input_fd;
 	int			output_fd;
-	t_hashtable	*temp_table;
+	t_hashtable	*tmp_table;
 }	t_exec;
 
 typedef struct s_entry_view
@@ -47,6 +41,6 @@ void	exec_complete(t_node *node, t_exec *executor, t_ctx *ctx);
 void	exec_andor(t_node *node, t_exec *executor, t_ctx *ctx);
 void	exec_pipe(t_node *node, t_exec *executor, t_ctx *ctx);
 void	exec_subshell(t_node *node, t_exec *executor, t_ctx *ctx);
-void	exec_simple(t_node *node, t_exec *executor, t_ctx *ctx);
+void	exec_simple(t_simple_cmd *cmd, t_exec *executor, t_ctx *ctx);
 
 #endif
