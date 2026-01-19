@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2025/12/27 16:52:45 by fendo            ###   ########.fr       */
+/*   Updated: 2026/01/19 21:00:56 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,26 @@
 # include "../libft/libft.h"
 # include <stddef.h>
 # include <stdint.h>
+# include "./hashmap.h"
 
 # define SUCCESS 0
 # define FAILURE -1
 
 extern volatile sig_atomic_t	g_signum;
+
+typedef struct s_ctx
+{
+	int			exit_code;
+	t_hashtable	*env_table;//environment variable table. When execve, this is converted to envp.
+	t_hashtable	*var_table;//shell variable table
+}	t_ctx;
+
+typedef enum e_status
+{
+	ST_SUCCESS,
+	ST_FAILURE,
+	ST_FATAL
+}	t_status;
 
 typedef enum e_op_connect
 {
