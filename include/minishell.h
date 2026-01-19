@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 21:27:49 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/19 21:00:56 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ extern volatile sig_atomic_t	g_signum;
 typedef struct s_ctx
 {
 	int			exit_code;
-	t_hashtable	*env_table;//When execve, this is converted to envp.
-	t_hashtable	*var_table;//this is not.
+	t_hashtable	*env_table;//environment variable table. When execve, this is converted to envp.
+	t_hashtable	*var_table;//shell variable table
 }	t_ctx;
 
 typedef enum e_status
