@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 22:33:02 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/20 15:14:28 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,13 +94,16 @@ t_status	exec_simple(t_simple_cmd *cmd, t_exec *executor, t_ctx *ctx)
 	status = load_assigns_to_table(executor->tmp_table, cmd->assigns);
 	if (status == ST_FATAL)
 		return (status);
-	status = expand_args(cmd, executor, ctx);
+	status = expand_args(cmd->args, executor, ctx);
 	if (status == ST_FATAL)
 		return (status);
-	status = apply_redirects(cmd, executor, ctx);
+	status = apply_redirects(cmd->redirects, executor, ctx);
 	if (status == ST_FATAL)
 		return (status);
-	return (execute_cmd(cmd, executor, ctx));
+	status = execute_cmd(cmd, executor, ctx);
+	if (status == ST_FATAL)
+		return (status);
+	return (status);
 }
 
 t_status	exec_subshell(t_node *node, t_exec *executor, t_ctx *ctx)
