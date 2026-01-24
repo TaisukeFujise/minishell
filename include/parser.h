@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/01/08 16:24:09 by fendo            ###   ########.fr       */
+/*   Updated: 2026/01/24 10:28:31 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 
 typedef enum e_node_kind
 {
-	NODE_PROGRAM,
 	NODE_COMPLETE,
 	NODE_ANDOR,
 	NODE_PIPE,
@@ -58,8 +57,8 @@ typedef struct s_node		t_node;
 struct s_node
 {
 	t_node_kind	node_kind;
-	t_node		*child;
-	t_node		*next;
+	t_node		*left;
+	t_node		*right;
 	union
 	{
 		t_and_or		and_or;
