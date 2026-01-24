@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/24 10:30:38 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/24 20:03:14 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 
 # define SUCCESS 0
 # define FAILURE -1
+
+# define NO_PIPE -1
 
 extern volatile sig_atomic_t	g_signum;
 
