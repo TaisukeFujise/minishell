@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/19 21:00:56 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/24 10:30:38 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ typedef struct s_ctx
 	int			exit_code;
 	t_hashtable	*env_table;//environment variable table. When execve, this is converted to envp.
 	t_hashtable	*var_table;//shell variable table
+	t_hashtable	*tmp_table;//tmp environment variable table. This is set by assignment word in front of cmd.
 }	t_ctx;
 
 typedef enum e_status
