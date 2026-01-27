@@ -6,12 +6,25 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:17 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 00:13:20 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 01:03:46 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 #include "../../include/parser.h"
+
+t_status	exec_connection(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
+{
+	t_status	result;
+
+	if (node->node_kind == NODE_COMPLETE)
+		return (exec_complete(node, ctx, pipe_in, pipe_out));
+	if (node->node_kind == NODE_ANDOR)
+		return (exec_andor(node, ctx, pipe_in, pipe_out));
+	if (node->node_kind == NODE_PIPE)
+		return (exec_pipeline(node, ctx, pipe_in, pipe_out));
+	return (ST_FATAL);
+}
 
 t_status	exec_complete(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
