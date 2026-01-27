@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/24 20:03:14 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 00:16:31 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <stddef.h>
 # include <stdint.h>
 # include "./hashmap.h"
+# include <sys/types.h>
 
 # define SUCCESS 0
 # define FAILURE -1
@@ -29,12 +30,32 @@
 
 extern volatile sig_atomic_t	g_signum;
 
+typedef struct s_fd_bitmap
+{
+	int		size;
+	char	*bitmap;
+}	t_fd_bitmap;
+
+typedef struct s_entry_view
+{
+	char	*key;
+	int		key_len;
+	char	*value;
+	int		value_len;
+}	t_entry_view;
+
 typedef struct s_ctx
 {
+
 	int			exit_code;
 	t_hashtable	*env_table;//environment variable table. When execve, this is converted to envp.
 	t_hashtable	*var_table;//shell variable table
+	// Reset following member on every command.
 	t_hashtable	*tmp_table;//tmp environment variable table. This is set by assignment word in front of cmd.
+	t_fd_bitmap	*bitmap;// It's for managing fd, especially pipe read end fd, when using pipe.
+	pid_t		*pids;// Array of pids.
+	int			npid;// Coutn of pids.
+	int			in_child;// Flag about whether already forked or not.
 }	t_ctx;
 
 typedef enum e_status
