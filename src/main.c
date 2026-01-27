@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 00:23:04 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 00:43:35 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int main(int argc, char **argv, char **envp)
 			handle_parse_error(status, &ast, &ctx);
 		status = execute(&ast, &ctx);
 		if (status != ST_SUCCESS)
-			handle_execute_error(status, &executor, &ctx);
+			handle_execute_error(status, &ctx);
 		free(user_input);
 		// Here, free other objects in token, ast, executor.
 	}
