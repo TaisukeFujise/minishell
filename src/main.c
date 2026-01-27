@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/27 23:25:00 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 00:23:04 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,9 @@ void	handle_parse_error(t_status status, t_node *node, t_ctx *ctx)
 	(void)ctx;
 }
 
-void	handle_execute_error(t_status status, t_exec *executor, t_ctx *ctx)
+void	handle_execute_error(t_status status, t_ctx *ctx)
 {
 	(void)status;
-	(void)executor;
 	(void)ctx;
 }
 
@@ -41,7 +40,6 @@ int main(int argc, char **argv, char **envp)
 	char		*user_input;
 	t_status	status;
 	t_node		ast;
-	t_exec		executor;
 
 	(void)argc;
 	(void)argv;
