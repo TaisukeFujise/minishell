@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:15 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 22:40:04 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 23:05:47 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 
 	if (node->u_node.simple_command.args == 0)
 	{
-		result = execute_null_command(node->u_node.simple_command.redirects, ctx, pipe_in, pipe_out);
+		result = exec_null_command(node->u_node.simple_command.redirects, ctx, pipe_in, pipe_out);
 		if (already_forked)
 			exit(result);
 		return (result);
@@ -67,11 +67,11 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 		if (already_forked)
 		{
 			reset_signal();
-			execute_subshell_builtin(node->u_node.simple_command, ctx, pipe_in, pipe_out);
+			exec_subshell_builtin(node->u_node.simple_command, ctx, pipe_in, pipe_out);
 			exit(result);
 		}
-		result = execute_builtin(node->u_node.simple_command, ctx, pipe_in, pipe_out);
+		result = exec_builtin(node->u_node.simple_command, ctx, pipe_in, pipe_out);
 		return (result);
 	}
-	return (execute_disk_command(node->u_node.simple_command, ctx, pipe_in, pipe_out));
+	return (exec_disk_command(node->u_node.simple_command, ctx, pipe_in, pipe_out));
 }
