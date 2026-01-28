@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 00:11:40 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 22:38:50 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@
 
 t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
-	// Todo
-	// subshell
+	/*
+		Todo
+		- subshell
+	*/
 }
 

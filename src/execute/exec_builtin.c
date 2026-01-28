@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 01:06:11 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 22:40:26 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "../../include/parser.h"
 
 /*
+	Todo
 	execute builtin command in child process.
 */
 void	exec_subshell_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
@@ -25,7 +26,9 @@ void	exec_subshell_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_
 }
 
 /*
+	Todo
 	execute builtin command in parent process
+	- reverse redirect
 */
 t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
 {

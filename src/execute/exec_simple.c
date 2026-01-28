@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:15 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 00:52:40 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 22:40:04 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 		{
 			close(pipe_in);
 			close(pipe_out);
-			return (ST_SUCCESS);
+			return (ST_OK);
 		}
 	}
 	// expand args and assignment word!!!.
@@ -54,8 +54,6 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	if (load_assigns_to_table(ctx->tmp_table, node->u_node.simple_command.assigns)
 		== ST_FATAL)
 		return (ST_FATAL);
-
-
 
 	if (node->u_node.simple_command.args == 0)
 	{
