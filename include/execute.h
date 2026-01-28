@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 22:37:38 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 23:09:49 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,12 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 /* exec_subshell.c */
 t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 /* exec_null.c */
-t_status	execute_null_command(t_redirect *redirects, t_ctx *ctx, int pipe_in, int pipe_out);
+t_status	exec_null_command(t_redirect *redirects, t_ctx *ctx, int pipe_in, int pipe_out);
 /* exec_builtin.c */
 void		exec_subshell_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
 t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
 /* exec_disk.c */
-t_status	execute_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
+t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
 
 /* bitmap.c */
 t_fd_bitmap *new_fd_bitmap(int size);

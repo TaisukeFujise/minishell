@@ -6,12 +6,13 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 22:40:26 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 23:08:42 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 #include "../../include/parser.h"
+#include "../../include/execute.h"
 
 /*
 	Todo
