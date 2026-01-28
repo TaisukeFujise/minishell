@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 00:16:31 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 22:32:53 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,9 @@ typedef struct s_ctx
 
 typedef enum e_status
 {
-	ST_SUCCESS,
-	ST_FAILURE,
-	ST_FATAL
+	ST_OK,
+	ST_EXIT,
+	ST_FATAL,
 }	t_status;
 
 typedef enum e_op_connect

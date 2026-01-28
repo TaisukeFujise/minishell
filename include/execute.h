@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 00:59:24 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/28 22:37:38 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int		init_ctx(t_ctx *ctx, char **envp);
 t_status	execute(t_node *node, t_ctx *ctx);
 t_status	execute_internal(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 /* exec_connection.c */
+t_status	exec_connection(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 t_status	exec_complete(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 t_status	exec_andor(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 t_status	exec_pipeline(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
