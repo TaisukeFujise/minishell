@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 22:34:35 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/29 17:05:20 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int main(int argc, char **argv, char **envp)
 		status = parse(user_input, &ast, &ctx);
 		if (status != ST_OK)
 			handle_command_termination(status, user_input, &ast, &ctx);
-		status = execute(&ast, &ctx);
+		status = execute(&ast, &ctx, NO_PIPE, NO_PIPE);
 		if (status != ST_OK)
 			handle_command_termination(status, user_input, &ast, &ctx);
 		/*

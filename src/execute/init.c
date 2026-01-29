@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 21:43:29 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/29 16:41:46 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,6 @@ static int	_load_envp_to_table(t_hashtable *env_table, char **envp);
 int	init_ctx(t_ctx *ctx, char **envp)
 {
 	ft_bzero(ctx, sizeof(t_ctx));
-	// /* init fd used for pipe process */
-	// executor->input_fd = -1;
-	// executor->output_fd = -1;
 
 	ctx->var_table = hash_crate(BUCKET_SIZE);
 	if (ctx->var_table == NULL)
@@ -31,6 +28,13 @@ int	init_ctx(t_ctx *ctx, char **envp)
 	if (ctx->env_table == NULL)
 		return (hash_dispose(ctx->var_table), FAILURE);
 	if (_load_envp_to_table(ctx->env_table, envp) == FAILURE)
+	{
+		hash_flush(ctx->env_table, NULL);
+		hash_dispose(ctx->env_table);
+		return (FAILURE);
+	}
+	ctx->bitmap = new_fd_bitmap(FD_BITMAP_SIZE);
+	if (ctx->bitmap == NULL)
 	{
 		hash_flush(ctx->env_table, NULL);
 		hash_dispose(ctx->env_table);
