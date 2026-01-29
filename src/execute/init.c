@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/29 16:41:46 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/29 18:26:02 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	init_ctx(t_ctx *ctx, char **envp)
 		hash_dispose(ctx->env_table);
 		return (FAILURE);
 	}
+	/* init fd_bitmap */
 	ctx->bitmap = new_fd_bitmap(FD_BITMAP_SIZE);
 	if (ctx->bitmap == NULL)
 	{
