@@ -18,12 +18,30 @@ SRCS:=main.c\
 	  lexer/lexer.c\
 	  lexer/lexer_internal/lex_ops.c\
 	  lexer/lexer_internal/lex_word.c\
-	  lexer/lexer_internal/lexer_utils.c
+	  lexer/lexer_internal/lexer_utils.c\
+	  execute/assigns.c\
+	  execute/bitmap.c\
+	  execute/exec_builtin.c\
+	  execute/exec_connection.c\
+	  execute/exec_disk.c\
+	  execute/exec_null.c\
+	  execute/exec_simple.c\
+	  execute/exec_subshell.c\
+	  execute/execute.c\
+	  execute/expand.c\
+	  execute/init.c\
+	  execute/wait.c\
+	  hashmap/hashmap_crud.c\
+	  hashmap/hashmap_free.c\
+	  hashmap/hashmap_utils.c
 
 HEADDIR:=include
 HEADERS:=minishell.h\
 		 signal_handle.h\
-		 lexer.h
+		 lexer.h\
+		 execute.h\
+		 parser.h\
+		 hashmap.h
 HEADERS:=$(addprefix $(HEADDIR)/, $(HEADERS))
 
 LIBFT_DIR:=libft
