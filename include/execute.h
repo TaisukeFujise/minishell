@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/29 16:36:49 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 03:57:14 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,10 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_
 t_fd_bitmap *new_fd_bitmap(int size);
 void	close_fd_bitmap(t_fd_bitmap *fd_bitmap);
 void	dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
+
+/* assigns.c */
+t_status	apply_assings_to_vars(t_hashtable *env_table, t_word_list *assigns);
+t_status	apply_assigns_to_exec_env(t_hashtable *tmp_table, t_word_list *assigns);
 
 void	wait_pids(t_ctx *ctx);
 
