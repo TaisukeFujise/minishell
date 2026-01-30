@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/29 17:49:44 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 03:21:58 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ typedef struct s_ctx
 
 	int			exit_code;
 	t_hashtable	*env_table;//environment variable table. When execve, this is converted to envp.
-	t_hashtable	*var_table;//shell variable table
 	// Reset following member on every command.
 	t_hashtable	*tmp_table;//tmp environment variable table. This is set by assignment word in front of cmd.
 	t_fd_bitmap	*bitmap;// It's for managing fd, especially pipe read end fd, when using pipe.
