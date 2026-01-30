@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:15 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/29 18:19:32 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/30 20:26:36 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,24 +31,7 @@ t_status	load_assigns_to_table(t_hashtable *tmp_table, t_word_list *assigns)
 t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
 	ctx->already_forked = 0; // initialize ctx->already_forked flag.
-	// if (pipe_in != NO_PIPE || pipe_out != NO_PIPE)
-	// {
-	// 	if (make_child() == 0)
-	// 	{
-	// 		already_forked = 1;
-	// 		close_fd_bitmap(ctx->bitmap);
-	// 		do_piping(pipe_in, pipe_out);
-	// 		pipe_in = pipe_out = NO_PIPE;
-	// 	}
-	// 	else
-	// 	{
-	// 		close(pipe_in);
-	// 		close(pipe_out);
-	// 		return (ST_OK);
-	// 	}
-	// }
-	// expand args and assignment word!!!.
-	if (expand_args(node->u_node.simple_command, ctx)
+	if (expand_words(node->u_node.simple_command, ctx)
 		== ST_FATAL)
 		return (ST_FATAL);
 	if (load_assigns_to_table(ctx->tmp_table, node->u_node.simple_command.assigns)

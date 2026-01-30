@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/29 17:05:20 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/29 22:38:57 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 
 volatile sig_atomic_t g_signum = 0;
 
+/*
+	handle_command_termination sets ctx->exit_code only when the main process cannot continue.
+*/
 void	handle_command_termination(t_status status, char *user_input, t_node *node, t_ctx *ctx)
 {
 	(void)node;
