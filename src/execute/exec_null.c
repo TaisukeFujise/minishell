@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/30 20:25:49 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 14:55:15 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include "../../include/parser.h"
 
 /*
-	Tod	handle_command_termination sets ctx->exit_code only when the main process cannot continue.
 	execute null command, meaning no args command.
 	- fork if pipe_in or pipe_out is not a NO_PIPE. (It means command is connected by pipe)
 	- fork
@@ -83,10 +82,10 @@ pid_t	make_child(t_ctx *ctx)
 		- stack pid on *pids
 		- increment npid
 	*/
-	pid_t	pid;
+	// pid_t	pid;
 
-	ctx->already_forked = true;
-	pid = fork();
-	if (pid < 0)
-		return 
+	// ctx->already_forked = true;
+	// pid = fork();
+	// if (pid < 0)
+	// 	return 
 }
