@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/01/28 00:15:09 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 18:22:41 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ typedef enum e_node_kind
 
 typedef struct s_heredoc
 {
-	t_word_desc	raw_str;
+	t_word	raw_str;
 	char	*tmp_path; // It's for unlink the opened tmp file.
 	int		content_fd; // init value is -1
 }	t_heredoc;
@@ -36,7 +36,7 @@ typedef struct s_redirect	t_redirect;
 struct s_redirect
 {
 	t_op_redir	op;
-	t_word_desc	target; // filename or delimiter
+	t_word		target; // filename or delimiter
 	int			io_number; // -1 if IO_NUMBER is not specified
 	t_heredoc	hd;
 	t_redirect	*next;
@@ -44,7 +44,7 @@ struct s_redirect
 
 typedef struct s_simple_cmd
 {
-	t_word_list	*assigns;
+	t_assign	*assigns;
 	t_word_list	*args;
 	t_redirect	*redirects;
 }	t_simple_cmd;
