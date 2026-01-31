@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 19:22:49 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 20:24:28 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ typedef struct s_fd_bitmap
 
 typedef struct s_ctx
 {
-
 	int			exit_code;
 	t_hashtable	*env_table;//environment variable table. When execve, this is converted to envp.
 	// Reset following member on every command.
