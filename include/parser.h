@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/01/31 18:04:33 by fendo            ###   ########.fr       */
+/*   Updated: 2026/01/31 18:54:08 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,21 @@ typedef enum e_node_kind
 	NODE_SIMPLE
 }	t_node_kind;
 
+typedef struct s_heredoc
+{
+	t_word	raw_str;
+	char	*tmp_path; // It's for unlink the opened tmp file.
+	int		content_fd; // init value is -1
+}	t_heredoc;
+
 typedef struct s_redirect	t_redirect;
 
 struct s_redirect
 {
 	t_op_redir	op;
 	t_word		target; // filename or delimiter
-	int			src_fd;	// -1 if IO_NUMBER is not specified
-	int			dest_fd;
+	int			io_number; // -1 if IO_NUMBER is not specified
+	t_heredoc	hd;
 	t_redirect	*next;
 };
 

@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/18 21:56:06 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/29 22:38:57 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,26 @@
 volatile sig_atomic_t g_signum = 0;
 
 /*
-	Todo
-	- handle error関連
+	handle_command_termination sets ctx->exit_code only when the main process cannot continue.
 */
-void	handle_parse_error(t_status status, t_node *node, t_ctx *ctx)
+void	handle_command_termination(t_status status, char *user_input, t_node *node, t_ctx *ctx)
 {
-	(void)status;
 	(void)node;
 	(void)ctx;
-}
-
-void	handle_execute_error(t_status status, t_node *node, t_ctx *ctx)
-{
-	(void)status;
-	(void)node;
-	(void)ctx;
+	/*
+		Here free "user_input" and the member of "node and ctx"(not node and ctx itself)
+		because node and ctx itself are not allocated memory.
+	*/
+	if (status == ST_EXIT)
+	{
+		rl_clear_history();
+		exit(ctx->exit_code);
+	}
+	if (status == ST_FATAL)
+	{
+		rl_clear_history();
+		exit(1);
+	}
 }
 
 int main(int argc, char **argv, char **envp)
@@ -41,7 +46,6 @@ int main(int argc, char **argv, char **envp)
 	char		*user_input;
 	t_status	status;
 	t_node		ast;
-	t_exec		executor;
 
 	(void)argc;
 	(void)argv;
@@ -61,16 +65,18 @@ int main(int argc, char **argv, char **envp)
 			add_history(user_input);
 		g_signum = 0;
 		status = parse(user_input, &ast, &ctx);
-		if (status != ST_SUCCESS)
-			handle_parse_error(status, &ast, &ctx);
-		status = execute(&ast, &executor, &ctx);
-		if (status != ST_SUCCESS)
-			handle_execute_error(status, &executor, &ctx);
-		free(user_input);
-		// Here, free other objects in token, ast, executor.
+		if (status != ST_OK)
+			handle_command_termination(status, user_input, &ast, &ctx);
+		status = execute(&ast, &ctx, NO_PIPE, NO_PIPE);
+		if (status != ST_OK)
+			handle_command_termination(status, user_input, &ast, &ctx);
+		/*
+			Here free "user_input" and the member of "node and ctx"(not node and ctx itself)
+			because node and ctx itself are not allocated memory.
+		*/
 	}
 	rl_clear_history();
-	return (0);
+	return (ctx.exit_code);
 }
 
 

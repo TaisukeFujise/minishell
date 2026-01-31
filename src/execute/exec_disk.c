@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.c                                           :+:      :+:    :+:   */
+/*   exec_disk.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/29 17:56:04 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/30 20:28:46 by tafujise         ###   ########.fr       */
+/*   Created: 2026/01/28 00:49:57 by tafujise          #+#    #+#             */
+/*   Updated: 2026/01/28 23:07:31 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,12 @@
 
 /*
 	Todo
-	- expand args and assignment word!!!.
+	execute disk command(external command).
 */
-t_status	expand_words(t_simple_cmd *cmd, t_ctx *ctx)
+t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
 {
-
+	t_status	result;
+	if (apply_redirects(cmd->redirects, ctx) == ST_FATAL)
+		return (ST_FATAL);
+	return (result);
 }
