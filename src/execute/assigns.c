@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/31 03:17:31 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 17:02:16 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 18:08:23 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ t_status	apply_assings_to_vars(t_hashtable *env_table, t_word_list *assigns)
 			return (ST_FATAL);
 		if (item->data.value != NULL)
 		{
-			free(item->data.value != NULL);
+			free(item->data.value);
 			item->data.value = NULL;
 		}
 		item->data.value =value;
