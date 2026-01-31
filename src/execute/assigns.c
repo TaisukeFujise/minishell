@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/31 03:17:31 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 18:54:05 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 20:56:59 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ t_status	apply_assings_to_vars(t_hashtable *env_table, t_assign *assign)
 }
 
 /*
-	apply_assings_to_exec_env is called by exec_builtin_command and exec_disk_command.
+	apply_assings_to_tmp_env is called by exec_builtin_command and exec_disk_command.
 	- Add temporary env variable to tmp table from assignment word.
 */
-t_status	apply_assigns_to_exec_env(t_hashtable *tmp_table, t_assign *assign)
+t_status	apply_assigns_to_tmp_env(t_hashtable *tmp_table, t_assign *assign)
 {
 	t_bucket_contents	*item;
 
