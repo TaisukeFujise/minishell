@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 15:12:18 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 19:22:18 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ void	close_fd_bitmap(t_fd_bitmap *fd_bitmap);
 void	dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
 
 /* assigns.c */
-t_status	apply_assings_to_vars(t_hashtable *env_table, t_word_list *assigns);
-t_status	apply_assigns_to_exec_env(t_hashtable *tmp_table, t_word_list *assigns);
+t_status	apply_assings_to_vars(t_hashtable *env_table, t_assign *assign);
+t_status	apply_assigns_to_exec_env(t_hashtable *tmp_table, t_assign *assign);
 
 void	wait_pids(t_ctx *ctx);
 

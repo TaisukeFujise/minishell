@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 15:34:49 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 18:58:01 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_
 {
 	t_status	result;
 	pid_t		pid;
-
 
 	if (pipe_in != NO_PIPE || pipe_out != NO_PIPE)
 	{

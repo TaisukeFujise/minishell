@@ -6,14 +6,16 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 03:25:28 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 19:21:04 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/execute.h"
 #include "../../include/hashmap.h"
 
-static int	_extract_entry_view(char *entry, t_entry_view *entry_view);
+int			_preprocess_item(t_bucket_contents *item, char *key);
+char		*_extract_key_from_envp(char *entry);
+char		*_extract_value_from_envp(char *entry);
 static int	_load_envp_to_table(t_hashtable *env_table, char **envp);
 
 int	init_ctx(t_ctx *ctx, char **envp)
@@ -44,7 +46,6 @@ int	init_ctx(t_ctx *ctx, char **envp)
 // envp is reliable value, so we ignore the entry if the *envp doesn't have "="
 static int	_load_envp_to_table(t_hashtable *env_table, char **envp)
 {
-	t_entry_view		entry_view;
 	char				*key;
 	char				*value;
 	t_bucket_contents	*item;
@@ -53,33 +54,15 @@ static int	_load_envp_to_table(t_hashtable *env_table, char **envp)
 		return (FAILURE);
 	while (*envp != NULL)
 	{
-		if (_extract_entry_view(*envp, &entry_view) == FAILURE)
-		{
-			envp++;
-			continue ;
-		}
-		key = ft_strndup(entry_view.key, entry_view.key_len);
+		key = _extract_key_from_envp(*envp);
 		if (key == NULL)
 			return (FAILURE);
 		item = hash_insert(key, env_table);
-		if (item == NULL)
-		{
-			free(key);
-			key = NULL;
+		if (preprocess_item(item, key) == FAILURE)
 			return (FAILURE);
-		}
-		if (item->data.value != NULL)
-		{
-			free(item->data.value);
-			item->data.value = NULL;
-		}
-		value = ft_strndup(entry_view.value, entry_view.value_len);
+		value = _extract_value_from_envp(*envp);
 		if (value == NULL)
-		{
-			free(key);
-			key = NULL;
 			return (FAILURE);
-		}
 		item->data.value = value;
 		item->data.exported = true;
 		envp++;
@@ -87,18 +70,42 @@ static int	_load_envp_to_table(t_hashtable *env_table, char **envp)
 	return (SUCCESS);
 }
 
-static int	_extract_entry_view(char *entry, t_entry_view *entry_view)
+int	_preprocess_item(t_bucket_contents *item, char *key)
 {
-	int	i;
+	if (item == NULL)
+	{
+		free(key);
+		key = NULL;
+		return (FAILURE);
+	}
+	if (item->data.value != NULL)
+	{
+		free(item->data.value);
+		item->data.value = NULL;
+	}
+	return(SUCCESS);
+}
 
-	entry_view->key = entry;
+char	*_extract_key_from_envp(char *entry)
+{
+	int		i;
+
 	i = 0;
 	while (entry[i] != '=' && entry[i] != '\0')
 		i++;
 	if (entry[i] == '\0')
-		return (FAILURE);
-	entry_view->key_len = i;
-	entry_view->value = &entry[i + 1];
-	entry_view->value_len = ft_strlen(&entry[i + 1]);
-	return (SUCCESS);
+		return (NULL);
+	return (ft_strndup(entry, i));
+}
+
+char	*_extract_value_from_envp(char *entry)
+{
+	int	i;
+
+	i = 0;
+	while (entry[i] != '=' && entry[i] != '\0')
+		i++;
+	if (entry[i] == '\0')
+		return (NULL);
+	return (ft_strdup(entry + i));
 }

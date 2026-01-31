@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 18:54:11 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 19:22:49 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,6 @@ typedef struct s_fd_bitmap
 	int		size;
 	char	*bitmap;
 }	t_fd_bitmap;
-
-typedef struct s_entry_view
-{
-	char	*key;
-	int		key_len;
-	char	*value;
-	int		value_len;
-}	t_entry_view;
 
 typedef struct s_ctx
 {
