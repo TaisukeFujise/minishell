@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 14:55:15 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 15:34:49 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,26 @@
 
 	- apply_redirects
 */
-t_status	exec_null_command(t_redirect *redirects, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
 {
 	t_status	result;
+	pid_t		pid;
+
 
 	if (pipe_in != NO_PIPE || pipe_out != NO_PIPE)
 	{
-		if (make_child(ctx) == 0)
+		pid = make_child(ctx);
+		if (pid < 0)
+			return (ST_FATAL);
+		else if (pid == 0)
 		{
+			if (apply_assigns_to_vars(ctx->env_table, cmd->assigns) == ST_FATAL)
+				return (ST_FATAL);
 			close_fd_bitmap(ctx->bitmap);
-			do_piping(ctx, pipe_in, pipe_out);
+			if (do_piping(ctx, pipe_in, pipe_out) == ST_FATAL)
+				exit(EXIT_FAILURE);
 			pipe_in = pipe_out = NO_PIPE;
-			if (apply_redirects(redirects, ctx) != ST_OK)
+			if (apply_redirects(cmd->redirects, ctx) != ST_OK)
 				exit(EXIT_FAILURE);
 			exit(EXIT_SUCCESS);
 		}
@@ -47,14 +55,15 @@ t_status	exec_null_command(t_redirect *redirects, t_ctx *ctx, int pipe_in, int p
 	}
 	else
 	{
-		result = apply_redirects(redirects, ctx);
-		if (result != ST_OK)
-			return (result);
-		return (cleanup_redirects(redirects, ctx));
+		if (apply_assigns_to_vars(ctx->env_table, cmd->assigns) == ST_FATAL)
+			return (ST_FATAL);
+		if (apply_redirects(cmd->redirects, ctx) == ST_FATAL)
+			return (ST_FATAL);
+		return (cleanup_redirects(cmd->redirects, ctx));
 	}
 }
 
-void	do_piping(t_ctx *ctx, int pipe_in, int pipe_out) 
+t_status	do_piping(t_ctx *ctx, int pipe_in, int pipe_out) 
 {
 	if (pipe_in != NO_PIPE)
 	{

@@ -6,31 +6,13 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/31 03:17:31 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 04:19:37 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 17:02:16 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 #include "../../include/parser.h"
 #include "../../include/execute.h"
-
-char	*extract_key(t_word_desc word)
-{
-	/*
-		Todo
-		- get the length of word by the equal
-		- strndup(length)
-	*/
-}
-
-char	*extract_value(t_word_desc word)
-{
-	/*
-		Todo
-		- get the length of word from the equal
-		- strndup(length)
-	*/
-}
 
 /*
 	apply_assigns_to_vars is called by exec_null_command.

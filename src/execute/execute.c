@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/29 17:49:54 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 16:50:39 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,3 +62,5 @@ t_status	execute(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 		result = ST_FATAL;
 	return (result);
 }
+
+// fd_bitmapの初期化をwhile毎にする必要がある
