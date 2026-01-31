@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/24 10:30:38 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 18:04:11 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,20 +78,22 @@ typedef struct s_word
 {
 	char	*str;
 	int		len;
+	uint8_t	flag;
+	t_word	*next;
 }	t_word;
 
-typedef struct s_word_desc
+typedef struct s_assingn
 {
-	t_word		word;
-	uint8_t		flag;
-	char		*eq_ptr;
-}	t_word_desc;
+	t_word		*key;
+	t_word		*value;
+	t_assign	*next;
+}	t_assign;
 
 typedef struct s_word_list	t_word_list;
 
 struct s_word_list
 {
-	t_word_desc	wd;
+	t_word		*wd;
 	t_word_list	*next;
 };
 
