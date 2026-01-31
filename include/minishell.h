@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 03:21:58 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 18:19:45 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,20 +100,22 @@ typedef struct s_word
 {
 	char	*str;
 	int		len;
+	uint8_t	flag;
+	t_word	*next;
 }	t_word;
 
-typedef struct s_word_desc
+typedef struct s_assingn
 {
-	t_word		word;
-	uint8_t		flag;
-	char		*eq_ptr;
-}	t_word_desc;
+	t_word		*key;
+	t_word		*value;
+	t_assign	*next;
+}	t_assign;
 
 typedef struct s_word_list	t_word_list;
 
 struct s_word_list
 {
-	t_word_desc	wd;
+	t_word		*wd;
 	t_word_list	*next;
 };
 
