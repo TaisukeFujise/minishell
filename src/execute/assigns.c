@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/31 03:17:31 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 17:02:16 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/01/31 18:50:37 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,34 +20,22 @@
 	- If there is already some entry, update the value.
 	- This function doesn't touch export flag.
 */
-t_status	apply_assings_to_vars(t_hashtable *env_table, t_word_list *assigns)
+t_status	apply_assings_to_vars(t_hashtable *env_table, t_assign *assign)
 {
-	char				*key;
-	char				*value;
 	t_bucket_contents	*item;
 
-	while (assigns)
+	while (assign)
 	{
-		key = extract_key(assigns->wd);
-		if (key == NULL)
-			return (ST_FATAL);
-		item = hash_insert(key, env_table);
+		item = hash_insert(assign->key, env_table);
 		if (item == NULL)
-		{
-			free(key);
-			key = NULL;
-			return (ST_FATAL);
-		}
-		value = extract_value(assigns->wd);
-		if (value == NULL)
 			return (ST_FATAL);
 		if (item->data.value != NULL)
 		{
 			free(item->data.value != NULL);
 			item->data.value = NULL;
 		}
-		item->data.value =value;
-		assigns = assigns->next;
+		item->data.value =assign->value;
+		assign = assign->next;
 	}
 	return (ST_OK);
 }
@@ -56,36 +44,24 @@ t_status	apply_assings_to_vars(t_hashtable *env_table, t_word_list *assigns)
 	apply_assings_to_exec_env is called by exec_builtin_command and exec_disk_command.
 	- Add temporary env variable to tmp table from assignment word.
 */
-t_status	apply_assigns_to_exec_env(t_hashtable *tmp_table, t_word_list *assigns)
+t_status	apply_assigns_to_exec_env(t_hashtable *tmp_table, t_assign *assign)
 {
-	char				*key;
-	char				*value;
 	t_bucket_contents	*item;
 
 	hash_flush(tmp_table, NULL);
-	while (assigns)
+	while (assign)
 	{
-		key = extract_key(assigns->wd);
-		if (key == NULL)
-			return (ST_FATAL);
-		item = hash_insert(key, tmp_table);
+		item = hash_insert(assign->key, tmp_table);
 		if (item == NULL)
-		{
-			free(key);
-			key = NULL;
 			return (ST_FATAL);
-		}
 		if (item->data.value != NULL)
 		{
 			free(item->data.value);
 			item->data.value = NULL;
 		}
-		value = extrace_value(assigns->wd);
-		if (value == NULL)
-			return (ST_FATAL);
-		item->data.value = value;
+		item->data.value = assign->value;
 		item->data.exported = true;
-		assigns = assigns->next;
+		assign = assign->next;
 	}
 	return (ST_OK);
 }
