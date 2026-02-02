@@ -6,16 +6,16 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 18:02:42 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/02 18:07:02 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
 #include "minishell.h"
 
-static int	is_tk_bound(char *p)
+static int	is_tk_bound(char *ch)
 {
-	return (ft_strchr(" \t\n|()><", *p) || strchunk("&&||>><<", p, 2));
+	return (ft_strchr(" \t\n|()><", *ch) || strchunk("&&||>><<", ch, 2));
 }
 
 static int	append_part(t_word ***tail, char *str, int len, uint8_t flag)
