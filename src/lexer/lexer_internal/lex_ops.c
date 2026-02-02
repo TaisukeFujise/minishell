@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lex_ops.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 19:59:19 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/27 15:59:03 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/02 15:21:52 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,25 @@ void	lex_connect(char **line, t_token *token)
 	}
 }
 
-void	lex_group(char **line, t_token *token)
+void	lex_group(char **line, t_token *token, t_lex_state *st)
 {
 	if (!ft_strncmp(*line, "(", 1))
 	{
 		token->token_kind = TK_GROUP;
 		token->u_token.op_group = GROUP_LPAREN;
+		st->paren_depth++;
 		(*line)++;
 	}
 	else if (!ft_strncmp(*line, ")", 1))
 	{
-		token->token_kind = TK_GROUP;
-		token->u_token.op_group = GROUP_RPAREN;
+		if (st->paren_depth == 0)
+			set_lex_error(token, ERR_UNCLOSED_SUBSHELL);
+		else
+		{
+			token->token_kind = TK_GROUP;
+			token->u_token.op_group = GROUP_RPAREN;
+			st->paren_depth--;
+		}
 		(*line)++;
 	}
 }

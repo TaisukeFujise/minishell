@@ -26,7 +26,7 @@ int	main(void)
 			return (1);
 		}
 		dump_tokens(tokens);
-		free_tokens(tokens);
+		free_tokens(tokens, NULL);
 		free(line);
 	}
 	return (0);

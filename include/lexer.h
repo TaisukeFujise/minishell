@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:33 by fendo             #+#    #+#             */
-/*   Updated: 2025/12/26 19:45:06 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/01 18:49:00 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "minishell.h"
 
 # define ERR_UNCLOSED_QUOTE 1
+# define ERR_UNCLOSED_SUBSHELL 2
 
 typedef enum e_token_kind
 {
@@ -38,7 +39,7 @@ struct s_token
 	t_token			*next;
 	union
 	{
-		t_word_desc		wd;
+		t_word			wd;
 		t_op_connect	op_connect;
 		t_op_group		op_group;
 		t_op_redir		op_redir;
@@ -49,6 +50,6 @@ struct s_token
 };
 
 t_token	*tokenize(char *line);
-void	free_tokens(t_token *head);
+t_token	*free_tokens(t_token *head, t_token *extra);
 
 #endif

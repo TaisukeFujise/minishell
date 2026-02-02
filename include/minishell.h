@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 18:04:11 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/02 13:49:32 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,20 +74,25 @@ typedef enum e_flag
 	W_ASSIGN	= 1u << 4
 }	t_flag;
 
-typedef struct s_word
+typedef struct s_word	t_word;
+
+struct s_word
 {
 	char	*str;
 	int		len;
+	char	*eq_ptr;
 	uint8_t	flag;
 	t_word	*next;
-}	t_word;
+};
 
-typedef struct s_assingn
+typedef struct s_assign	t_assign;
+
+struct s_assign
 {
 	t_word		*key;
 	t_word		*value;
 	t_assign	*next;
-}	t_assign;
+};
 
 typedef struct s_word_list	t_word_list;
 

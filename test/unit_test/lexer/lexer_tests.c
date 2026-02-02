@@ -317,7 +317,7 @@ static int	run_case(const t_test_case *tc)
 	}
 	else
 		printf("  result: INFO (not validated)\n");
-	free_tokens(tokens);
+	free_tokens(tokens, NULL);
 	free(input);
 	if (!tc->check)
 		return (-1);

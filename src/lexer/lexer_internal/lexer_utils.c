@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2026/01/08 16:40:38 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/02 14:15:06 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,25 @@ void	validate_assign(char *cur_ptr, t_token *token, t_assign_state *as)
 		if (!(ft_isalnum(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1)))
 			*as = AS_INVALID;
 	}
+}
+
+void	set_lex_error(t_token *token, int err)
+{
+	if (!token)
+		return ;
+	token->token_kind = TK_ERR;
+	token->u_token.err = err;
+}
+
+int	free_word_parts(t_word *head)
+{
+	t_word	*tmp;
+
+	while (head)
+	{
+		tmp = head->next;
+		free(head);
+		head = tmp;
+	}
+	return (1);
 }
