@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:32:33 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 14:09:37 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/02 16:26:43 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,9 @@ t_token	*free_tokens(t_token *head, t_token *extra)
 // Return NULL if and only if malloc fails.
 t_token	*tokenize(char *line)
 {
-	t_token	*head;
-	t_token	**tail;
-	t_token	*token;
+	t_token		*head;
+	t_token		**tail;
+	t_token		*token;
 	t_lex_state	st;
 
 	if (!line)

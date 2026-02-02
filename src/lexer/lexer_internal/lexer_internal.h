@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:40:40 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 14:15:06 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/02 18:05:06 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ typedef enum e_assign_state
 
 typedef struct s_lex_state
 {
-	int	paren_depth;
+	int		paren_depth;
 }	t_lex_state;
 
 void			lex_control(char **line, t_token *token);
