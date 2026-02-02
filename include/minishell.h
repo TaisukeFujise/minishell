@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/02 19:54:23 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/02 21:31:31 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ typedef struct s_ctx
 	t_hashtable	*tmp_table;//tmp environment variable table. This is set by assignment word in front of cmd.
 	t_fd_bitmap	*bitmap;// It's for managing fd, especially pipe read end fd, when using pipe.
 	pid_t		*pids;// Array of pids.
-	int			npid;// Coutn of pids.
+	int			npid;// Count of pids.
 	int			already_forked;// Flag about whether already forked or not.
 }	t_ctx;
 

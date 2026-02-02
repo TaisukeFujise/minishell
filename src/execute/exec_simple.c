@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:15 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 15:16:04 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/02 23:28:56 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,6 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	if (expand_words(node->u_node.simple_command, ctx)
 		== ST_FATAL)
 		return (ST_FATAL);
-	// if (apply_assings_to_vars(ctx->tmp_table, node->u_node.simple_command.assigns)
-	// 	== ST_FATAL)
-	// 	return (ST_FATAL);
 	if (node->u_node.simple_command.args == 0)
 		return (exec_null_command(&node->u_node.simple_command,
 				ctx, pipe_in, pipe_out));

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fendo <fendo@student.42.jp>                +#+  +:+       +#+         #
+#    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2025/12/27 17:46:30 by fendo            ###   ########.fr        #
+#    Updated: 2026/02/03 00:31:41 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,11 @@ SRCS:=main.c\
 	  execute/execute.c\
 	  execute/expand.c\
 	  execute/init.c\
-	  execute/wait.c\
+	  execute/wait_pids.c\
+	  execute/apply_redirect.c\
+	  execute/stdio_backup.c\
+	  execute/pipe_utils.c\
+	  execute/register_pid.c\
 	  hashmap/hashmap_crud.c\
 	  hashmap/hashmap_free.c\
 	  hashmap/hashmap_utils.c

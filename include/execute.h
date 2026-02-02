@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/02 18:55:56 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 00:33:12 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,12 @@
 # include "./minishell.h"
 # include <fcntl.h>
 # include <errno.h>
+
+typedef struct s_savedfd
+{
+	int	stdin;
+	int	stdout;
+}	t_savedfd;
 
 /* init.c */
 int			init_ctx(t_ctx *ctx, char **envp);
@@ -50,13 +56,24 @@ void		close_fd_bitmap(t_fd_bitmap *fd_bitmap);
 void		dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
 
 /* assigns.c */
-t_status	apply_assings_to_vars(t_hashtable *env_table, t_assign *assign);
-t_status	apply_assigns_to_exec_env(t_hashtable *tmp_table, t_assign *assign);
+t_status	apply_assigns_to_vars(t_hashtable *env_table, t_assign *assign);
+t_status	apply_assigns_to_tmp_env(t_hashtable *tmp_table, t_assign *assign);
 
-/* redirects.c */
+/* apply_redirect.c */
 t_status	apply_redirects(t_redirect *redirects, t_ctx *ctx);
-t_status	cleanup_redirects(t_redirect *redirects, t_ctx *ctx);
-/* wait.c */
-void		wait_pids(t_ctx *ctx);
+
+/* stdio_backup.c */
+t_status	save_stdio(t_savedfd *saved);
+t_status	undo_stdio(t_redirect *redirects, t_savedfd saved);
+
+/* pipe_utils.c */
+t_status	attach_pipe_to_stdio(t_ctx *ctx, int pipe_in, int pipe_out);
+void		close_pipes(int pipe_in, int pipe_out);
+
+/* register_pid.c */
+t_status	register_pid(t_ctx *ctx, pid_t pid);
+
+/* wait_pids.c */
+t_status	wait_pids(t_ctx *ctx);
 
 #endif

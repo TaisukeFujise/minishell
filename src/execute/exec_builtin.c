@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 23:13:41 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/02 23:28:08 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ void	exec_subshell_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_
 {
 	t_status	result;
 
+	// Here!!!
+	// apply_assigns_to_tmp_env
 	if (apply_redirects(cmd->redirects, ctx) == ST_FATAL)
 		exit (result);
 }
@@ -34,6 +36,8 @@ void	exec_subshell_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_
 t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
 {
 	t_status	result;
+	// Here!!!
+	// apply_assigns_to_vars
 	if (apply_redirects(cmd->redirects, ctx) == ST_FATAL)
 		return (ST_FATAL);
 	if (reset_redirects(cmd->redirects, ctx) == ST_FATAL)
