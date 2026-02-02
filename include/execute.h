@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 00:50:11 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 00:52:26 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void		close_pipes(int pipe_in, int pipe_out);
 /* register_pid.c */
 t_status	register_pid(t_ctx *ctx, pid_t pid);
 
-/* wait_pids.c */
+/* collect_child.c */
 t_status	collect_child_result(t_ctx *ctx);
 
 #endif

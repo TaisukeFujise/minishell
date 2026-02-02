@@ -6,7 +6,7 @@
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2026/02/03 00:31:41 by tafujise         ###   ########.fr        #
+#    Updated: 2026/02/03 00:52:36 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,7 @@ SRCS:=main.c\
 	  execute/execute.c\
 	  execute/expand.c\
 	  execute/init.c\
-	  execute/wait_pids.c\
+	  execute/collect_child.c\
 	  execute/apply_redirect.c\
 	  execute/stdio_backup.c\
 	  execute/pipe_utils.c\
