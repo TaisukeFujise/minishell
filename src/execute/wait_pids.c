@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   wait.c                                             :+:      :+:    :+:   */
+/*   wait_pids.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 23:52:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 00:28:32 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 00:51:05 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	status_to_exitcode(int status);
 
-t_status	wait_pids(t_ctx *ctx)
+t_status	collect_child_result(t_ctx *ctx)
 {
 	/*
 		Todo
@@ -39,6 +39,7 @@ t_status	wait_pids(t_ctx *ctx)
 	ctx->exit_code = status_to_exitcode(status);
 	free(ctx->pids);
 	ctx->pids = NULL;
+	ctx->npid = 0;
 	return (ST_OK);
 }
 

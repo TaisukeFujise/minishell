@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 00:31:13 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 00:49:42 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,13 @@ t_status	execute_internal(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	{
 		result = exec_subshell(node, ctx, pipe_in, pipe_out);
 		if (pipe_in != NO_PIPE && pipe_out != NO_PIPE)
-			result = wait_pids(ctx);
+			result = collect_child_result(ctx);
 	}
 	else if (node->node_kind == NODE_SIMPLE)
 	{
 		result = exec_simple(node, ctx, pipe_in, pipe_out);
 		if (ctx->already_forked && pipe_out == NO_PIPE)
-			result = wait_pids(ctx);
+			result = collect_child_result(ctx);
 	}
 	else if (node->node_kind == NODE_COMPLETE || NODE_ANDOR || NODE_PIPE)
 		result = exec_connection(node, ctx, pipe_in, pipe_out);
