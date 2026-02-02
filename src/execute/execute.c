@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/02 10:04:46 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/02 10:09:07 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "../../include/parser.h"
 
 /*
-	(ctx->bitmapのinitをinit_ctxへ)
 	execute init fd_bitmap and wrap execute_internal.
 	after the func call, dispose the fd_bitmap, and return t_status result.
 */
@@ -32,7 +31,7 @@ t_status	execute(t_node *root, t_ctx *ctx)
 }
 
 /*
-	execute call exec_*** by the type of node, and return t_status result.
+	execute_internal call exec_*** by the type of node, and return t_status result.
 
 	- exec_subshell
 	- exec_simple

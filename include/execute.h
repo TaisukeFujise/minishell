@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/02 10:03:54 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/02 12:37:09 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include "./minishell.h"
 
 /* init.c */
-int		init_ctx(t_ctx *ctx, char **envp);
+int			init_ctx(t_ctx *ctx, char **envp);
 /* execute.c */
 t_status	execute(t_node *node, t_ctx *ctx);
 t_status	execute_internal(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
@@ -43,14 +43,18 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
 t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
 
 /* bitmap.c */
-t_fd_bitmap *new_fd_bitmap(int size);
-void	close_fd_bitmap(t_fd_bitmap *fd_bitmap);
-void	dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
+t_fd_bitmap	*new_fd_bitmap(int size);
+void		close_fd_bitmap(t_fd_bitmap *fd_bitmap);
+void		dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
 
 /* assigns.c */
 t_status	apply_assings_to_vars(t_hashtable *env_table, t_assign *assign);
 t_status	apply_assigns_to_exec_env(t_hashtable *tmp_table, t_assign *assign);
 
-void	wait_pids(t_ctx *ctx);
+/* redirects.c */
+t_status	apply_redirects(t_redirect *redirects, t_ctx *ctx);
+
+/* wait.c */
+void		wait_pids(t_ctx *ctx);
 
 #endif
