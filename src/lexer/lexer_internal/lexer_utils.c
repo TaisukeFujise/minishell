@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 14:15:06 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/02 20:34:52 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 
 // Refer to section "3.45 Blank Character (<blank>)" 
 // in https://pubs.opengroup.org/onlinepubs/9799919799/
-
 void	skip_blank(char **line)
 {
 	while (**line != '\0' && ft_isblank(**line))
@@ -94,17 +93,4 @@ void	set_lex_error(t_token *token, int err)
 		return ;
 	token->token_kind = TK_ERR;
 	token->u_token.err = err;
-}
-
-int	free_word_parts(t_word *head)
-{
-	t_word	*tmp;
-
-	while (head)
-	{
-		tmp = head->next;
-		free(head);
-		head = tmp;
-	}
-	return (1);
 }

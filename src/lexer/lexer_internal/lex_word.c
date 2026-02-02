@@ -3,52 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   lex_word.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 18:07:02 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/02 22:37:37 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
 #include "minishell.h"
-
-static int	is_tk_bound(char *ch)
-{
-	return (ft_strchr(" \t\n|()><", *ch) || strchunk("&&||>><<", ch, 2));
-}
-
-static int	append_part(t_word ***tail, char *str, int len, uint8_t flag)
-{
-	t_word	*part;
-
-	if (len <= 0)
-		return (0);
-	part = ft_calloc(1, sizeof(t_word));
-	if (!part)
-		return (-1);
-	part->str = str;
-	part->len = len;
-	part->flag = flag;
-	**tail = part;
-	*tail = &part->next;
-	return (0);
-}
-
-static int	finish_quote(char **line, t_word ***tail, char *begin, uint8_t flag)
-{
-	const char	*quote;
-
-	quote = "\"";
-	if (flag & W_SQ)
-		quote = "\'";
-	if (ft_strncmp(*line, quote, 1) != 0)
-		return (ERR_UNCLOSED_QUOTE);
-	if (append_part(tail, begin, *line - begin, flag) < 0)
-		return (-1);
-	(*line)++;
-	return (0);
-}
 
 static int	scan_sq(char **line, t_word ***tail)
 {
@@ -86,42 +49,49 @@ static int	scan_dq(char **line, t_word ***tail)
 	return (finish_quote(line, tail, begin, W_DQ));
 }
 
-static int	scan_special(char **line, t_word ***tail)
+static int	scan_unquoted(char **line, t_word ***tail,
+				t_assign_state *as, t_token *tk)
 {
 	char	*begin;
 	uint8_t	flag;
 
 	begin = *line;
-	if (ft_strncmp(*line, "$", 1) == 0)
+	flag = W_NONE;
+	if (**line == '$')
 	{
 		flag = W_DOLL;
+		(*line)++;
 		while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))
 			(*line)++;
 	}
-	else if (ft_strncmp(*line, "*", 1) == 0)
+	else if (**line == '*')
 	{
 		flag = W_WILD;
-		while (ft_strncmp(*line, "*", 1) == 0)
+		while (**line == '*')
 			(*line)++;
 	}
 	else
-		return (0);
+		while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))
+			validate_assign((*line)++, tk, as);
 	if (append_part(tail, begin, *line - begin, flag) < 0)
 		return (-1);
 	return (0);
 }
 
-static int	scan_plain(char **line, t_word ***tail, t_assign_state *as,
-				t_token *tk)
+static int	dispatch_word_lexing(t_word **tail, char **line,
+								t_token *tk, t_assign_state *as)
 {
-	char	*begin;
+	int	err;
 
-	begin = *line;
-	while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))
-		validate_assign((*line)++, tk, as);
-	if (append_part(tail, begin, *line - begin, W_NONE) < 0)
-		return (-1);
-	return (0);
+	if (ft_strncmp(*line, "\'", 1) == 0)
+		err = scan_sq(line, &tail);
+	else if (ft_strncmp(*line, "\"", 1) == 0)
+		err = scan_dq(line, &tail);
+	else if (ft_strchr("$*", **line))
+		err = scan_special(line, &tail);
+	else
+		err = scan_plain(line, &tail, as, tk);
+	return (err);
 }
 
 void	lex_word(char **line, t_token *tk)
@@ -131,23 +101,12 @@ void	lex_word(char **line, t_token *tk)
 	t_assign_state	as;
 	int				err;
 
-	head = NULL;
-	tail = &head;
-	as = AS_INIT;
-	tk->u_token.wd.flag = W_NONE;
-	tk->u_token.wd.eq_ptr = NULL;
+	init_lex(head, tail, &as, tk);
 	while (**line && !is_tk_bound(*line))
 	{
 		if (ft_strchr("\'\"$*", **line))
 			validate_assign(*line, tk, &as);
-		if (ft_strncmp(*line, "\'", 1) == 0)
-			err = scan_sq(line, &tail);
-		else if (ft_strncmp(*line, "\"", 1) == 0)
-			err = scan_dq(line, &tail);
-		else if (ft_strchr("$*", **line))
-			err = scan_special(line, &tail);
-		else
-			err = scan_plain(line, &tail, &as, tk);
+		err = dispatch_word_lexing(tail, line, tk, &as);
 		if (err && free_word_parts(head))
 		{
 			if (err > 0)

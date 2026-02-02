@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_internal.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:40:40 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 18:05:06 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/02 22:24:23 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,11 @@ void			validate_assign(char *cur_ptr, t_token *token,
 					t_assign_state *as);
 void			set_lex_error(t_token *token, int err);
 int				free_word_parts(t_word *head);
+int				is_tk_bound(char *ch);
+void			init_lex(t_word *head, t_word **tail,
+					t_assign_state *as, t_token *tk);
+int				append_part(t_word ***tail, char *str, int len, uint8_t flag);
+int				finish_quote(char **line, t_word ***tail,
+					char *begin, uint8_t flag);
 
 #endif

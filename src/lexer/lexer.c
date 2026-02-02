@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:32:33 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 16:26:43 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/02 22:12:40 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal/lexer_internal.h"
 #include <stdbool.h>
 
-void	lex_step(char **line, t_token *token, t_lex_state *st)
+void	lexer_step(char **line, t_token *token, t_lex_state *st)
 {
 	if (!token)
 		return ;
@@ -40,6 +40,19 @@ void	lex_step(char **line, t_token *token, t_lex_state *st)
 	if (token->token_kind != TK_UNSET)
 		return ;
 	lex_word(line, token);
+}
+
+int	free_word_parts(t_word *head)
+{
+	t_word	*tmp;
+
+	while (head)
+	{
+		tmp = head->next;
+		free(head);
+		head = tmp;
+	}
+	return (1);
 }
 
 t_token	*free_tokens(t_token *head, t_token *extra)
@@ -77,7 +90,7 @@ t_token	*tokenize(char *line)
 		token = ft_calloc(1, sizeof(t_token));
 		if (!token)
 			return (free_tokens(head, NULL));
-		lex_step(&line, token, &st);
+		lexer_step(&line, token, &st);
 		if (token->token_kind == TK_UNSET)
 			return (free_tokens(head, token));
 		if (token->token_kind == TK_ERR)
