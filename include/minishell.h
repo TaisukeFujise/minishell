@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/31 20:24:28 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/02 19:54:23 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@ typedef enum e_op_group
 typedef enum e_op_redir
 {
 	REDIR_LESS,
-	REDIR_GREAT,
+	REDIR_GREATER,
 	REDIR_DLESS,
-	REDIR_DGREAT
+	REDIR_DGREATER
 }	t_op_redir;
 
 typedef enum e_flag

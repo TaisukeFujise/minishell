@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/02 12:37:09 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/02 18:55:56 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include <sys/types.h>
 # include "./hashmap.h"
 # include "./minishell.h"
+# include <fcntl.h>
+# include <errno.h>
 
 /* init.c */
 int			init_ctx(t_ctx *ctx, char **envp);
@@ -53,7 +55,7 @@ t_status	apply_assigns_to_exec_env(t_hashtable *tmp_table, t_assign *assign);
 
 /* redirects.c */
 t_status	apply_redirects(t_redirect *redirects, t_ctx *ctx);
-
+t_status	cleanup_redirects(t_redirect *redirects, t_ctx *ctx);
 /* wait.c */
 void		wait_pids(t_ctx *ctx);
 
