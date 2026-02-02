@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 00:16:15 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 01:39:02 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,11 @@ void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int p
 		Todo left
 		- restore_signals ????
 	*/
-	if (apply_assigns_to_vars(ctx->env_table, cmd->assigns) == ST_FATAL)
-		EXIT (EXIT_FAILURE);
 	close_fd_bitmap(ctx->bitmap);
 	if (attach_pipe_to_stdio(ctx, pipe_in, pipe_out) == ST_FATAL)
 		exit(EXIT_FAILURE);
+	if (apply_assigns_to_vars(ctx->env_table, cmd->assigns) == ST_FATAL)
+		exit (EXIT_FAILURE);
 	pipe_in = pipe_out = NO_PIPE;
 	if (apply_redirects(cmd->redirects, ctx) != ST_OK)
 		exit(EXIT_FAILURE);
@@ -79,7 +79,10 @@ t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	if (save_stdio(&saved) == ST_FATAL)
 		return (ST_FATAL);
 	if (apply_redirects(cmd->redirects, ctx) == ST_FATAL)
-		return (close_savedfd(saved), ST_FATAL);
+	{
+		close_savedfd(saved);
+		return (ST_FATAL);
+	}
 	result = undo_stdio(cmd->redirects, saved);
 	close_savedfd(saved);
 	return (result);
