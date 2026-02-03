@@ -6,7 +6,7 @@
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/03 18:30:51 by tafujise          #+#    #+#              #
-#    Updated: 2026/02/03 19:55:25 by tafujise         ###   ########.fr        #
+#    Updated: 2026/02/03 20:30:26 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,7 @@ LIBFT := $(LIBFT_DIR)/libft.a
 TEST_SRCS := main.c
 EXECUTE_SRCS := \
 	init.c \
+	bitmap.c\
 	exec_null.c \
 	pipe_utils.c \
 	register_pid.c \

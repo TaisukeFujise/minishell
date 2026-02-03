@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:40:31 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 19:57:36 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 21:44:07 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ struct	s_bucket_contents
 	t_bucket_contents	*next; // Link to next hashed key in this bucket.
 	char				*key; // entry key (What we look up.)
 	unsigned int		khash; // hashed key (What key hashes to)
-	t_data				data; // entry data (What we really want.)
+	t_data				*data; // entry data (What we really want.)
 };
 
 typedef struct s_hashtable			t_hashtable;
@@ -57,6 +57,7 @@ void				hash_dispose(t_hashtable *table);
 typedef int							t_hash_wfunc(t_bucket_contents *);
 unsigned int		hash_string(const char *s); // Convert string to hash value
 int					hash_bucket(unsigned int hash_value, t_hashtable *table);
+void				hash_walk(t_hashtable *table, t_hash_wfunc *func);
 t_bucket_contents	*hash_items(int bucket, t_hashtable *table);
 								// hash value to index in table
 
