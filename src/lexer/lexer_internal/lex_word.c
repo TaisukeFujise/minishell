@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 22:37:37 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/03 20:50:18 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,7 @@ static int	scan_unquoted(char **line, t_word ***tail,
 	begin = *line;
 	flag = W_NONE;
 	if (**line == '$')
-	{
-		flag = W_DOLL;
-		(*line)++;
-		while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))
-			(*line)++;
-	}
+		lex_dollar(line, &flag);
 	else if (**line == '*')
 	{
 		flag = W_WILD;
@@ -94,14 +89,14 @@ static int	dispatch_word_lexing(t_word **tail, char **line,
 	return (err);
 }
 
-void	lex_word(char **line, t_token *tk)
+t_token_kind	lex_word(char **line, t_token *tk)
 {
 	t_word			*head;
 	t_word			**tail;
 	t_assign_state	as;
 	int				err;
 
-	init_lex(head, tail, &as, tk);
+	init_lex(&head, &tail, &as, tk);
 	while (**line && !is_tk_bound(*line))
 	{
 		if (ft_strchr("\'\"$*", **line))
@@ -111,9 +106,10 @@ void	lex_word(char **line, t_token *tk)
 		{
 			if (err > 0)
 				set_lex_error(tk, err);
-			return ;
+			return (tk->token_kind);
 		}
 	}
 	tk->token_kind = TK_WORD;
 	tk->u_token.wd.next = head;
+	return (tk->token_kind);
 }

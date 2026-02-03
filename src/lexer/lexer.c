@@ -6,40 +6,36 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:32:33 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 22:12:40 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/03 20:33:57 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal/lexer_internal.h"
 #include <stdbool.h>
 
-void	lexer_step(char **line, t_token *token, t_lex_state *st)
+t_token_kind	lexer_step(char **line, t_token *token, t_lex_state *st)
 {
 	if (!token)
-		return ;
+		return (TK_UNSET);
 	token->token_kind = TK_UNSET;
 	skip_blank(line);
-	lex_control(line, token);
-	if (token->token_kind == TK_EOF && st->paren_depth != 0)
+	if (lex_control(line, token) == TK_EOF && st->paren_depth != 0)
 	{
 		set_lex_error(token, ERR_UNCLOSED_SUBSHELL);
 		return ;
 	}
 	if (token->token_kind != TK_UNSET)
 		return ;
-	lex_connect(line, token);
-	if (token->token_kind != TK_UNSET)
+	if (lex_connect(line, token) != TK_UNSET)
 		return ;
-	lex_group(line, token, st);
-	if (token->token_kind != TK_UNSET)
+	if (lex_group(line, token, st) != TK_UNSET)
 		return ;
-	lex_redirect(line, token);
-	if (token->token_kind != TK_UNSET)
+	if (lex_redirect(line, token) != TK_UNSET)
 		return ;
-	lex_io_number(line, token);
-	if (token->token_kind != TK_UNSET)
+	if (lex_io_number(line, token) != TK_UNSET)
 		return ;
 	lex_word(line, token);
+	return (token->token_kind);
 }
 
 int	free_word_parts(t_word *head)
@@ -75,10 +71,11 @@ t_token	*free_tokens(t_token *head, t_token *extra)
 // Return NULL if and only if malloc fails.
 t_token	*tokenize(char *line)
 {
-	t_token		*head;
-	t_token		**tail;
-	t_token		*token;
-	t_lex_state	st;
+	t_token			*head;
+	t_token			**tail;
+	t_token			*token;
+	t_lex_state		st;
+	t_token_kind	tk_kind;
 
 	if (!line)
 		return (NULL);
@@ -90,17 +87,17 @@ t_token	*tokenize(char *line)
 		token = ft_calloc(1, sizeof(t_token));
 		if (!token)
 			return (free_tokens(head, NULL));
-		lexer_step(&line, token, &st);
-		if (token->token_kind == TK_UNSET)
+		tk_kind = (&line, token, &st);
+		if (tk_kind == TK_UNSET)
 			return (free_tokens(head, token));
-		if (token->token_kind == TK_ERR)
+		if (tk_kind == TK_ERR)
 		{
 			free_tokens(head, NULL);
 			return (token);
 		}
 		(*tail) = token;
 		tail = &token->next;
-		if (token->token_kind == TK_EOF)
+		if (tk_kind == TK_EOF)
 			break ;
 	}
 	return (head);

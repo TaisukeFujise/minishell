@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 22:00:38 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 22:02:24 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/03 20:49:46 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@ int	is_tk_bound(char *ch)
 	return (ft_strchr(" \t\n|()><", *ch) || strchunk("&&||>><<", ch, 2));
 }
 
-void	init_lex(t_word	*head, t_word	**tail,
+void	init_lex(t_word	**head, t_word	***tail,
 				t_assign_state	*as, t_token	*tk)
 {
-	head = NULL;
-	tail = &head;
+	*head = NULL;
+	*tail = head;
 	*as = AS_INIT;
 	tk->u_token.wd.flag = W_NONE;
 	tk->u_token.wd.eq_ptr = NULL;
@@ -58,4 +58,22 @@ int	finish_quote(char **line, t_word ***tail, char *begin, uint8_t flag)
 		return (-1);
 	(*line)++;
 	return (0);
+}
+
+void	lex_dollar(char **cur_ptr, int *flag)
+{
+	(*cur_ptr)++;
+	if (!ft_strncmp(*cur_ptr, "?", 1))
+	{
+		(*cur_ptr)++;
+		*flag = W_DOLL;
+		return ;
+	}
+	else if (ft_isalpha(**cur_ptr) || !ft_strncmp(*cur_ptr, "_", 1))
+	{
+		(*cur_ptr)++;
+		while (ft_isalnum(**cur_ptr) || !ft_strncmp(*cur_ptr, "_", 1))
+			(*cur_ptr)++;
+		*flag = W_DOLL;
+	}
 }

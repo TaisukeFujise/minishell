@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:40:40 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 22:24:23 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/03 20:18:51 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,12 @@ typedef struct s_lex_state
 	int		paren_depth;
 }	t_lex_state;
 
-void			lex_control(char **line, t_token *token);
-void			lex_connect(char **line, t_token *token);
-void			lex_group(char **line, t_token *token, t_lex_state *st);
-void			lex_redirect(char **line, t_token *token);
-void			lex_io_number(char **line, t_token *token);
-void			lex_word(char **line, t_token *token);
+t_token_kind	lex_control(char **line, t_token *token);
+t_token_kind	lex_connect(char **line, t_token *token);
+t_token_kind	lex_group(char **line, t_token *token, t_lex_state *st);
+t_token_kind	lex_redirect(char **line, t_token *token);
+t_token_kind	lex_io_number(char **line, t_token *token);
+t_token_kind	lex_word(char **line, t_token *token);
 
 void			skip_blank(char **line);
 unsigned int	str2fd(char **line);

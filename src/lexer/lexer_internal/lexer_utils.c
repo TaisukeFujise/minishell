@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 20:34:52 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/03 20:04:38 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,14 @@ char	*strchunk(const char *table, const char *str, size_t n)
 	return (NULL);
 }
 
+void	set_lex_error(t_token *token, int err)
+{
+	if (!token)
+		return ;
+	token->token_kind = TK_ERR;
+	token->u_token.err = err;
+}
+
 void	validate_assign(char *cur_ptr, t_token *token, t_assign_state *as)
 {
 	if (*as == AS_DONE || *as == AS_INVALID)
@@ -85,12 +93,4 @@ void	validate_assign(char *cur_ptr, t_token *token, t_assign_state *as)
 		if (!(ft_isalnum(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1)))
 			*as = AS_INVALID;
 	}
-}
-
-void	set_lex_error(t_token *token, int err)
-{
-	if (!token)
-		return ;
-	token->token_kind = TK_ERR;
-	token->u_token.err = err;
 }

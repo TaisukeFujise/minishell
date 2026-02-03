@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   lex_ops.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 19:59:19 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/02 15:21:52 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/03 20:20:40 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "lexer_internal.h"
 
-void	lex_control(char **line, t_token *token)
+t_token_kind	lex_control(char **line, t_token *token)
 {
 	if (!ft_strncmp(*line, "\0", 1))
 		token->token_kind = TK_EOF;
@@ -23,9 +23,10 @@ void	lex_control(char **line, t_token *token)
 		token->u_token.nl_ptr = *line;
 		(*line)++;
 	}
+	return (token->token_kind);
 }
 
-void	lex_connect(char **line, t_token *token)
+t_token_kind	lex_connect(char **line, t_token *token)
 {
 	if (!ft_strncmp(*line, "&&", 2))
 	{
@@ -45,9 +46,10 @@ void	lex_connect(char **line, t_token *token)
 		token->u_token.op_connect = CONNECT_PIPE;
 		(*line)++;
 	}
+	return (token->token_kind);
 }
 
-void	lex_group(char **line, t_token *token, t_lex_state *st)
+t_token_kind	lex_group(char **line, t_token *token, t_lex_state *st)
 {
 	if (!ft_strncmp(*line, "(", 1))
 	{
@@ -68,9 +70,10 @@ void	lex_group(char **line, t_token *token, t_lex_state *st)
 		}
 		(*line)++;
 	}
+	return (token->token_kind);
 }
 
-void	lex_redirect(char **line, t_token *token)
+t_token_kind	lex_redirect(char **line, t_token *token)
 {
 	if (!ft_strncmp(*line, ">>", 2))
 	{
@@ -96,9 +99,10 @@ void	lex_redirect(char **line, t_token *token)
 		token->u_token.op_redir = REDIR_LESS;
 		(*line)++;
 	}
+	return (token->token_kind);
 }
 
-void	lex_io_number(char **line, t_token *token)
+t_token_kind	lex_io_number(char **line, t_token *token)
 {
 	char			*end_ptr;
 	unsigned int	fd;
@@ -111,4 +115,5 @@ void	lex_io_number(char **line, t_token *token)
 		token->u_token.io_num = fd;
 		(*line) = end_ptr;
 	}
+	return (token->token_kind);
 }
