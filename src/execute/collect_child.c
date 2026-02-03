@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   wait_pids.c                                        :+:      :+:    :+:   */
+/*   collect_child.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 23:52:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 00:51:05 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 19:32:37 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,16 @@ t_status	collect_child_result(t_ctx *ctx)
 	int	status;
 
 	i = 0;
+	status = 0;
 	if (ctx->pids == NULL || ctx->npid < 1)
 		return (ST_FATAL);
 	while (i < (ctx->npid - 1))
 	{
-		if (waitpid(ctx->pids[i], NULL) < 0)
+		if (waitpid(ctx->pids[i], &status, 0) < 0)
 			return (ST_FATAL);
 		i++;
 	}
-	if (waitpid(ctx->pids[i], status) < 0)
+	if (waitpid(ctx->pids[i], &status, 0) < 0)
 		return (ST_FATAL);
 	ctx->exit_code = status_to_exitcode(status);
 	free(ctx->pids);

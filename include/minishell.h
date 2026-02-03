@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 18:51:08 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 19:41:14 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <stdint.h>
 # include "./hashmap.h"
 # include <sys/types.h>
+# include <sys/wait.h>
 
 # define SUCCESS 0
 # define FAILURE -1

@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/31 03:17:31 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/02 23:26:43 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 19:27:24 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_status	apply_assigns_to_vars(t_hashtable *env_table, t_assign *assign)
 
 	while (assign)
 	{
-		item = hash_insert(assign->key, env_table);
+		item = hash_insert(assign->key->str, env_table);
 		if (item == NULL)
 			return (ST_FATAL);
 		if (item->data.value != NULL)
@@ -34,7 +34,7 @@ t_status	apply_assigns_to_vars(t_hashtable *env_table, t_assign *assign)
 			free(item->data.value);
 			item->data.value = NULL;
 		}
-		item->data.value =assign->value;
+		item->data.value =assign->value->str;
 		assign = assign->next;
 	}
 	return (ST_OK);
@@ -51,7 +51,7 @@ t_status	apply_assigns_to_tmp_env(t_hashtable *tmp_table, t_assign *assign)
 	hash_flush(tmp_table, NULL);
 	while (assign)
 	{
-		item = hash_insert(assign->key, tmp_table);
+		item = hash_insert(assign->key->str, tmp_table);
 		if (item == NULL)
 			return (ST_FATAL);
 		if (item->data.value != NULL)
@@ -59,7 +59,7 @@ t_status	apply_assigns_to_tmp_env(t_hashtable *tmp_table, t_assign *assign)
 			free(item->data.value);
 			item->data.value = NULL;
 		}
-		item->data.value = assign->value;
+		item->data.value = assign->value->str;
 		item->data.exported = true;
 		assign = assign->next;
 	}
