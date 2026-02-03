@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:40:31 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 21:44:07 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 21:54:38 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ struct	s_bucket_contents
 	t_bucket_contents	*next; // Link to next hashed key in this bucket.
 	char				*key; // entry key (What we look up.)
 	unsigned int		khash; // hashed key (What key hashes to)
-	t_data				*data; // entry data (What we really want.)
+	t_data				data; // entry data (What we really want.)
 };
 
 typedef struct s_hashtable			t_hashtable;

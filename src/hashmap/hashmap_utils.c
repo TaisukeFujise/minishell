@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 02:41:16 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/15 21:52:17 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 22:01:18 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	hash_walk(t_hashtable *table, t_hash_wfunc *func)
 */
 t_bucket_contents	*hash_items(int bucket, t_hashtable *table)
 {
-	if (table == NULL && bucket < table->bucket_size)
+	if (table != NULL && bucket < table->bucket_size)
 		return (table->bucket_array[bucket]);
 	return (NULL);
 }
