@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 12:31:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/02 21:10:58 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 19:18:20 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 #include "../../include/parser.h"
 #include "../../include/execute.h"
 
-t_status	apply_redir_greater(t_redirect *redirect, t_ctx *ctx);
-t_status	apply_redir_less(t_redirect *redirect, t_ctx *ctx);
-t_status	apply_redir_dgreater(t_redirect *redirect, t_ctx *ctx);
-t_status	apply_redir_dless(t_redirect *redirect, t_ctx *ctx);
+t_status	apply_redir_greater(t_redirect *redirect);
+t_status	apply_redir_less(t_redirect *redirect);
+t_status	apply_redir_dgreater(t_redirect *redirect);
+t_status	apply_redir_dless(t_redirect *redirect);
 
 /*
 	apply_redirects call redirect func depending on redirect->op.
@@ -26,20 +26,20 @@ t_status	apply_redir_dless(t_redirect *redirect, t_ctx *ctx);
 	- apply_redir_dgreat
 	- apply_redir_dless
 */
-t_status	apply_redirects(t_redirect *redirects, t_ctx *ctx)
+t_status	apply_redirects(t_redirect *redirects)
 {
 	t_status	status;
 
 	while (redirects)
 	{
 		if (redirects->op == REDIR_GREATER)
-			status = apply_redir_greater(redirects, ctx);
+			status = apply_redir_greater(redirects);
 		else if (redirects->op == REDIR_LESS)
-			status = apply_redir_less(redirects, ctx) == ST_FATAL;
+			status = apply_redir_less(redirects) == ST_FATAL;
 		else if (redirects->op == REDIR_DGREATER)
-			status = apply_redir_dgreater(redirects, ctx) == ST_FATAL;
+			status = apply_redir_dgreater(redirects) == ST_FATAL;
 		else if (redirects->op == REDIR_DLESS)
-			status = apply_redir_dless(redirects, ctx) == ST_FATAL;
+			status = apply_redir_dless(redirects) == ST_FATAL;
 		else
 			status = ST_FATAL;
 		if (status == ST_FATAL)
@@ -53,7 +53,7 @@ t_status	apply_redirects(t_redirect *redirects, t_ctx *ctx)
 	apply_redir_great redirect output like " 3> file".
 	- io_number "1" means " > file"
 */
-t_status	apply_redir_greater(t_redirect *redirect, t_ctx *ctx)
+t_status	apply_redir_greater(t_redirect *redirect)
 {
 	int	fd;
 
@@ -73,7 +73,7 @@ t_status	apply_redir_greater(t_redirect *redirect, t_ctx *ctx)
 	apply_redir_less redirect input like " 4< file".
 	- io_number "0" means " < file"
 */
-t_status	apply_redir_less(t_redirect *redirect, t_ctx *ctx)
+t_status	apply_redir_less(t_redirect *redirect)
 {
 	int	fd;
 
@@ -93,7 +93,7 @@ t_status	apply_redir_less(t_redirect *redirect, t_ctx *ctx)
 	apply_redir_dgreat redirect output in append mode like "4>> file"
 	- io_number "1" means " >> file"
 */
-t_status	apply_redir_dgreater(t_redirect *redirect, t_ctx *ctx)
+t_status	apply_redir_dgreater(t_redirect *redirect)
 {
 	int	fd;
 
@@ -113,7 +113,7 @@ t_status	apply_redir_dgreater(t_redirect *redirect, t_ctx *ctx)
 	apply_redir_dless redirect the input read by until a line containing the delimiter, like "4<< EOF"
 	- io_number "0" means "<< file"
 */
-t_status	apply_redir_dless(t_redirect *redirect, t_ctx *ctx)
+t_status	apply_redir_dless(t_redirect *redirect)
 {
 	int		fd;
 	char	*filename;

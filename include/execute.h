@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 01:35:59 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 19:14:44 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ t_status	apply_assigns_to_vars(t_hashtable *env_table, t_assign *assign);
 t_status	apply_assigns_to_tmp_env(t_hashtable *tmp_table, t_assign *assign);
 
 /* apply_redirect.c */
-t_status	apply_redirects(t_redirect *redirects, t_ctx *ctx);
+t_status	apply_redirects(t_redirect *redirects);
 
 /* stdio_backup.c */
 t_status	save_stdio(t_savedfd *saved);
