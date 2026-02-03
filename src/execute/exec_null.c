@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 19:14:08 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 20:26:31 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "../../include/execute.h"
 
 void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
-t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
+t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
 
 /*
 	execute null command, meaning no args command.
@@ -47,9 +47,10 @@ t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_
 			close_pipes(pipe_in, pipe_out);
 			return (register_pid(ctx, pid));
 		}
+		return (ST_OK);
 	}
 	else // single command in parent process
-		return (exec_null_command_in_parent(cmd, ctx, pipe_in, pipe_out));
+		return (exec_null_command_in_parent(cmd, ctx));
 }
 
 /*
@@ -66,7 +67,7 @@ void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int p
 		- restore_signals ????
 	*/
 	close_fd_bitmap(ctx->bitmap);
-	if (attach_pipe_to_stdio(ctx, pipe_in, pipe_out) == ST_FATAL)
+	if (attach_pipe_to_stdio(pipe_in, pipe_out) == ST_FATAL)
 		exit(EXIT_FAILURE);
 	pipe_in = pipe_out = NO_PIPE;
 	if (apply_redirects(cmd->redirects) == ST_FATAL)
@@ -83,11 +84,10 @@ void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int p
 	- apply_assigns_to_vars
 	- undo_stdio
 */
-t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 {
 	t_status	result;
 	t_savedfd	saved;
-
 
 	if (save_stdio(&saved) == ST_FATAL)
 		return (ST_FATAL);
@@ -99,10 +99,10 @@ t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	if (apply_assigns_to_vars(ctx->env_table, cmd->assigns) == ST_FATAL)
 	{
 		close_savedfd(saved);
-		undo_stdio(cmd->redirects, saved);//　It does't matter if this func fails or not.
+		undo_stdio(saved);//　It does't matter if this func fails or not.
 		return (ST_FATAL);
 	}
-	result = undo_stdio(cmd->redirects, saved);
+	result = undo_stdio(saved);
 	close_savedfd(saved);
 	return (result);
 }

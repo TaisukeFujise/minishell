@@ -20,15 +20,14 @@ LIBFT_DIR := $(ROOT)/libft
 LIBFT := $(LIBFT_DIR)/libft.a
 
 TEST_SRCS := main.c
-EXECUTE_SRCS := init.c\
-				exec_null.c\
-				pipe_utils.c\
-				register_pid.c\
-				stdio_backup.c\
-				apply_redirect.c\
-				assigns.c\
-
-EXECUTE_SRCS := $(notdir $(wildcard $(ROOT)/src/execute/$(EXECUTE_SRCS)))
+EXECUTE_SRCS := \
+	init.c \
+	exec_null.c \
+	pipe_utils.c \
+	register_pid.c \
+	stdio_backup.c \
+	apply_redirect.c \
+	assigns.c
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
 
 SRCS := $(TEST_SRCS) $(EXECUTE_SRCS) $(HASHMAP_SRCS)

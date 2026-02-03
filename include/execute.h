@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 19:59:35 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 20:24:47 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,11 @@ t_status	apply_redirects(t_redirect *redirects);
 
 /* stdio_backup.c */
 t_status	save_stdio(t_savedfd *saved);
-t_status	undo_stdio(t_redirect *redirects, t_savedfd saved);
+void		close_savedfd(t_savedfd saved);
+t_status	undo_stdio(t_savedfd saved);
 
 /* pipe_utils.c */
-t_status	attach_pipe_to_stdio(t_ctx *ctx, int pipe_in, int pipe_out);
+t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out);
 void		close_pipes(int pipe_in, int pipe_out);
 
 /* register_pid.c */

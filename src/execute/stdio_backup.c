@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 21:10:35 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/02 23:20:33 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 20:24:29 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	close_savedfd(t_savedfd saved)
 	restore_stdio is called by null or builtin cmd in parent process.
 	undo STDIN_FILENO and STDOUT_FILENO by saved.stdin and saved.stdout
 */
-t_status	undo_stdio(t_redirect *redirects, t_savedfd saved)
+t_status	undo_stdio(t_savedfd saved)
 {
 	if (dup2(saved.stdin, STDIN_FILENO) < 0)
 		return (ST_FATAL);
