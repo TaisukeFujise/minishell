@@ -6,13 +6,15 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:15 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/02 23:28:56 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 02:04:58 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 #include "../../include/parser.h"
 #include "../../include/execute.h"
+
+bool	find_builtin(char *str);
 
 /*
 	Todo
@@ -32,8 +34,21 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	if (node->u_node.simple_command.args == 0)
 		return (exec_null_command(&node->u_node.simple_command,
 				ctx, pipe_in, pipe_out));
-	if (find_builtin(node->u_node.simple_command.args[0]))
+	if (find_builtin(node->u_node.simple_command.args->wd->str))
 		return (exec_builtin(&node->u_node.simple_command,
 				ctx, pipe_in, pipe_out));
 	return (exec_disk_command(&node->u_node.simple_command, ctx, pipe_in, pipe_out));
+}
+
+bool	find_builtin(char *str)
+{
+	if (str == "echo"
+		|| str == "cd"
+		|| str == "pwd"
+		|| str == "export"
+		|| str == "unset"
+		|| str == "env"
+		|| str == "exit")
+		return (true);
+	return (false);
 }

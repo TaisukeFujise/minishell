@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 01:39:02 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 09:10:26 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,13 @@ t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_
 		return (exec_null_command_in_parent(cmd, ctx, pipe_in, pipe_out));
 }
 
+/*
+	exec_null_command_in_pipe is called in pipe.
+	- close_fd_bitmp
+	- attach_pipe_to_stdio
+	- apply_redirects
+	- apply_assigns_to_vars
+*/
 void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
 {
 	/* 
@@ -61,26 +68,38 @@ void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int p
 	close_fd_bitmap(ctx->bitmap);
 	if (attach_pipe_to_stdio(ctx, pipe_in, pipe_out) == ST_FATAL)
 		exit(EXIT_FAILURE);
+	pipe_in = pipe_out = NO_PIPE;
+	if (apply_redirects(cmd->redirects, ctx) == ST_FATAL)
+		exit(EXIT_FAILURE);
 	if (apply_assigns_to_vars(ctx->env_table, cmd->assigns) == ST_FATAL)
 		exit (EXIT_FAILURE);
-	pipe_in = pipe_out = NO_PIPE;
-	if (apply_redirects(cmd->redirects, ctx) != ST_OK)
-		exit(EXIT_FAILURE);
 	exit(EXIT_SUCCESS);
 }
 
+/*
+	exec_null_command_in_parent is called in parent
+	- save_stdio
+	- apply_redirects
+	- apply_assigns_to_vars
+	- undo_stdio
+*/
 t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
 {
 	t_status	result;
 	t_savedfd	saved;
 
-	if (apply_assigns_to_vars(ctx->env_table, cmd->assigns) == ST_FATAL)
-		return (ST_FATAL);
+
 	if (save_stdio(&saved) == ST_FATAL)
 		return (ST_FATAL);
 	if (apply_redirects(cmd->redirects, ctx) == ST_FATAL)
 	{
 		close_savedfd(saved);
+		return (ST_FATAL);
+	}
+	if (apply_assigns_to_vars(ctx->env_table, cmd->assigns) == ST_FATAL)
+	{
+		close_savedfd(saved);
+		undo_stdio(cmd->redirects, saved);//　It does't matter if this func fails or not.
 		return (ST_FATAL);
 	}
 	result = undo_stdio(cmd->redirects, saved);
