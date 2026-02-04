@@ -1,0 +1,14 @@
+
+# <prefix>: <summary>
+#
+# 例)　feat: implement basic parser
+#
+#[prefix一覧]:
+#  - feat:     新機能
+#  - fix:      バグ修正
+#  - docs:     ドキュメント更新
+#  - refactor: 動作を変えない改善
+#  - test:     テスト追加
+#
+# summaryは50文字程度以内
+# bodyは空行後に詳細を書く（任意）
