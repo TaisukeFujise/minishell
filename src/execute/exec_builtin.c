@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/04 19:16:56 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/04 20:35:22 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
 	{
 		pid = fork();
 		if (pid < 0)
-			return (ST_FATAL);
+			return (ST_FAILURE);
 		else if (pid == 0)
 			exec_builtin_in_pipe(cmd, ctx, pipe_in, pipe_out);
 		else
@@ -91,25 +91,22 @@ t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int 
 	t_status	result;
 	t_savedfd	saved;
 
-
-	if (save_stdio(&saved) == ST_FATAL)
-		return (ST_FATAL);
-	if (apply_redirects(cmd->redirects) == ST_FATAL)
+	if (save_stdio(&saved) != ST_OK)
+		return (ST_FAILURE);
+	if (apply_redirects(cmd->redirects) != ST_OK)
 	{
 		close_savedfd(saved);
-		return (ST_FATAL);
+		return (ST_FAILURE);
 	}
 	if (apply_assigns_to_tmp_env(ctx->tmp_table, cmd->assigns) == ST_FATAL)
 	{
 		close_savefd(saved);
-		undo_stdio(saved);// It doesn't matter if this func fails or not.
-		return (ST_FATAL);
+		return (undo_stdio(saved));// It doesn't matter if this func fails or not.
 	}
-	if (builtin_cmd(cmd->args, ctx) == ST_FATAL)
+	if (builtin_cmd(cmd->args, ctx) != ST_OK)
 	{
 		close_savedfd(saved);
-		undo_stdio(saved);//It doesn't matter fi this func fails or not.
-		return (ST_FATAL);
+		return (undo_stdio(saved));//It doesn't matter fi this func fails or not.
 	}
 	result = undo_stdio(saved);
 	close_savedfd(saved);
@@ -132,21 +129,21 @@ t_status	builtin_cmd(t_word_list *args, t_ctx *ctx)
 	/*
 		Todo
 		- builtin_command find builtin cmd and execute it.
-	*/
-	if (args->wd->str == "echo")
-		return (echo_cmd(args, ctx));
-	else if (args->wd->str == "cd")
+	*/	
+	if (args->wd->str == "cd")
 		return (cd_cmd(args, ctx));
-	else if (args->wd->str == "pwd")
-		return (pwd_cmd(args, ctx));
-	else if (args->wd->str == "export")
-		return (export_cmd(args, ctx));
-	else if (args->wd->str == "unset")
-		return (unset_cmd(args, ctx));
+	else if (args->wd->str == "echo")
+		return (echo_cmd(args, ctx));
 	else if (args->wd->str == "env")
 		return (env_cmd(args, ctx));
 	else if (args->wd->str == "exit")
 		return (exit_cmd(args, ctx));
+	else if (args->wd->str == "export")
+		return (export_cmd(args, ctx));
+	else if (args->wd->str == "pwd")
+		return (pwd_cmd(args, ctx));
+	else if (args->wd->str == "unset")
+		return (unset_cmd(args, ctx));
 	else
 		return (ST_FATAL);
 }
