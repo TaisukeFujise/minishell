@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 08:40:17 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 22:11:28 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/04 08:24:51 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,68 +77,132 @@ int	main(int argc, char **argv, char **envp)
 		- (viii) tmp=42 > file
 	*/
 	t_ctx	ctx;
-	t_node	node;
 
 	(void)argc;
 	(void)argv;
 	if (init_ctx(&ctx, envp) == FAILURE)
 		return (1);
 	// print_ctx(ctx);
-	node.node_kind = NODE_SIMPLE;
-	node.left = NULL;
-	node.right = NULL;
+
 
 	// (i) tmp=42
-	node.u_node.simple_command.args = NULL;
-	node.u_node.simple_command.redirects = NULL;
+	t_simple_cmd	cmd1;
+	cmd1.args = NULL;
+	cmd1.redirects = NULL;
 
-	node.u_node.simple_command.assigns = malloc(sizeof(t_assign) * 1);
-	node.u_node.simple_command.assigns->key = malloc(sizeof(t_word) * 1);
-	node.u_node.simple_command.assigns->value = malloc(sizeof(t_word) * 1);
-	node.u_node.simple_command.assigns->key->str = ft_strdup("temp");
-	node.u_node.simple_command.assigns->value->str = ft_strdup("42");
-	node.u_node.simple_command.assigns->next = NULL;
-	if (exec_null_command(&node.u_node.simple_command, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
-		return (1);
-	print_table(ctx.env_table);
-	return (0);
+	cmd1.assigns = malloc(sizeof(t_assign) * 1);
+	cmd1.assigns->key = malloc(sizeof(t_word) * 1);
+	cmd1.assigns->value = malloc(sizeof(t_word) * 1);
+	cmd1.assigns->key->str = ft_strdup("temp");
+	cmd1.assigns->value->str = ft_strdup("42");
+	cmd1.assigns->next = NULL;
+	// if (exec_null_command(&cmd1, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+	// 	return (1);
+
+	// print_table(ctx.env_table);
 	// (ii) A=42 B=20 C=10
-	// node.u_node.simple_command.args = NULL;
-	// node.u_node.simple_command.redirects = NULL;
+	t_simple_cmd	cmd2;
+	t_assign		assign_A;
+	t_assign		assign_B;
+	t_assign		assign_C;
 
-	// node.u_node.simple_command.assigns->key->str = "A";
-	// node.u_node.simple_command.assigns->value->str = "42";
+	cmd2.args = NULL;
+	cmd2.redirects = NULL;
 
+	cmd2.assigns = &assign_A;
+	assign_A.key = malloc(sizeof(t_word) * 1);
+	assign_A.value = malloc(sizeof(t_word) * 1);
+	assign_A.key->str = ft_strdup("A");
+	assign_A.value->str = ft_strdup("42");
+	assign_A.next = &assign_B;
+
+	assign_B.key = malloc(sizeof(t_word) * 1);
+	assign_B.value = malloc(sizeof(t_word) * 1);
+	assign_B.key->str = ft_strdup("B");
+	assign_B.value->str = ft_strdup("20");
+	assign_B.next = &assign_C;
+
+	assign_C.key = malloc(sizeof(t_word) * 1);
+	assign_C.value = malloc(sizeof(t_word) * 1);
+	assign_C.key->str = ft_strdup("C");
+	assign_C.value->str = ft_strdup("10");
+	assign_C.next = NULL;
+
+
+	// if (exec_null_command(&cmd2, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+	// 	return (1);
+	// print_table(ctx.env_table);
+	// return (0);
 
 	// (iii) export tmp=10; tmp=42
-	// node.u_node.simple_command.args = NULL;
-	// node.u_node.simple_command.redirects = NULL;
-	// node.u_node.simple_command.assigns->key->str = "tmp";
-	// node.u_node.simple_command.assigns->value->str = "42";
-	// node.u_node.simple_command.assigns->next = NULL;
+	// cmd1.args = NULL;
+	// cmd1.redirects = NULL;
+	// cmd1.assigns->key->str = "tmp";
+	// cmd1.assigns->value->str = "42";
+	// cmd1.assigns->next = NULL;
 
-	// // (iv) >file
-	// node.u_node.simple_command.args = NULL;
-	// node.u_node.simple_command.assigns = NULL;
+	// (iv) >file
+	t_simple_cmd	cmd4;
+	cmd4.args = NULL;
+	cmd4.assigns = NULL;
+
+	cmd4.redirects = malloc(sizeof(t_redirect));
+	cmd4.redirects->op = REDIR_GREATER;
+	cmd4.redirects->target.str = ft_strdup("test_iv.txt");
+	cmd4.redirects->io_number = 1;
+	cmd4.redirects->next = NULL;
+	// if (exec_null_command(&cmd4, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+	// 	return (1);
+	// return (0);
 
 	// // (v) >>file
-	// node.u_node.simple_command.args = NULL;
-	// node.u_node.simple_command.assigns = NULL;
+	t_simple_cmd	cmd5;
+	cmd5.args = NULL;
+	cmd5.assigns = NULL;
+
+	cmd5.redirects = malloc(sizeof(t_redirect));
+	cmd5.redirects->op = REDIR_DGREATER;
+	cmd5.redirects->target.str = ft_strdup("test_v.txt");
+	cmd5.redirects->io_number = 1;
+	cmd5.redirects->next = NULL;
+	// if (exec_null_command(&cmd5, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+	// 	return (1);
+	// return (0);
 
 	// // (vi) <file
-	// node.u_node.simple_command.args = NULL;
-	// node.u_node.simple_command.assigns = NULL;
+	t_simple_cmd	cmd6;
+	cmd6.args = NULL;
+	cmd6.assigns = NULL;
+
+	cmd6.redirects = malloc(sizeof(t_redirect));
+	cmd6.redirects->op = REDIR_LESS;
+	cmd6.redirects->target.str = ft_strdup("test_vi.txt");
+	cmd6.redirects->io_number = 0;
+	cmd6.redirects->next = NULL;
+	if (exec_null_command(&cmd6, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+		return (1);
+	return (0);
 
 	// // (vii) <<file
-	// node.u_node.simple_command.args = NULL;
-	// node.u_node.simple_command.assigns = NULL;
+	t_simple_cmd	cmd7;
+	cmd7.args = NULL;
+	cmd7.assigns = NULL;
+
+	cmd7.redirects = malloc(sizeof(t_redirect));
+	cmd7.redirects->op = REDIR_DLESS;
+	cmd7.redirects->target.str = ft_strdup("test_vii.txt");
+	cmd7.redirects->io_number = 0;
+	cmd7.redirects->next = NULL;
+	// if (exec_null_command(&cmd4, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+	// 	return (1);
+	// return (0);
 
 	// // (viii) assigns + redirect
-	// node.u_node.simple_command.args = NULL;
+	// cmd1.args = NULL;
 
-	// node.u_node.simple_command.assigns->key->str = "tmp";
-	// node.u_node.simple_command.assigns->value->str = "42";
-	// node.u_node.simple_command.assigns->next = NULL;
+	// cmd1.assigns->key->str = "tmp";
+	// cmd1.assigns->value->str = "42";
+	// cmd1.assigns->next = NULL;
 
-	// node.u_node.simple_command.redirects
+	// cmd1.redirects
 }
