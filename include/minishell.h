@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/04 08:34:17 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/04 19:39:53 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,12 @@ typedef struct s_fd_bitmap
 	int		size;
 	char	*bitmap;
 }	t_fd_bitmap;
+
+typedef struct s_error
+{
+	int		exit_code;
+	char	*err_msg;
+}	t_error;
 
 typedef struct s_ctx
 {
