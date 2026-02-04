@@ -5,9 +5,10 @@
 typedef struct s_expect_token
 {
 	t_token_kind	kind;
-	const char		*word;
-	int				word_len;
-	uint16_t		flag;
+	const t_word	*word_parts;
+	size_t			part_len;
+	uint8_t			head_extra_flag;
+	int				eq_pos;
 	t_op_connect	op_connect;
 	t_op_group		op_group;
 	t_op_redir		op_redir;
@@ -24,14 +25,16 @@ typedef struct s_test_case
 	int					check;
 } 	t_test_case;
 
-#define EXP_WORD(s, flg) (t_expect_token){TK_WORD, (s), -1, (flg), 0, 0, 0, 0, 0}
-#define EXP_EOF (t_expect_token){TK_EOF, NULL, 0, 0, 0, 0, 0, 0, 0}
-#define EXP_NL (t_expect_token){TK_NEWLINE, NULL, 0, 0, 0, 0, 0, 0, 0}
-#define EXP_ERR(code) (t_expect_token){TK_ERR, NULL, 0, 0, 0, 0, 0, 0, (code)}
-#define EXP_CONNECT(op) (t_expect_token){TK_CONNECT, NULL, 0, 0, (op), 0, 0, 0, 0}
-#define EXP_GROUP(op) (t_expect_token){TK_GROUP, NULL, 0, 0, 0, (op), 0, 0, 0}
-#define EXP_REDIR(op) (t_expect_token){TK_REDIR, NULL, 0, 0, 0, 0, (op), 0, 0}
-#define EXP_IO(fd) (t_expect_token){TK_IO_NUMBER, NULL, 0, 0, 0, 0, 0, (fd), 0}
+#define EXP_WORD(parts, extra_flag, eq_pos) (t_expect_token){ \
+	TK_WORD, (parts), sizeof(parts) / sizeof((parts)[0]), (extra_flag), \
+	(eq_pos), 0, 0, 0, 0, 0}
+#define EXP_EOF (t_expect_token){TK_EOF, NULL, 0, 0, -1, 0, 0, 0, 0, 0}
+#define EXP_NL (t_expect_token){TK_NEWLINE, NULL, 0, 0, -1, 0, 0, 0, 0, 0}
+#define EXP_ERR(code) (t_expect_token){TK_ERR, NULL, 0, 0, -1, 0, 0, 0, 0, (code)}
+#define EXP_CONNECT(op) (t_expect_token){TK_CONNECT, NULL, 0, 0, -1, (op), 0, 0, 0, 0}
+#define EXP_GROUP(op) (t_expect_token){TK_GROUP, NULL, 0, 0, -1, 0, (op), 0, 0, 0}
+#define EXP_REDIR(op) (t_expect_token){TK_REDIR, NULL, 0, 0, -1, 0, 0, (op), 0, 0}
+#define EXP_IO(fd) (t_expect_token){TK_IO_NUMBER, NULL, 0, 0, -1, 0, 0, 0, (fd), 0}
 
 #define CASE(name, input, exp) (t_test_case){(name), (input), (exp), \
 	(sizeof(exp) / sizeof((exp)[0])), 1}
@@ -39,19 +42,39 @@ typedef struct s_test_case
 
 static int	match_word(const t_token *tok, const t_expect_token *exp)
 {
-	int	len;
+	const t_word	*part;
+	size_t			i;
+	int				len;
+	uint8_t			flag;
 
-	if (!exp->word)
+	part = tok->u_token.wd;
+	i = 0;
+	while (part && i < exp->part_len)
+	{
+		len = exp->word_parts[i].len;
+		if (len < 0)
+			len = (int)ft_strlen(exp->word_parts[i].str);
+		if (part->len != len)
+			return (0);
+		if (ft_strncmp(part->str, exp->word_parts[i].str, len) != 0)
+			return (0);
+		flag = exp->word_parts[i].flag;
+		if (i == 0)
+			flag |= exp->head_extra_flag;
+		if (part->flag != flag)
+			return (0);
+		part = part->next;
+		i++;
+	}
+	if (part != NULL || i != exp->part_len)
 		return (0);
-	len = exp->word_len;
-	if (len < 0)
-		len = (int)ft_strlen(exp->word);
-	if (tok->u_token.wd.word.len != len)
-		return (0);
-	if (ft_strncmp(tok->u_token.wd.word.str, exp->word, len) != 0)
-		return (0);
-	if (tok->u_token.wd.flag != exp->flag)
-		return (0);
+	if (exp->eq_pos >= 0)
+	{
+		if (!tok->u_token.wd || !tok->u_token.wd->eq_ptr)
+			return (0);
+		if (tok->u_token.wd->eq_ptr - tok->u_token.wd->str != exp->eq_pos)
+			return (0);
+	}
 	return (1);
 }
 
@@ -109,7 +132,7 @@ static const char	*redir_name(t_op_redir op)
 	return ("UNKNOWN");
 }
 
-static void	print_word_flags(uint16_t flag)
+static void	print_word_flags(uint8_t flag)
 {
 	int	first;
 
@@ -142,8 +165,34 @@ static void	print_word_flags(uint16_t flag)
 		printf("WILD");
 		first = 0;
 	}
+	if (flag & W_ASSIGN)
+	{
+		if (!first)
+			printf("|");
+		printf("ASSIGN");
+		first = 0;
+	}
 	if (first)
 		printf("NONE");
+}
+
+static void	print_word_parts(const t_word *head)
+{
+	const t_word	*part;
+	size_t			index;
+
+	part = head;
+	index = 0;
+	while (part)
+	{
+		printf("    part[%zu]: ", index);
+		print_word_flags(part->flag);
+		printf(" \"%.*s\"\n", part->len, part->str);
+		part = part->next;
+		index++;
+	}
+	if (index == 0)
+		printf("    part[0]: (none)\n");
 }
 
 static void	print_token(const t_token *tok)
@@ -156,11 +205,12 @@ static void	print_token(const t_token *tok)
 	printf("  actual: %s\n", token_kind_name(tok->token_kind));
 	if (tok->token_kind == TK_WORD)
 	{
-		printf("    flags: ");
-		print_word_flags(tok->u_token.wd.flag);
-		printf("\n");
-		printf("    word : \"%.*s\"\n",
-			tok->u_token.wd.word.len, tok->u_token.wd.word.str);
+		print_word_parts(tok->u_token.wd);
+		if (tok->u_token.wd && (tok->u_token.wd->flag & W_ASSIGN))
+		{
+			printf("    position of \'=\' : \"%zu\"\n",
+				tok->u_token.wd->eq_ptr - tok->u_token.wd->str);
+		}
 	}
 	else if (tok->token_kind == TK_CONNECT)
 		printf("    op   : %s\n", connect_name(tok->u_token.op_connect));
@@ -176,7 +226,9 @@ static void	print_token(const t_token *tok)
 
 static void	print_expected(const t_expect_token *exp)
 {
-	int	len;
+	size_t	i;
+	int		len;
+	uint8_t	flag;
 
 	if (!exp)
 	{
@@ -186,16 +238,24 @@ static void	print_expected(const t_expect_token *exp)
 	printf("  expect: %s\n", token_kind_name(exp->kind));
 	if (exp->kind == TK_WORD)
 	{
-		printf("    flags: ");
-		print_word_flags(exp->flag);
-		printf("\n");
-		len = exp->word_len;
-		if (len < 0 && exp->word)
-			len = (int)ft_strlen(exp->word);
-		if (exp->word)
-			printf("    word : \"%.*s\"\n", len, exp->word);
-		else
-			printf("    word : (null)\n");
+		i = 0;
+		while (i < exp->part_len)
+		{
+			len = exp->word_parts[i].len;
+			if (len < 0)
+				len = (int)ft_strlen(exp->word_parts[i].str);
+			flag = exp->word_parts[i].flag;
+			if (i == 0)
+				flag |= exp->head_extra_flag;
+			printf("    part[%zu]: ", i);
+			print_word_flags(flag);
+			printf(" \"%.*s\"\n", len, exp->word_parts[i].str);
+			i++;
+		}
+		if (exp->part_len == 0)
+			printf("    part[0]: (none)\n");
+		if (exp->eq_pos >= 0)
+			printf("    position of \'=\' : \"%d\"\n", exp->eq_pos);
 	}
 	else if (exp->kind == TK_CONNECT)
 		printf("    op   : %s\n", connect_name(exp->op_connect));
@@ -213,6 +273,7 @@ static void	dump_tokens(const t_token *head)
 {
 	const t_token	*curr;
 	size_t			index;
+	const t_word	*word;
 
 	curr = head;
 	index = 0;
@@ -221,12 +282,13 @@ static void	dump_tokens(const t_token *head)
 		printf("  [%zu] %s\n", index, token_kind_name(curr->token_kind));
 		if (curr->token_kind == TK_WORD)
 		{
-			printf("    flags: ");
-			print_word_flags(curr->u_token.wd.flag);
-			printf("\n");
-			printf("    word : \"%.*s\"\n",
-				curr->u_token.wd.word.len,
-				curr->u_token.wd.word.str);
+			word = curr->u_token.wd;
+			print_word_parts(word);
+			if (word && (word->flag & W_ASSIGN))
+			{
+				printf("    position of \'=\' : \"%zu\"\n",
+					word->eq_ptr - word->str);
+			}
 		}
 		else if (curr->token_kind == TK_CONNECT)
 			printf("    op   : %s\n", connect_name(curr->u_token.op_connect));
@@ -326,61 +388,114 @@ static int	run_case(const t_test_case *tc)
 
 int	main(void)
 {
+	static const t_word	parts_echo[] = {
+		{.str = "echo", .len = -1, .flag = W_NONE}
+	};
+	static const t_word	parts_foo[] = {
+		{.str = "foo", .len = -1, .flag = W_NONE}
+	};
+	static const t_word	parts_a[] = {
+		{.str = "a", .len = -1, .flag = W_NONE}
+	};
+	static const t_word	parts_b[] = {
+		{.str = "b", .len = -1, .flag = W_NONE}
+	};
+	static const t_word	parts_cat[] = {
+		{.str = "cat", .len = -1, .flag = W_NONE}
+	};
+	static const t_word	parts_file[] = {
+		{.str = "file", .len = -1, .flag = W_NONE}
+	};
+	static const t_word	parts_eof[] = {
+		{.str = "EOF", .len = -1, .flag = W_NONE}
+	};
+	static const t_word	parts_out[] = {
+		{.str = "out", .len = -1, .flag = W_NONE}
+	};
+	static const t_word	parts_wild[] = {
+		{.str = "*", .len = -1, .flag = W_WILD}
+	};
+	static const t_word	parts_doll[] = {
+		{.str = "$HOME", .len = -1, .flag = W_DOLL}
+	};
+	static const t_word	parts_sq[] = {
+		{.str = "a b", .len = -1, .flag = W_SQ}
+	};
+	static const t_word	parts_dq[] = {
+		{.str = "a ", .len = -1, .flag = W_DQ},
+		{.str = "$b", .len = -1, .flag = (W_DQ | W_DOLL)},
+		{.str = "", .len = 0, .flag = W_DQ}
+	};
+	static const t_word	parts_mix[] = {
+		{.str = "a", .len = -1, .flag = W_NONE},
+		{.str = "b", .len = -1, .flag = W_DQ},
+		{.str = "c", .len = -1, .flag = W_NONE}
+	};
+	static const t_word	parts_assign[] = {
+		{.str = "FOO=bar", .len = -1, .flag = W_NONE}
+	};
 	static const t_expect_token	case_empty[] = {EXP_EOF};
 	static const t_expect_token	case_spaces[] = {EXP_EOF};
 	static const t_expect_token	case_newline[] = {EXP_NL, EXP_EOF};
-	static const t_expect_token	case_word[] = {EXP_WORD("echo", W_NONE), EXP_EOF};
+	static const t_expect_token	case_word[] = {EXP_WORD(parts_echo, 0, -1), EXP_EOF};
 	static const t_expect_token	case_words[] = {
-		EXP_WORD("echo", W_NONE), EXP_WORD("foo", W_NONE), EXP_EOF
+		EXP_WORD(parts_echo, 0, -1), EXP_WORD(parts_foo, 0, -1), EXP_EOF
 	};
 	static const t_expect_token	case_and[] = {
-		EXP_WORD("a", W_NONE), EXP_CONNECT(CONNECT_AND_IF),
-		EXP_WORD("b", W_NONE), EXP_EOF
+		EXP_WORD(parts_a, 0, -1), EXP_CONNECT(CONNECT_AND_IF),
+		EXP_WORD(parts_b, 0, -1), EXP_EOF
 	};
 	static const t_expect_token	case_or[] = {
-		EXP_WORD("a", W_NONE), EXP_CONNECT(CONNECT_OR_IF),
-		EXP_WORD("b", W_NONE), EXP_EOF
+		EXP_WORD(parts_a, 0, -1), EXP_CONNECT(CONNECT_OR_IF),
+		EXP_WORD(parts_b, 0, -1), EXP_EOF
 	};
 	static const t_expect_token	case_pipe[] = {
-		EXP_WORD("a", W_NONE), EXP_CONNECT(CONNECT_PIPE),
-		EXP_WORD("b", W_NONE), EXP_EOF
+		EXP_WORD(parts_a, 0, -1), EXP_CONNECT(CONNECT_PIPE),
+		EXP_WORD(parts_b, 0, -1), EXP_EOF
 	};
 	static const t_expect_token	case_group[] = {
-		EXP_GROUP(GROUP_LPAREN), EXP_WORD("echo", W_NONE),
+		EXP_GROUP(GROUP_LPAREN), EXP_WORD(parts_echo, 0, -1),
 		EXP_GROUP(GROUP_RPAREN), EXP_EOF
 	};
 	static const t_expect_token	case_redir[] = {
-		EXP_WORD("echo", W_NONE), EXP_REDIR(REDIR_GREAT),
-		EXP_WORD("file", W_NONE), EXP_EOF
+		EXP_WORD(parts_echo, 0, -1), EXP_REDIR(REDIR_GREAT),
+		EXP_WORD(parts_file, 0, -1), EXP_EOF
 	};
 	static const t_expect_token	case_append[] = {
-		EXP_WORD("echo", W_NONE), EXP_REDIR(REDIR_DGREAT),
-		EXP_WORD("file", W_NONE), EXP_EOF
+		EXP_WORD(parts_echo, 0, -1), EXP_REDIR(REDIR_DGREAT),
+		EXP_WORD(parts_file, 0, -1), EXP_EOF
 	};
 	static const t_expect_token	case_heredoc[] = {
-		EXP_WORD("cat", W_NONE), EXP_REDIR(REDIR_DLESS),
-		EXP_WORD("EOF", W_NONE), EXP_EOF
+		EXP_WORD(parts_cat, 0, -1), EXP_REDIR(REDIR_DLESS),
+		EXP_WORD(parts_eof, 0, -1), EXP_EOF
 	};
 	static const t_expect_token	case_io_num[] = {
 		EXP_IO(2), EXP_REDIR(REDIR_GREAT),
-		EXP_WORD("out", W_NONE), EXP_EOF
+		EXP_WORD(parts_out, 0, -1), EXP_EOF
 	};
 	static const t_expect_token	case_io_num_space[] = {
 		EXP_IO(2), EXP_REDIR(REDIR_GREAT),
-		EXP_WORD("out", W_NONE), EXP_EOF
+		EXP_WORD(parts_out, 0, -1), EXP_EOF
 	};
-	static const t_expect_token	case_wild[] = {EXP_WORD("*", W_WILD), EXP_EOF};
-	static const t_expect_token	case_doll[] = {EXP_WORD("$HOME", W_DOLL), EXP_EOF};
-	static const t_expect_token	case_sq[] = {EXP_WORD("'a b'", W_SQ), EXP_EOF};
-	static const t_expect_token	case_dq[] = {
-		EXP_WORD("\"a $b\"", (W_DQ | W_DOLL)), EXP_EOF
-	};
-	static const t_expect_token	case_mix[] = {EXP_WORD("a\"b\"c", W_DQ), EXP_EOF};
+	static const t_expect_token	case_wild[] = {EXP_WORD(parts_wild, 0, -1), EXP_EOF};
+	static const t_expect_token	case_doll[] = {EXP_WORD(parts_doll, 0, -1), EXP_EOF};
+	static const t_expect_token	case_sq[] = {EXP_WORD(parts_sq, 0, -1), EXP_EOF};
+	static const t_expect_token	case_dq[] = {EXP_WORD(parts_dq, 0, -1), EXP_EOF};
+	static const t_expect_token	case_mix[] = {EXP_WORD(parts_mix, 0, -1), EXP_EOF};
 	static const t_expect_token	case_newline_mid[] = {
-		EXP_WORD("a", W_NONE), EXP_NL, EXP_WORD("b", W_NONE), EXP_EOF
+		EXP_WORD(parts_a, 0, -1), EXP_NL, EXP_WORD(parts_b, 0, -1), EXP_EOF
 	};
 	static const t_expect_token	case_unclosed_sq[] = {EXP_ERR(ERR_UNCLOSED_QUOTE)};
 	static const t_expect_token	case_unclosed_dq[] = {EXP_ERR(ERR_UNCLOSED_QUOTE)};
+	static const t_expect_token	case_unclosed_paren[] = {
+		EXP_ERR(ERR_UNCLOSED_SUBSHELL)
+	};
+	static const t_expect_token	case_unexpected_rparen[] = {
+		EXP_ERR(ERR_UNCLOSED_SUBSHELL)
+	};
+	static const t_expect_token	case_assign[] = {
+		EXP_WORD(parts_assign, W_ASSIGN, 3), EXP_EOF
+	};
 
 	static const t_test_case	cases[] = {
 		CASE("empty", "", case_empty),
@@ -405,6 +520,9 @@ int	main(void)
 		CASE("newline_mid", "a\nb", case_newline_mid),
 		CASE("unclosed_sq", "'abc", case_unclosed_sq),
 		CASE("unclosed_dq", "\"abc", case_unclosed_dq),
+		CASE("unclosed_paren", "(echo", case_unclosed_paren),
+		CASE("unexpected_rparen", ")", case_unexpected_rparen),
+		CASE("assign", "FOO=bar", case_assign),
 		CASE_INFO("complex_pipe", "echo \"a|b\" | cat -e"),
 		CASE_INFO("complex_group", "((echo hi)&& (foo||bar))"),
 		CASE_INFO("complex_redir", "2>>out <<EOF"),

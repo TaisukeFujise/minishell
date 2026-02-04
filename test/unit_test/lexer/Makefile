@@ -9,6 +9,7 @@ LIBFT:=$(LIBFT_DIR)/libft.a
 ROOT_SRCS:=lexer/lexer.c \
 	lexer/lexer_internal/lex_ops.c \
 	lexer/lexer_internal/lex_word.c \
+	lexer/lexer_internal/lex_word_util.c \
 	lexer/lexer_internal/lexer_utils.c
 LOCAL_SRCS:=dump_tokens.c
 
@@ -59,4 +60,8 @@ re: fclean all
 
 tests: $(NAME_TEST)
 
-.PHONY: all clean fclean re tests
+repl: $(NAME_REPL)
+
+line: $(NAME_LINE)
+
+.PHONY: all clean fclean re tests repl line

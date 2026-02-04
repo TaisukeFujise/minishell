@@ -67,7 +67,7 @@ static const char	*redir_name(t_op_redir op)
 	return ("UNKNOWN");
 }
 
-static void	print_word_flags(uint16_t flag)
+static void	print_word_flags(uint8_t flag)
 {
 	int	first;
 
@@ -111,10 +111,30 @@ static void	print_word_flags(uint16_t flag)
 		printf("NONE");
 }
 
+static void	print_word_parts(const t_word *head)
+{
+	const t_word	*part;
+	size_t			index;
+
+	part = head;
+	index = 0;
+	while (part)
+	{
+		printf("  part[%zu]: ", index);
+		print_word_flags(part->flag);
+		printf(" \"%.*s\"\n", part->len, part->str);
+		part = part->next;
+		index++;
+	}
+	if (index == 0)
+		printf("  part[0]: (none)\n");
+}
+
 void	dump_tokens(t_token *head)
 {
 	t_token	*curr;
 	size_t	index;
+	t_word	*word;
 
 	index = 0;
 	curr = head;
@@ -123,15 +143,12 @@ void	dump_tokens(t_token *head)
 		printf("[%zu] %s\n", index, token_kind_name(curr->token_kind));
 		if (curr->token_kind == TK_WORD)
 		{
-			printf("  flags: ");
-			print_word_flags(curr->u_token.wd.flag);
-			printf("\n");
-			printf("  word : %.*s\n", curr->u_token.wd.word.len,
-				curr->u_token.wd.word.str);
-			if (curr->u_token.wd.flag & W_ASSIGN)
+			word = curr->u_token.wd;
+			print_word_parts(word);
+			if (word && (word->flag & W_ASSIGN))
 			{
 				printf("  position of \'=\' : \"%zu\"\n",
-					curr->u_token.wd.eq_ptr - curr->u_token.wd.word.str);
+					word->eq_ptr - word->str);
 			}
 		}
 		else if (curr->token_kind == TK_CONNECT)
