@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:32:33 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/03 20:33:57 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/04 13:39:23 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,18 @@ t_token_kind	lexer_step(char **line, t_token *token, t_lex_state *st)
 	if (lex_control(line, token) == TK_EOF && st->paren_depth != 0)
 	{
 		set_lex_error(token, ERR_UNCLOSED_SUBSHELL);
-		return ;
+		return (token->token_kind);
 	}
 	if (token->token_kind != TK_UNSET)
-		return ;
+		return (token->token_kind);
 	if (lex_connect(line, token) != TK_UNSET)
-		return ;
+		return (token->token_kind);
 	if (lex_group(line, token, st) != TK_UNSET)
-		return ;
+		return (token->token_kind);
 	if (lex_redirect(line, token) != TK_UNSET)
-		return ;
+		return (token->token_kind);
 	if (lex_io_number(line, token) != TK_UNSET)
-		return ;
+		return (token->token_kind);
 	lex_word(line, token);
 	return (token->token_kind);
 }
@@ -59,7 +59,7 @@ t_token	*free_tokens(t_token *head, t_token *extra)
 	{
 		tmp = head->next;
 		if (head->token_kind == TK_WORD)
-			free_word_parts(head->u_token.wd.next);
+			free_word_parts(head->u_token.wd);
 		free(head);
 		head = tmp;
 	}
@@ -87,7 +87,7 @@ t_token	*tokenize(char *line)
 		token = ft_calloc(1, sizeof(t_token));
 		if (!token)
 			return (free_tokens(head, NULL));
-		tk_kind = (&line, token, &st);
+		tk_kind = lexer_step(&line, token, &st);
 		if (tk_kind == TK_UNSET)
 			return (free_tokens(head, token));
 		if (tk_kind == TK_ERR)

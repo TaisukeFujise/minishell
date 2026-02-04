@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_internal.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:40:40 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/03 20:18:51 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/04 13:59:30 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,13 @@ typedef enum e_assign_state
 	AS_DONE
 }	t_assign_state;
 
+typedef struct s_assign_info
+{
+	t_assign_state	state;
+	char			*eq_ptr;
+	uint8_t			flag;
+}	t_assign_info;
+
 typedef struct s_lex_state
 {
 	int		paren_depth;
@@ -38,15 +45,13 @@ t_token_kind	lex_word(char **line, t_token *token);
 void			skip_blank(char **line);
 unsigned int	str2fd(char **line);
 char			*strchunk(const char *tbl, const char *str, size_t n);
-void			validate_assign(char *cur_ptr, t_token *token,
-					t_assign_state *as);
+void			validate_assign(char *cur_ptr, t_assign_info *as);
 void			set_lex_error(t_token *token, int err);
 int				free_word_parts(t_word *head);
 int				is_tk_bound(char *ch);
-void			init_lex(t_word *head, t_word **tail,
-					t_assign_state *as, t_token *tk);
 int				append_part(t_word ***tail, char *str, int len, uint8_t flag);
 int				finish_quote(char **line, t_word ***tail,
 					char *begin, uint8_t flag);
+void			lex_dollar(char **cur_ptr, uint8_t *flag);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lex_word.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/03 20:50:18 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/04 14:04:56 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static int	scan_dq(char **line, t_word ***tail)
 {
 	char	*begin;
 	char	*dollar;
+	uint8_t	flag;
 
 	begin = ++(*line);
 	while (**line && ft_strncmp(*line, "\"", 1) != 0)
@@ -36,10 +37,9 @@ static int	scan_dq(char **line, t_word ***tail)
 			if (append_part(tail, begin, *line - begin, W_DQ) < 0)
 				return (-1);
 			dollar = *line;
-			(*line)++;
-			while (**line && !ft_strchr("\"$", **line))
-				(*line)++;
-			if (append_part(tail, dollar, *line - dollar, W_DQ | W_DOLL) < 0)
+			flag = W_NONE;
+			lex_dollar(line, &flag);
+			if (append_part(tail, dollar, *line - dollar, W_DQ | flag) < 0)
 				return (-1);
 			begin = *line;
 		}
@@ -49,8 +49,7 @@ static int	scan_dq(char **line, t_word ***tail)
 	return (finish_quote(line, tail, begin, W_DQ));
 }
 
-static int	scan_unquoted(char **line, t_word ***tail,
-				t_assign_state *as, t_token *tk)
+static int	scan_unquoted(char **line, t_word ***tail, t_assign_info *as)
 {
 	char	*begin;
 	uint8_t	flag;
@@ -67,49 +66,58 @@ static int	scan_unquoted(char **line, t_word ***tail,
 	}
 	else
 		while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))
-			validate_assign((*line)++, tk, as);
+			validate_assign((*line)++, as);
 	if (append_part(tail, begin, *line - begin, flag) < 0)
 		return (-1);
 	return (0);
 }
 
-static int	dispatch_word_lexing(t_word **tail, char **line,
-								t_token *tk, t_assign_state *as)
+static int	lex_word_scan(char **line, t_word **head, t_assign_info *as)
 {
-	int	err;
+	t_word	**tail;
+	int		err;
 
-	if (ft_strncmp(*line, "\'", 1) == 0)
-		err = scan_sq(line, &tail);
-	else if (ft_strncmp(*line, "\"", 1) == 0)
-		err = scan_dq(line, &tail);
-	else if (ft_strchr("$*", **line))
-		err = scan_special(line, &tail);
-	else
-		err = scan_plain(line, &tail, as, tk);
-	return (err);
+	tail = head;
+	while (**line && !is_tk_bound(*line))
+	{
+		if (ft_strchr("\'\"$*", **line))
+			validate_assign(*line, as);
+		if (ft_strncmp(*line, "\'", 1) == 0)
+			err = scan_sq(line, &tail);
+		else if (ft_strncmp(*line, "\"", 1) == 0)
+			err = scan_dq(line, &tail);
+		else
+			err = scan_unquoted(line, &tail, as);
+		if (err)
+			return (err);
+	}
+	return (0);
 }
 
 t_token_kind	lex_word(char **line, t_token *tk)
 {
 	t_word			*head;
-	t_word			**tail;
-	t_assign_state	as;
+	t_assign_info	as;
 	int				err;
 
-	init_lex(&head, &tail, &as, tk);
-	while (**line && !is_tk_bound(*line))
+	head = NULL;
+	as.state = AS_INIT;
+	as.eq_ptr = NULL;
+	as.flag = W_NONE;
+	err = lex_word_scan(line, &head, &as);
+	if (err)
 	{
-		if (ft_strchr("\'\"$*", **line))
-			validate_assign(*line, tk, &as);
-		err = dispatch_word_lexing(tail, line, tk, &as);
-		if (err && free_word_parts(head))
-		{
-			if (err > 0)
-				set_lex_error(tk, err);
-			return (tk->token_kind);
-		}
+		free_word_parts(head);
+		if (err > 0)
+			set_lex_error(tk, err);
+		return (tk->token_kind);
 	}
 	tk->token_kind = TK_WORD;
-	tk->u_token.wd.next = head;
+	tk->u_token.wd = head;
+	if (head)
+	{
+		head->eq_ptr = as.eq_ptr;
+		head->flag |= as.flag;
+	}
 	return (tk->token_kind);
 }

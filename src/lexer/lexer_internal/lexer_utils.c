@@ -67,30 +67,30 @@ void	set_lex_error(t_token *token, int err)
 	token->u_token.err = err;
 }
 
-void	validate_assign(char *cur_ptr, t_token *token, t_assign_state *as)
+void	validate_assign(char *cur_ptr, t_assign_info *as)
 {
-	if (*as == AS_DONE || *as == AS_INVALID)
+	if (as->state == AS_DONE || as->state == AS_INVALID)
 		return ;
 	if (!ft_strncmp(cur_ptr, "=", 1))
 	{
-		if (*as == AS_VALID)
+		if (as->state == AS_VALID)
 		{
-			token->u_token.wd.eq_ptr = cur_ptr;
-			token->u_token.wd.flag |= W_ASSIGN;
+			as->eq_ptr = cur_ptr;
+			as->flag |= W_ASSIGN;
 		}
-		*as = AS_DONE;
+		as->state = AS_DONE;
 		return ;
 	}
-	if (*as == AS_INIT)
+	if (as->state == AS_INIT)
 	{
 		if (ft_isalpha(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1))
-			*as = AS_VALID;
+			as->state = AS_VALID;
 		else
-			*as = AS_INVALID;
+			as->state = AS_INVALID;
 	}
 	else
 	{
 		if (!(ft_isalnum(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1)))
-			*as = AS_INVALID;
+			as->state = AS_INVALID;
 	}
 }
