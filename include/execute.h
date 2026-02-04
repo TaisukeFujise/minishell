@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 20:24:47 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/04 09:36:12 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,5 +75,8 @@ t_status	register_pid(t_ctx *ctx, pid_t pid);
 
 /* collect_child.c */
 t_status	collect_child_result(t_ctx *ctx);
+
+/* create_filename.c */
+char	*create_tmp_filename(void);
 
 #endif

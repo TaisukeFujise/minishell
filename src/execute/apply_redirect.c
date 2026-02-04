@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 12:31:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/04 08:42:17 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/04 09:36:44 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,8 +122,7 @@ t_status	apply_redir_dless(t_redirect *redirect)
 	fd = -1;
 	while (fd < 0)
 	{
-		// filename = create_tmp_filename();
-		filename = "tmp";
+		filename = create_tmp_filename();
 		if (filename == NULL)
 			return (ST_FAILURE);
 		fd = open(filename, O_RDWR | O_CREAT | O_EXCL, 0644);

@@ -6,7 +6,7 @@
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/03 18:30:51 by tafujise          #+#    #+#              #
-#    Updated: 2026/02/03 20:30:26 by tafujise         ###   ########.fr        #
+#    Updated: 2026/02/04 09:37:58 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,9 @@ EXECUTE_SRCS := \
 	register_pid.c \
 	stdio_backup.c \
 	apply_redirect.c \
-	assigns.c
+	assigns.c\
+	create_filename.c\
+
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
 
 SRCS := $(TEST_SRCS) $(EXECUTE_SRCS) $(HASHMAP_SRCS)
