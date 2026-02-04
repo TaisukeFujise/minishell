@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/04 19:39:53 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/04 19:40:36 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ typedef struct s_error
 
 typedef struct s_ctx
 {
-	int			exit_code;
+	t_error		err;
 	t_hashtable	*env_table;//environment variable table. When execve, this is converted to envp.
 	// Reset following member on every command.
 	t_hashtable	*tmp_table;//tmp environment variable table. This is set by assignment word in front of cmd.
