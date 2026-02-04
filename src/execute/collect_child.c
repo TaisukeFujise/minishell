@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 23:52:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 19:32:37 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/04 09:03:01 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ t_status	collect_child_result(t_ctx *ctx)
 	while (i < (ctx->npid - 1))
 	{
 		if (waitpid(ctx->pids[i], &status, 0) < 0)
-			return (ST_FATAL);
+			return (ST_FAILURE);
 		i++;
 	}
 	if (waitpid(ctx->pids[i], &status, 0) < 0)
-		return (ST_FATAL);
+		return (ST_FAILURE);
 	ctx->exit_code = status_to_exitcode(status);
 	free(ctx->pids);
 	ctx->pids = NULL;
