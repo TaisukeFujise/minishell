@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 19:59:19 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/03 20:20:40 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/04 18:19:47 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ t_token_kind	lex_group(char **line, t_token *token, t_lex_state *st)
 	else if (!ft_strncmp(*line, ")", 1))
 	{
 		if (st->paren_depth == 0)
-			set_lex_error(token, ERR_UNCLOSED_SUBSHELL);
+			set_lexer_error(token, ERR_UNCLOSED_SUBSHELL);
 		else
 		{
 			token->token_kind = TK_GROUP;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/04 14:47:51 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/04 18:19:23 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char	*strchunk(const char *table, const char *str, size_t n)
 	return (NULL);
 }
 
-void	set_lex_error(t_token *token, int err)
+void	set_lexer_error(t_token *token, int err)
 {
 	if (!token)
 		return ;

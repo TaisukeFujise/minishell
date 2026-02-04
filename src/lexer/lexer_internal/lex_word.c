@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lex_word.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/04 14:04:56 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/04 18:19:16 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static int	scan_unquoted(char **line, t_word ***tail, t_assign_info *as)
 	return (0);
 }
 
-static int	lex_word_scan(char **line, t_word **head, t_assign_info *as)
+static int	scan_word(char **line, t_word **head, t_assign_info *as)
 {
 	t_word	**tail;
 	int		err;
@@ -104,12 +104,12 @@ t_token_kind	lex_word(char **line, t_token *tk)
 	as.state = AS_INIT;
 	as.eq_ptr = NULL;
 	as.flag = W_NONE;
-	err = lex_word_scan(line, &head, &as);
+	err = scan_word(line, &head, &as);
 	if (err)
 	{
 		free_word_parts(head);
 		if (err > 0)
-			set_lex_error(tk, err);
+			set_lexer_error(tk, err);
 		return (tk->token_kind);
 	}
 	tk->token_kind = TK_WORD;
