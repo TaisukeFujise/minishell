@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 09:13:02 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/04 19:16:56 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,10 @@ void	exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_o
 		- restore_signals ???
 	*/
 	close_fd_bitmap(ctx->bitmap);
-	if (attach_pipe_to_stdio(ctx, pipe_in, pipe_out) == ST_FATAL)
+	if (attach_pipe_to_stdio(pipe_in, pipe_out) == ST_FATAL)
 		exit (EXIT_FAILURE);
 	pipe_in = pipe_out = NO_PIPE;
-	if (apply_redirects(cmd->redirects, ctx) == ST_FATAL)
+	if (apply_redirects(cmd->redirects) == ST_FATAL)
 		exit (EXIT_FAILURE);
 	if (apply_assigns_to_tmp_env(ctx->tmp_table, cmd->assigns) == ST_FATAL)
 		exit (EXIT_FAILURE);
@@ -94,7 +94,7 @@ t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int 
 
 	if (save_stdio(&saved) == ST_FATAL)
 		return (ST_FATAL);
-	if (apply_redirects(cmd->redirects, ctx) == ST_FATAL)
+	if (apply_redirects(cmd->redirects) == ST_FATAL)
 	{
 		close_savedfd(saved);
 		return (ST_FATAL);
@@ -102,16 +102,16 @@ t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int 
 	if (apply_assigns_to_tmp_env(ctx->tmp_table, cmd->assigns) == ST_FATAL)
 	{
 		close_savefd(saved);
-		undo_stdio(cmd->redirects, saved);// It doesn't matter if this func fails or not.
+		undo_stdio(saved);// It doesn't matter if this func fails or not.
 		return (ST_FATAL);
 	}
 	if (builtin_cmd(cmd->args, ctx) == ST_FATAL)
 	{
 		close_savedfd(saved);
-		undo_stdio(cmd->redirects, saved);//It doesn't matter fi this func fails or not.
+		undo_stdio(saved);//It doesn't matter fi this func fails or not.
 		return (ST_FATAL);
 	}
-	result = undo_stdio(cmd->redirects, saved);
+	result = undo_stdio(saved);
 	close_savedfd(saved);
 	return (result);
 }

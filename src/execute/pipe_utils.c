@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   attach_pipe.c                                      :+:      :+:    :+:   */
+/*   pipe_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 23:34:14 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 00:15:41 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/04 09:01:31 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,19 @@
 #include "../../include/parser.h"
 #include "../../include/execute.h"
 
-t_status	attach_pipe_to_stdio(t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out)
 {
 	if (pipe_in != NO_PIPE)
 	{
 		if (dup2(pipe_in, STDIN_FILENO) < 0)
-			return (ST_FATAL);
+			return (ST_FAILURE);
 		if (pipe_in < 0)
 			close(pipe_in);
 	}
 	if (pipe_out != NO_PIPE)
 	{
 		if (dup2(pipe_out, STDOUT_FILENO) < 0)
-			return (ST_FATAL);
+			return (ST_FAILURE);
 		if (pipe_out < 0)
 			close(pipe_out);
 	}

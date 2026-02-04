@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/02 21:31:31 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/04 08:34:17 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <stdint.h>
 # include "./hashmap.h"
 # include <sys/types.h>
+# include <sys/wait.h>
 
 # define SUCCESS 0
 # define FAILURE -1
@@ -51,6 +52,7 @@ typedef struct s_ctx
 typedef enum e_status
 {
 	ST_OK,
+	ST_FAILURE,
 	ST_EXIT,
 	ST_FATAL,
 }	t_status;
@@ -87,6 +89,8 @@ typedef enum e_flag
 	W_ASSIGN	= 1u << 4
 }	t_flag;
 
+typedef struct s_word	t_word;
+
 typedef struct s_word
 {
 	char	*str;
@@ -95,7 +99,8 @@ typedef struct s_word
 	t_word	*next;
 }	t_word;
 
-typedef struct s_assingn
+typedef struct s_assign	t_assign;
+typedef struct s_assign
 {
 	t_word		*key;
 	t_word		*value;

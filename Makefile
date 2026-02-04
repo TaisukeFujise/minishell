@@ -6,7 +6,7 @@
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2026/02/03 00:52:36 by tafujise         ###   ########.fr        #
+#    Updated: 2026/02/04 13:59:46 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,8 +19,11 @@ SRCS:=main.c\
 	  lexer/lexer_internal/lex_ops.c\
 	  lexer/lexer_internal/lex_word.c\
 	  lexer/lexer_internal/lexer_utils.c\
+	  execute/apply_redirect.c\
 	  execute/assigns.c\
 	  execute/bitmap.c\
+	  execute/collect_child.c\
+	  execute/create_filename.c\
 	  execute/exec_builtin.c\
 	  execute/exec_connection.c\
 	  execute/exec_disk.c\
@@ -30,11 +33,9 @@ SRCS:=main.c\
 	  execute/execute.c\
 	  execute/expand.c\
 	  execute/init.c\
-	  execute/collect_child.c\
-	  execute/apply_redirect.c\
-	  execute/stdio_backup.c\
 	  execute/pipe_utils.c\
 	  execute/register_pid.c\
+	  execute/stdio_backup.c\
 	  hashmap/hashmap_crud.c\
 	  hashmap/hashmap_free.c\
 	  hashmap/hashmap_utils.c

@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/02 10:04:01 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 19:53:43 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static int	_load_envp_to_table(t_hashtable *env_table, char **envp)
 		if (key == NULL)
 			return (FAILURE);
 		item = hash_insert(key, env_table);
-		if (preprocess_item(item, key) == FAILURE)
+		if (_preprocess_item(item, key) == FAILURE)
 			return (FAILURE);
 		value = _extract_value_from_envp(*envp);
 		if (value == NULL)

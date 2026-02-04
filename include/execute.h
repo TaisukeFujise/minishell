@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 01:35:59 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/04 09:36:12 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 /* exec_null.c */
 t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
 /* exec_builtin.c */
-t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
+// t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
 /* exec_disk.c */
 t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
 
@@ -59,14 +59,15 @@ t_status	apply_assigns_to_vars(t_hashtable *env_table, t_assign *assign);
 t_status	apply_assigns_to_tmp_env(t_hashtable *tmp_table, t_assign *assign);
 
 /* apply_redirect.c */
-t_status	apply_redirects(t_redirect *redirects, t_ctx *ctx);
+t_status	apply_redirects(t_redirect *redirects);
 
 /* stdio_backup.c */
 t_status	save_stdio(t_savedfd *saved);
-t_status	undo_stdio(t_redirect *redirects, t_savedfd saved);
+void		close_savedfd(t_savedfd saved);
+t_status	undo_stdio(t_savedfd saved);
 
 /* pipe_utils.c */
-t_status	attach_pipe_to_stdio(t_ctx *ctx, int pipe_in, int pipe_out);
+t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out);
 void		close_pipes(int pipe_in, int pipe_out);
 
 /* register_pid.c */
@@ -74,5 +75,8 @@ t_status	register_pid(t_ctx *ctx, pid_t pid);
 
 /* collect_child.c */
 t_status	collect_child_result(t_ctx *ctx);
+
+/* create_filename.c */
+char	*create_tmp_filename(void);
 
 #endif
