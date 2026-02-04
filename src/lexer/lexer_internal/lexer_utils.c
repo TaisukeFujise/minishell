@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/03 20:04:38 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/04 14:47:51 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,32 +65,4 @@ void	set_lex_error(t_token *token, int err)
 		return ;
 	token->token_kind = TK_ERR;
 	token->u_token.err = err;
-}
-
-void	validate_assign(char *cur_ptr, t_assign_info *as)
-{
-	if (as->state == AS_DONE || as->state == AS_INVALID)
-		return ;
-	if (!ft_strncmp(cur_ptr, "=", 1))
-	{
-		if (as->state == AS_VALID)
-		{
-			as->eq_ptr = cur_ptr;
-			as->flag |= W_ASSIGN;
-		}
-		as->state = AS_DONE;
-		return ;
-	}
-	if (as->state == AS_INIT)
-	{
-		if (ft_isalpha(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1))
-			as->state = AS_VALID;
-		else
-			as->state = AS_INVALID;
-	}
-	else
-	{
-		if (!(ft_isalnum(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1)))
-			as->state = AS_INVALID;
-	}
 }

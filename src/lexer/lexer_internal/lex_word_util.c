@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 22:00:38 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/04 14:15:57 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/04 14:47:57 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,5 +65,33 @@ void	lex_dollar(char **cur_ptr, uint8_t *flag)
 		while (ft_isalnum(**cur_ptr) || !ft_strncmp(*cur_ptr, "_", 1))
 			(*cur_ptr)++;
 		*flag = W_DOLL;
+	}
+}
+
+void	validate_assign(char *cur_ptr, t_assign_info *as)
+{
+	if (as->state == AS_DONE || as->state == AS_INVALID)
+		return ;
+	if (!ft_strncmp(cur_ptr, "=", 1))
+	{
+		if (as->state == AS_VALID)
+		{
+			as->eq_ptr = cur_ptr;
+			as->flag |= W_ASSIGN;
+		}
+		as->state = AS_DONE;
+		return ;
+	}
+	if (as->state == AS_INIT)
+	{
+		if (ft_isalpha(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1))
+			as->state = AS_VALID;
+		else
+			as->state = AS_INVALID;
+	}
+	else
+	{
+		if (!(ft_isalnum(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1)))
+			as->state = AS_INVALID;
 	}
 }
