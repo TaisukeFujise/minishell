@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/01/31 18:54:08 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/04 18:31:49 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ typedef enum e_node_kind
 typedef struct s_heredoc
 {
 	t_word	raw_str;
-	char	*tmp_path; // It's for unlink the opened tmp file.
 	int		content_fd; // init value is -1
 }	t_heredoc;
 
