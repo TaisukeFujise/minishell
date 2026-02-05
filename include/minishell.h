@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 20:59:00 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/05 20:08:41 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <stdint.h>
 # include "./hashmap.h"
 # include <sys/types.h>
+# include <sys/wait.h>
 
 # define SUCCESS 0
 # define FAILURE -1
@@ -36,21 +37,28 @@ typedef struct s_fd_bitmap
 	char	*bitmap;
 }	t_fd_bitmap;
 
+typedef struct s_error
+{
+	int		exit_code;
+	char	*err_msg;
+}	t_error;
+
 typedef struct s_ctx
 {
-	int			exit_code;
+	t_error		err;
 	t_hashtable	*env_table;//environment variable table. When execve, this is converted to envp.
 	// Reset following member on every command.
 	t_hashtable	*tmp_table;//tmp environment variable table. This is set by assignment word in front of cmd.
 	t_fd_bitmap	*bitmap;// It's for managing fd, especially pipe read end fd, when using pipe.
 	pid_t		*pids;// Array of pids.
-	int			npid;// Coutn of pids.
+	int			npid;// Count of pids.
 	int			already_forked;// Flag about whether already forked or not.
 }	t_ctx;
 
 typedef enum e_status
 {
 	ST_OK,
+	ST_FAILURE,
 	ST_EXIT,
 	ST_FATAL,
 }	t_status;
@@ -72,9 +80,9 @@ typedef enum e_op_group
 typedef enum e_op_redir
 {
 	REDIR_LESS,
-	REDIR_GREAT,
+	REDIR_GREATER,
 	REDIR_DLESS,
-	REDIR_DGREAT
+	REDIR_DGREATER
 }	t_op_redir;
 
 typedef enum e_flag

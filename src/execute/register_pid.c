@@ -1,32 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_builtin.c                                     :+:      :+:    :+:   */
+/*   register_pid.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 19:42:52 by tafujise         ###   ########.fr       */
+/*   Created: 2026/02/03 00:09:40 by tafujise          #+#    #+#             */
+/*   Updated: 2026/02/03 20:24:05 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 #include "../../include/parser.h"
 #include "../../include/execute.h"
-
 /*
-	Todo
-	execute builtin command in parent process
-	- reverse redirect
+	register_pid stack pid on ctx->pids, and increment ctx->npid
+	- calloc by (npid + 1) size
+	- memcpy pids to new_pids
+	- set new_pids to ctx->pids
+	- increment ctx->npid
 */
-// t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
-// {
-// 	t_status	result;
-// 	// Here!!!
-// 	// apply_assigns_to_vars
-// 	if (apply_redirects(cmd->redirects) == ST_FATAL)
-// 		return (ST_FATAL);
-// 	if (reset_redirects(cmd->redirects, ctx) == ST_FATAL)
-// 		return (ST_FATAL);
-// 	return (result);
-// }
+t_status	register_pid(t_ctx *ctx, pid_t pid)
+{
+	pid_t	*new_pids;
+
+	new_pids = ft_calloc(ctx->npid + 1, sizeof(pid_t));
+	if (new_pids == NULL)
+		return (ST_FATAL);
+	ft_memcpy(new_pids, ctx->pids, ctx->npid);
+	new_pids[ctx->npid] = pid;
+	ctx->pids = new_pids;
+	ctx->npid++;
+	return (ST_OK);
+}
