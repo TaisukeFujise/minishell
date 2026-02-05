@@ -1,3 +1,2 @@
 *.obj
-/test/unit_test/lexer/lexer_tests.c
 .gitignore
