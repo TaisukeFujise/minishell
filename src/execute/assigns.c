@@ -41,7 +41,7 @@ t_status	apply_assigns_to_vars(t_hashtable *env_table, t_assign *assign)
 }
 
 /*
-	apply_assings_to_exec_env is called by exec_builtin_command and exec_disk_command.
+	apply_assings_to_tmp_env is called by exec_builtin_command and exec_disk_command.
 	- Add temporary env variable to tmp table from assignment word.
 */
 t_status	apply_assigns_to_tmp_env(t_hashtable *tmp_table, t_assign *assign)
