@@ -114,10 +114,6 @@ t_token_kind	lex_word(char **line, t_token *tk)
 	}
 	tk->token_kind = TK_WORD;
 	tk->u_token.wd = head;
-	if (head)
-	{
-		head->eq_ptr = as.eq_ptr;
-		head->flag |= as.flag;
-	}
+	apply_assign_info(head, &as);
 	return (tk->token_kind);
 }

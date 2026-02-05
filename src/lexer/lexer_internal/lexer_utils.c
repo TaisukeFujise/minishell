@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/04 18:19:23 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/05 18:11:25 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,11 @@ char	*strchunk(const char *table, const char *str, size_t n)
 		i += n;
 	}
 	return (NULL);
+}
+
+int	is_tk_bound(char *ch)
+{
+	return (ft_strchr(" \t\n|()><", *ch) || strchunk("&&||>><<", ch, 2));
 }
 
 void	set_lexer_error(t_token *token, int err)

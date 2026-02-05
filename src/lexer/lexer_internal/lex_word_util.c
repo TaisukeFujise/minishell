@@ -6,17 +6,12 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 22:00:38 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/04 14:47:57 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/05 18:10:30 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
 #include "minishell.h"
-
-int	is_tk_bound(char *ch)
-{
-	return (ft_strchr(" \t\n|()><", *ch) || strchunk("&&||>><<", ch, 2));
-}
 
 int	append_part(t_word ***tail, char *str, int len, uint8_t flag)
 {
@@ -93,5 +88,23 @@ void	validate_assign(char *cur_ptr, t_assign_info *as)
 	{
 		if (!(ft_isalnum(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1)))
 			as->state = AS_INVALID;
+	}
+}
+
+void	apply_assign_info(t_word *head, t_assign_info *as)
+{
+	t_word	*cur;
+
+	if (!head || !as)
+		return ;
+	head->eq_ptr = as->eq_ptr;
+	head->flag |= as->flag;
+	if (!(as->flag & W_ASSIGN))
+		return ;
+	cur = head;
+	while (cur)
+	{
+		cur->flag |= W_ASSIGN;
+		cur = cur->next;
 	}
 }
