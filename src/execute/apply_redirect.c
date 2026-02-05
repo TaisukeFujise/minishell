@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 12:31:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/04 09:36:44 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/05 14:49:37 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ t_status	apply_redirects(t_redirect *redirects)
 {
 	t_status	status;
 
+	status = ST_OK;
 	while (redirects)
 	{
 		if (redirects->op == REDIR_GREATER)
