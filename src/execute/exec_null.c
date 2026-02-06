@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/04 09:00:23 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/06 18:56:28 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int p
 	pipe_in = pipe_out = NO_PIPE;
 	if (apply_redirects(cmd->redirects) != ST_OK)
 		exit(EXIT_FAILURE);
-	if (apply_assigns_to_vars(ctx->env_table, cmd->assigns) != ST_OK)
+	if (apply_assigns(ctx->env_table, cmd->assigns, VARS) != ST_OK)
 		exit (EXIT_FAILURE);
 	exit(EXIT_SUCCESS);
 }
@@ -96,7 +96,7 @@ t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 		close_savedfd(saved);
 		return (ST_FAILURE);
 	}
-	if (apply_assigns_to_vars(ctx->env_table, cmd->assigns) != ST_OK)
+	if (apply_assigns(ctx->env_table, cmd->assigns, VARS) != ST_OK)
 	{
 		close_savedfd(saved);
 		return (undo_stdio(saved));
