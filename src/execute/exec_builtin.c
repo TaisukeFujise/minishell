@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/06 18:57:10 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/07 00:20:30 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,12 @@ void	exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_o
 		- restore_signals ???
 	*/
 	close_fd_bitmap(ctx->bitmap);
-	if (attach_pipe_to_stdio(pipe_in, pipe_out) == ST_FATAL)
+	if (attach_pipe_to_stdio(pipe_in, pipe_out) != ST_OK)
 		exit (EXIT_FAILURE);
 	pipe_in = pipe_out = NO_PIPE;
-	if (apply_redirects(cmd->redirects) == ST_FATAL)
+	if (apply_redirects(cmd->redirects) != ST_OK)
 		exit (EXIT_FAILURE);
-	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) == ST_FATAL)
+	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) != ST_OK)
 		exit (EXIT_FAILURE);
 	exit(builtin_cmd(cmd->args, ctx));
 }
@@ -100,7 +100,7 @@ t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int 
 	}
 	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) == ST_FATAL)
 	{
-		close_savefd(saved);
+		close_savedfd(saved);
 		return (undo_stdio(saved));// It doesn't matter if this func fails or not.
 	}
 	if (builtin_cmd(cmd->args, ctx) != ST_OK)
@@ -130,19 +130,19 @@ t_status	builtin_cmd(t_word_list *args, t_ctx *ctx)
 		Todo
 		- builtin_command find builtin cmd and execute it.
 	*/	
-	if (args->wd->str == "cd")
+	if (ft_strcmp(args->wd->str, "cd") == 0)
 		return (cd_cmd(args, ctx));
-	else if (args->wd->str == "echo")
+	else if (ft_strcmp(args->wd->str, "echo") == 0)
 		return (echo_cmd(args, ctx));
-	else if (args->wd->str == "env")
+	else if (ft_strcmp(args->wd->str, "env") == 0)
 		return (env_cmd(args, ctx));
-	else if (args->wd->str == "exit")
+	else if (ft_strcmp(args->wd->str, "exit") == 0)
 		return (exit_cmd(args, ctx));
-	else if (args->wd->str == "export")
+	else if (ft_strcmp(args->wd->str, "export") == 0)
 		return (export_cmd(args, ctx));
-	else if (args->wd->str == "pwd")
+	else if (ft_strcmp(args->wd->str, "pwd") == 0)
 		return (pwd_cmd(args, ctx));
-	else if (args->wd->str == "unset")
+	else if (ft_strcmp(args->wd->str, "unset") == 0)
 		return (unset_cmd(args, ctx));
 	else
 		return (ST_FATAL);
