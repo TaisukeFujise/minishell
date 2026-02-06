@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 00:09:40 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 20:24:05 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/06 18:23:33 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_status	register_pid(t_ctx *ctx, pid_t pid)
 	new_pids = ft_calloc(ctx->npid + 1, sizeof(pid_t));
 	if (new_pids == NULL)
 		return (ST_FATAL);
-	ft_memcpy(new_pids, ctx->pids, ctx->npid);
+	ft_memcpy(new_pids, ctx->pids, sizeof(pid_t) * ctx->npid);
 	new_pids[ctx->npid] = pid;
 	ctx->pids = new_pids;
 	ctx->npid++;
