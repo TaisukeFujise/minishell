@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/06 18:56:28 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/06 19:04:26 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,13 +93,15 @@ t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 		return (ST_FAILURE);
 	if (apply_redirects(cmd->redirects) != ST_OK)
 	{
+		result = undo_stdio(saved);
 		close_savedfd(saved);
-		return (ST_FAILURE);
+		return (result);
 	}
 	if (apply_assigns(ctx->env_table, cmd->assigns, VARS) != ST_OK)
 	{
+		result = undo_stdio(saved);
 		close_savedfd(saved);
-		return (undo_stdio(saved));
+		return (result);
 	}
 	result = undo_stdio(saved);
 	close_savedfd(saved);
