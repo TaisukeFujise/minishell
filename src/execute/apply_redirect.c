@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 12:31:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/06 17:39:44 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/06 22:08:30 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ t_status	apply_redirects(t_redirect *redirects)
 {
 	t_status	status;
 
+	status = ST_OK;
 	while (redirects)
 	{
 		if (redirects->op == REDIR_GREATER)
@@ -77,7 +78,6 @@ t_status	apply_redir_dless(t_redirect *redirect)
 {
 	int		fd;
 	char	*filename;
-	int		len;
 
 	fd = -1;
 	while (fd < 0)
@@ -92,8 +92,7 @@ t_status	apply_redir_dless(t_redirect *redirect)
 	redirect->hd.content_fd = fd;
 	if (unlink(filename) < 0)
 		return (close(fd), ST_FAILURE);
-	len = ft_strlen(redirect->hd.raw_str.str);
-	if (write(fd, redirect->hd.raw_str.str, len) < 0)
+	if (write(fd, redirect->hd.raw_str.str, redirect->hd.raw_str.len) < 0)
 		return (close(fd), ST_FAILURE);
 	if (dup2(fd, redirect->io_number) < 0)
 		return (close(fd), ST_FAILURE);
