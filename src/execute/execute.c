@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/06 18:10:27 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/06 18:37:19 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ t_status	execute(t_node *root, t_ctx *ctx)
 	if (root == NULL)
 		return (ST_OK);// parse error passes NULL root ast.
 	ctx->bitmap = new_fd_bitmap(FD_BITMAP_SIZE);
+	if (ctx->bitmap == NULL)
+		return (ST_FATAL);
 	result = execute_internal(root, ctx, NO_PIPE, NO_PIPE);
 	dispose_fd_bitmap(ctx->bitmap);
 	return (result);
