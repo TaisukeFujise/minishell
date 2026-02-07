@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:40:31 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/14 13:04:11 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/03 22:16:02 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ void				hash_dispose(t_hashtable *table);
 typedef int							t_hash_wfunc(t_bucket_contents *);
 unsigned int		hash_string(const char *s); // Convert string to hash value
 int					hash_bucket(unsigned int hash_value, t_hashtable *table);
+void				hash_walk(t_hashtable *table, t_hash_wfunc *func);
+t_bucket_contents	*hash_items(int bucket, t_hashtable *table);
 								// hash value to index in table
 
 #endif
