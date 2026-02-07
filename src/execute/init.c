@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 19:53:43 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/05 14:37:25 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,5 @@ char	*_extract_value_from_envp(char *entry)
 		i++;
 	if (entry[i] == '\0')
 		return (NULL);
-	return (ft_strdup(entry + i));
+	return (ft_strdup(entry + i + 1));
 }

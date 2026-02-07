@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 23:52:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/04 09:11:36 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/05 15:26:19 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ t_status	collect_child_result(t_ctx *ctx)
 	}
 	if (waitpid(ctx->pids[i], &status, 0) < 0)
 		return (ST_FAILURE);
-	ctx->exit_code = status_to_exitcode(status);
+	ctx->err.exit_code = status_to_exitcode(status);
 	reset_ctx_pid(ctx);
 	return (ST_OK);
 }

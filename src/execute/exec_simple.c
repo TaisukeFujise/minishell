@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:15 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/04 09:03:03 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/07 00:20:42 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,14 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 
 bool	find_builtin(char *str)
 {
-	if (str == "echo"
-		|| str == "cd"
-		|| str == "pwd"
-		|| str == "export"
-		|| str == "unset"
-		|| str == "env"
-		|| str == "exit")
+	if ((ft_strcmp(str, "echo") == 0)
+		|| (ft_strcmp(str, "cd") == 0)
+		|| (ft_strcmp(str, "pwd") == 0)
+		|| (ft_strcmp(str, "export") == 0)
+		|| (ft_strcmp(str, "export") == 0)
+		|| (ft_strcmp(str, "unset")== 0)
+		|| (ft_strcmp(str, "env") == 0)
+		|| (ft_strcmp(str, "exit") == 0))
 		return (true);
 	return (false);
 }
