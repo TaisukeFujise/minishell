@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:35:43 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/07 22:56:09 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/08 00:16:32 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 /*
 	echo [-n] [string...]
 	"echo" display strings, and update the ctx->exit_code
-	-n : 
+	-n : do not output the trailing newline
 */
 t_status	echo_cmd(t_word_list *args, t_ctx *ctx)
 {
