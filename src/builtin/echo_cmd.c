@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:35:43 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/08 19:22:03 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/08 19:31:30 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_status	echo_cmd(t_word_list *args, t_ctx *ctx)
 
 	(void)ctx;
 	nflag = false;
-	if (args->wd == NULL)
+	if (args == NULL)
 		return (write(STDOUT_FILENO, "\n", 1), ST_OK);
 	if (ft_strcmp(args->wd->str, "-n") == 0)
 	{
