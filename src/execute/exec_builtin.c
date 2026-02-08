@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/07 00:20:30 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/08 17:15:49 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,19 +131,19 @@ t_status	builtin_cmd(t_word_list *args, t_ctx *ctx)
 		- builtin_command find builtin cmd and execute it.
 	*/	
 	if (ft_strcmp(args->wd->str, "cd") == 0)
-		return (cd_cmd(args, ctx));
+		return (cd_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "echo") == 0)
-		return (echo_cmd(args, ctx));
+		return (echo_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "env") == 0)
-		return (env_cmd(args, ctx));
+		return (env_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "exit") == 0)
-		return (exit_cmd(args, ctx));
+		return (exit_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "export") == 0)
-		return (export_cmd(args, ctx));
+		return (export_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "pwd") == 0)
-		return (pwd_cmd(args, ctx));
+		return (pwd_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "unset") == 0)
-		return (unset_cmd(args, ctx));
+		return (unset_cmd(args->next, ctx));
 	else
 		return (ST_FATAL);
 }
