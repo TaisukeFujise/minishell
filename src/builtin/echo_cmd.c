@@ -6,12 +6,14 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:35:43 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/08 19:31:30 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/09 18:32:00 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/parser.h"
-#include "../../include/builtin.h"
+// #include "../../include/builtin.h"
+
+static void	_consume_n_flag(t_word_list **args, bool *nflag);
 
 /*
 	echo [-n] [string...]
@@ -20,27 +22,39 @@
 */
 t_status	echo_cmd(t_word_list *args, t_ctx *ctx)
 {
-	bool	nflag;
+	bool	n_flag;
 
 	(void)ctx;
-	nflag = false;
+	n_flag = false;
 	if (args == NULL)
-		return (write(STDOUT_FILENO, "\n", 1), ST_OK);
-	if (ft_strcmp(args->wd->str, "-n") == 0)
 	{
-		nflag = true;
-		args = args->next;
+		if (write(STDOUT_FILENO, "\n", 1) < 0)
+			return (ST_FAILURE);
+		return (ST_OK);
 	}
+	_consume_n_flag(&args, &n_flag);
 	while (args)
 	{
-		write(STDOUT_FILENO, args->wd->str, ft_strlen(args->wd->str));
+		if (write(STDOUT_FILENO, args->wd->str, ft_strlen(args->wd->str)) < 0)
+			return (ST_FAILURE);
 		if (args->next != NULL)
-			write(STDOUT_FILENO, " ", 1);
+			if (write(STDOUT_FILENO, " ", 1) < 0)
+				return (ST_FAILURE);
 		args = args->next;
 	}
-	if (nflag == false)
-		write(STDOUT_FILENO, "\n", 1);
+	if (!n_flag)
+		if (write(STDOUT_FILENO, "\n", 1) < 0)
+			return (ST_FAILURE);
 	return (ST_OK);
+}
+
+static void	_consume_n_flag(t_word_list **args, bool *nflag)
+{
+	if (ft_strcmp((*args)->wd->str, "-n") == 0)
+	{
+		*nflag = true;
+		*args = (*args)->next;
+	}
 }
 
 // #include <stdio.h>
@@ -53,11 +67,11 @@ t_status	echo_cmd(t_word_list *args, t_ctx *ctx)
 // 	ctx = NULL;
 // 	args = malloc(sizeof(t_word_list));
 // 	args->wd = malloc(sizeof(t_word));
-// 	args->wd->str = ft_strdup("abc");
+// 	args->wd->str = ft_strdup("-n");
 // 	args2 = malloc(sizeof(t_word_list));
 // 	args2->wd = malloc(sizeof(t_word));
 // 	args2->wd->str = ft_strdup("efg");
 // 	args->next = args2;
 // 	args2->next = NULL;
-// 	cd_cmd(args, ctx);
+// 	echo_cmd(args, ctx);
 // }
