@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:32:33 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/04 18:20:00 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/09 20:14:16 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 
 t_token_kind	lexer_step(char **line, t_token *token, t_lex_state *st)
 {
-	if (!token)
-		return (TK_UNSET);
 	token->token_kind = TK_UNSET;
 	skip_blank(line);
 	if (lex_control(line, token) == TK_EOF && st->paren_depth != 0)
