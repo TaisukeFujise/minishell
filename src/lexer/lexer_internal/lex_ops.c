@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lex_ops.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 19:59:19 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/04 18:19:47 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/09 10:40:24 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ t_token_kind	lex_redirect(char **line, t_token *token)
 	if (!ft_strncmp(*line, ">>", 2))
 	{
 		token->token_kind = TK_REDIR;
-		token->u_token.op_redir = REDIR_DGREAT;
+		token->u_token.op_redir = REDIR_DGREATER;
 		(*line) += 2;
 	}
 	else if (!ft_strncmp(*line, "<<", 2))
@@ -90,7 +90,7 @@ t_token_kind	lex_redirect(char **line, t_token *token)
 	else if (!ft_strncmp(*line, ">", 1))
 	{
 		token->token_kind = TK_REDIR;
-		token->u_token.op_redir = REDIR_GREAT;
+		token->u_token.op_redir = REDIR_GREATER;
 		(*line)++;
 	}
 	else if (!ft_strncmp(*line, "<", 1))
