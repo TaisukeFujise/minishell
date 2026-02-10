@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fendo <fendo@student.42.jp>                +#+  +:+       +#+         #
+#    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/12 09:41:21 by fujisetaisu       #+#    #+#              #
-#    Updated: 2025/12/20 20:16:10 by fendo            ###   ########.fr        #
+#    Updated: 2026/02/11 04:14:34 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,6 +51,7 @@ SRCS := ft_isalpha.c\
 		ft_putendl_fd.c\
 		ft_putnbr_fd.c\
 		get_next_line.c\
+		ft_strtol.c\
 
 HEADERS := libft.h
 
