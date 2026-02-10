@@ -6,16 +6,15 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 19:33:34 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 01:26:04 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 02:43:02 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/parser.h"
 #include "../../include/builtin.h"
 
-t_status	_update_oldpwd(t_hashtable *env_table);
-t_status	update_pwd(t_hashtable *env_table, char *path);
-int			count_args(t_word_list *args);
+t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table);
+t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table, char *path);
 
 /*
 	cd [directory]
@@ -36,12 +35,16 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 
 	if (args == NULL)
 	{
-		home = hash_search("HOME", ctx->env_table);
+		home = hash_search("HOME", ctx->tmp_table);
 		if (home == NULL)
-			return (ST_FAILURE);// minishell: cd: HOME not set
+		{
+			home = hash_search("HOME", ctx->env_table);
+			if (home == NULL)
+				return (ST_FAILURE);// minishell: cd: HOME not set
+		}
 		if (chdir(home->data.value) < 0)
 			return (ST_FATAL); // perror can express
-		return (update_pwd(ctx->env_table, home->data.value));
+		return (update_pwd(ctx->tmp_table, ctx->env_table, home->data.value));
 	}
 	if (count_args(args) > 2)
 		return (ST_FAILURE);// minishell: cd: too many arguments.
@@ -50,17 +53,21 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 	path = getcwd(NULL, 0);
 	if (path == NULL)
 		return (ST_FATAL);
-	return (update_pwd(ctx->env_table, path));
+	return (update_pwd(ctx->tmp_table, ctx->env_table, path));
 }
 
-t_status	_update_oldpwd(t_hashtable *env_table)
+t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 {
 	t_bucket_contents	*pwd;
 	t_bucket_contents	*oldpwd;
 
-	pwd = hash_search("PWD", env_table);
+	pwd = hash_search("PWD", tmp_table);
 	if (pwd == NULL)
-		return (ST_OK);
+	{
+		pwd = hash_search("PWD", env_table);
+		if (pwd == NULL)
+			return (ST_OK);
+	}
 	oldpwd = hash_insert("OLDPWD", env_table);
 	if (oldpwd == NULL)
 		return (ST_FATAL);
@@ -75,12 +82,12 @@ t_status	_update_oldpwd(t_hashtable *env_table)
 	return (ST_OK);
 }
 
-t_status	update_pwd(t_hashtable *env_table, char *path)
+t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table, char *path)
 {
 	t_bucket_contents	*pwd;
 	char				*key_pwd;
 
-	if (update_oldpwd(env_table) != ST_OK)
+	if (update_oldpwd(tmp_table, env_table) != ST_OK)
 		return (ST_FATAL);
 	pwd = hash_insert("PWD", env_table);
 	if (pwd == NULL)
