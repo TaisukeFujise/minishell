@@ -6,20 +6,25 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 04:14:40 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 04:38:52 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 04:43:36 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-#include <stdio.h>
 long	round_long_limits(long long num)
 {
 	printf("round num: %lld\n", num);
 	if (num < LONG_MIN)
+	{
+		errno = ERANGE;
 		return (LONG_MIN);
+	}
 	if (LONG_MAX < num)
+	{
+		errno = ERANGE;
 		return (LONG_MAX);
+	}
 	return ((long)num);
 }
 
@@ -43,13 +48,11 @@ long	ft_strtol(const char *nptr)
 	nptr++;
 	while (ft_isdigit(*nptr))
 	{
-		printf("num: %lld\n", num);
 		num = num * 10 + (*nptr - '0');
 		if (LONG_MAX < num)
 			return (round_long_limits(num *sign));
 		nptr++;
 	}
-	printf("here: %lld\n", num);
 	return (round_long_limits(num * sign));
 }
 

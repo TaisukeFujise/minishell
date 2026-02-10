@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 09:41:34 by fujisetaisu       #+#    #+#             */
-/*   Updated: 2025/12/20 20:15:57 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/11 04:43:50 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <stdint.h>
 # include <limits.h>
+# include <errno.h>
 
 # define BUFFER_SIZE 100
 
