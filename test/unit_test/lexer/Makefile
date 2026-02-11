@@ -8,6 +8,7 @@ LIBFT:=$(LIBFT_DIR)/libft.a
 
 ROOT_SRCS:=lexer/lexer.c \
 	lexer/lexer_internal/lex_ops.c \
+	lexer/lexer_internal/lex_assign_util.c \
 	lexer/lexer_internal/lex_word.c \
 	lexer/lexer_internal/lex_word_util.c \
 	lexer/lexer_internal/lexer_utils.c

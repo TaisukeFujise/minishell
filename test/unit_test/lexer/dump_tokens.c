@@ -56,11 +56,11 @@ static const char	*group_name(t_op_group op)
 
 static const char	*redir_name(t_op_redir op)
 {
-	if (op == REDIR_DGREAT)
+	if (op == REDIR_DGREATER)
 		return (">>");
 	if (op == REDIR_DLESS)
 		return ("<<");
-	if (op == REDIR_GREAT)
+	if (op == REDIR_GREATER)
 		return (">");
 	if (op == REDIR_LESS)
 		return ("<");
@@ -107,6 +107,20 @@ static void	print_word_flags(uint8_t flag)
 		printf("ASSIGN");
 		first = 0;
 	}
+	if (flag & W_APPEND)
+	{
+		if (!first)
+			printf("|");
+		printf("APPEND");
+		first = 0;
+	}
+	if (flag & W_IDENT)
+	{
+		if (!first)
+			printf("|");
+		printf("IDENT");
+		first = 0;
+	}
 	if (first)
 		printf("NONE");
 }
@@ -145,7 +159,7 @@ void	dump_tokens(t_token *head)
 		{
 			word = curr->u_token.wd;
 			print_word_parts(word);
-			if (word && (word->flag & W_ASSIGN))
+			if (word && (word->flag & (W_ASSIGN | W_APPEND)))
 			{
 				printf("  position of \'=\' : \"%zu\"\n",
 					word->eq_ptr - word->str);
