@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 09:09:35 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/05 15:27:52 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:03:33 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 char	*create_tmp_filename(void)
 {
-	static	int	i = 0;
+	static int	i = 0;
 	char		*filename;
 
 	if (i > INT_MAX)

@@ -6,11 +6,12 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:35:43 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/09 18:32:00 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:01:29 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/parser.h"
+
 // #include "../../include/builtin.h"
 
 static void	_consume_n_flag(t_word_list **args, bool *nflag);

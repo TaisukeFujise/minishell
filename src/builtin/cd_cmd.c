@@ -6,15 +6,16 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 19:33:34 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 02:43:02 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:00:48 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/parser.h"
 #include "../../include/builtin.h"
+#include "../../include/parser.h"
 
 t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table);
-t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table, char *path);
+t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
+				char *path);
 
 /*
 	cd [directory]
@@ -29,10 +30,10 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table, char *path);
 */
 t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 {
-	(void)ctx;
 	t_bucket_contents	*home;
 	char				*path;
 
+	(void)ctx;
 	if (args == NULL)
 	{
 		home = hash_search("HOME", ctx->tmp_table);
@@ -40,14 +41,14 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 		{
 			home = hash_search("HOME", ctx->env_table);
 			if (home == NULL)
-				return (ST_FAILURE);// minishell: cd: HOME not set
+				return (ST_FAILURE); // minishell: cd: HOME not set
 		}
 		if (chdir(home->data.value) < 0)
 			return (ST_FATAL); // perror can express
 		return (update_pwd(ctx->tmp_table, ctx->env_table, home->data.value));
 	}
 	if (count_args(args) > 2)
-		return (ST_FAILURE);// minishell: cd: too many arguments.
+		return (ST_FAILURE); // minishell: cd: too many arguments.
 	if (chdir(args->wd->str) < 0)
 		return (ST_FATAL);
 	path = getcwd(NULL, 0);
@@ -82,7 +83,8 @@ t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 	return (ST_OK);
 }
 
-t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table, char *path)
+t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
+		char *path)
 {
 	t_bucket_contents	*pwd;
 	char				*key_pwd;

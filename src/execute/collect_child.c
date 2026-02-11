@@ -6,26 +6,26 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 23:52:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/05 15:26:19 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:03:22 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	status_to_exitcode(int status);
-void	reset_ctx_pid(t_ctx *ctx);
+int			status_to_exitcode(int status);
+void		reset_ctx_pid(t_ctx *ctx);
 
 t_status	collect_child_result(t_ctx *ctx)
 {
+	int	i;
+	int	status;
+
 	/*
 		Todo
 		- Wait the arrays of pids
 		- Convert last pid's status to exit code and store in ctx->exit_code
 		- Clean-up ctx's the arrays of pids.
 	*/
-	int	i;
-	int	status;
-
 	i = 0;
 	status = 0;
 	if (ctx->pids == NULL || ctx->npid < 1)

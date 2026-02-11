@@ -6,20 +6,22 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/06 19:04:26 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:07:39 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../include/execute.h"
 #include "../../include/minishell.h"
 #include "../../include/parser.h"
-#include "../../include/execute.h"
 
-void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out);
+void		exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx,
+				int pipe_in, int pipe_out);
 t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
 
 /*
 	execute null command, meaning no args command.
-	Fork if pipe_in or pipe_out is not a NO_PIPE. (It means command is connected by pipe)
+	Fork if pipe_in or pipe_out is not a NO_PIPE.
+	(It means command is connected by pipe)
 	- in pipe
 		- fork
 		- in child : exec_null_command_in_pipe
@@ -30,11 +32,13 @@ t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
 	- single
 		- exec_null_command_in_parent
 */
-t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
+		int pipe_out)
 {
-	pid_t		pid;
+	pid_t	pid;
 
-	if (pipe_in != NO_PIPE || pipe_out != NO_PIPE) // command beside pipe in child process
+	if (pipe_in != NO_PIPE || pipe_out != NO_PIPE)
+	// command beside pipe in child process
 	{
 		pid = fork();
 		if (pid < 0)
@@ -60,20 +64,22 @@ t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_
 	- apply_redirects
 	- apply_assigns_to_vars
 */
-void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
+void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
+		int pipe_out)
 {
-	/* 
+	/*
 		Todo left
 		- restore_signals ????
 	*/
 	close_fd_bitmap(ctx->bitmap);
 	if (attach_pipe_to_stdio(pipe_in, pipe_out) != ST_OK)
 		exit(EXIT_FAILURE);
-	pipe_in = pipe_out = NO_PIPE;
+	pipe_in = NO_PIPE;
+	pipe_out = NO_PIPE;
 	if (apply_redirects(cmd->redirects) != ST_OK)
 		exit(EXIT_FAILURE);
 	if (apply_assigns(ctx->env_table, cmd->assigns, VARS) != ST_OK)
-		exit (EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	exit(EXIT_SUCCESS);
 }
 

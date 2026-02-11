@@ -6,15 +6,15 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 23:52:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/08 00:13:23 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:03:16 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/execute.h"
 
-t_fd_bitmap *new_fd_bitmap(int size)
+t_fd_bitmap	*new_fd_bitmap(int size)
 {
-	t_fd_bitmap *new;
+	t_fd_bitmap	*new;
 
 	new = ft_calloc(sizeof(t_fd_bitmap), 1);
 	if (new == NULL)

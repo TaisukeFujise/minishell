@@ -6,15 +6,15 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:34:37 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 05:46:55 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:13:24 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BUILTIN_H
 # define BUILTIN_H
 
-#include <errno.h>
-#include "minishell.h"
+# include "minishell.h"
+# include <errno.h>
 
 t_status	cd_cmd(t_word_list *args, t_ctx *ctx);
 t_status	echo_cmd(t_word_list *args, t_ctx *ctx);

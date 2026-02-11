@@ -6,15 +6,15 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:39:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 02:13:17 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:01:39 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/parser.h"
 #include "../../include/builtin.h"
+#include "../../include/parser.h"
 
-void	free_item(t_bucket_contents **item);
-void	print_entry(t_bucket_contents *item);
+void		free_item(t_bucket_contents **item);
+void		print_entry(t_bucket_contents *item);
 
 /*
 	env
@@ -23,7 +23,6 @@ void	print_entry(t_bucket_contents *item);
 t_status	env_cmd(t_word_list *args, t_ctx *ctx)
 {
 	(void)ctx;
-
 	if (args != NULL)
 		return (ST_FAILURE); // env: too many arguments
 	if (args == NULL)
