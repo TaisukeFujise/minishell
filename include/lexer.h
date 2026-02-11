@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:33 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/09 18:20:03 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/10 21:03:28 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,15 @@ typedef enum e_token_kind
 	TK_ERR
 }	t_token_kind;
 
+typedef enum e_lexer_err
+{
+	LEX_NO_ERR,
+	LEX_ERR_UNCLOSED_SINGLE_QUOTE,
+	LEX_ERR_UNCLOSED_DOUBLE_QUOTE,
+	LEX_ERR_UNCLOSED_SUBSHELL,
+	LEX_ERR_MEMORY_ALLOCATION = -1
+}	t_lexer_err;
+
 typedef struct s_token	t_token;
 
 struct s_token
@@ -45,7 +54,7 @@ struct s_token
 		t_op_redir		op_redir;
 		int				io_num;
 		char			*nl_ptr;
-		int				err;
+		t_lexer_err		err;
 	}	u_token;
 };
 
