@@ -15,9 +15,6 @@
 
 # include "minishell.h"
 
-# define ERR_UNCLOSED_QUOTE 1
-# define ERR_UNCLOSED_SUBSHELL 2
-
 typedef enum e_token_kind
 {
 	TK_UNSET,

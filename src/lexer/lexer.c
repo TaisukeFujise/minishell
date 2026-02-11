@@ -19,7 +19,7 @@ t_token_kind	lexer_step(char **line, t_token *token, t_lex_state *st)
 	skip_blank(line);
 	if (lex_control(line, token) == TK_EOF && st->paren_depth != 0)
 	{
-		set_lexer_error(token, ERR_UNCLOSED_SUBSHELL);
+		set_lexer_error(token, LEX_ERR_UNCLOSED_SUBSHELL);
 		return (token->token_kind);
 	}
 	if (token->token_kind != TK_UNSET)

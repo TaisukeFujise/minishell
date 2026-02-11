@@ -61,7 +61,7 @@ t_token_kind	lex_group(char **line, t_token *token, t_lex_state *st)
 	else if (**line == ')')
 	{
 		if (st->paren_depth == 0)
-			set_lexer_error(token, ERR_UNCLOSED_SUBSHELL);
+			set_lexer_error(token, LEX_ERR_UNCLOSED_SUBSHELL);
 		else
 		{
 			token->token_kind = TK_GROUP;

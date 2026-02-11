@@ -49,8 +49,8 @@ void			validate_assign(char *cur_ptr, t_assign_info *as);
 void			set_lexer_error(t_token *token, int err);
 int				free_word_parts(t_word *head);
 int				is_tk_bound(char *ch);
-int				append_part(t_word ***tail, char *str, int len, uint8_t flag);
-int				finish_quote(char **line, t_word ***tail,
+t_lexer_err		append_part(t_word ***tail, char *str, int len, uint8_t flag);
+t_lexer_err		finish_quote(char **line, t_word ***tail,
 					char *begin, uint8_t flag);
 void			lex_dollar(char **cur_ptr, uint8_t *flag);
 void			apply_assign_info(t_word *head, t_assign_info *as);

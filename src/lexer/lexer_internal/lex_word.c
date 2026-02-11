@@ -6,14 +6,14 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/11 23:25:28 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/12 00:23:02 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
 #include "minishell.h"
 
-static int	scan_sq(char **line, t_word ***tail)
+static t_lexer_err	scan_sq(char **line, t_word ***tail)
 {
 	char	*begin;
 
@@ -23,7 +23,7 @@ static int	scan_sq(char **line, t_word ***tail)
 	return (finish_quote(line, tail, begin, W_SQ));
 }
 
-static int	scan_dq(char **line, t_word ***tail)
+static t_lexer_err	scan_dq(char **line, t_word ***tail)
 {
 	char	*begin;
 	char	*dollar;
@@ -34,13 +34,15 @@ static int	scan_dq(char **line, t_word ***tail)
 	{
 		if (**line == '$')
 		{
-			if (append_part(tail, begin, *line - begin, W_DQ) < 0)
-				return (-1);
+			if (append_part(tail, begin, *line - begin, W_DQ)
+				!= LEX_NO_ERR)
+				return (LEX_ERR_MEMORY_ALLOCATION);
 			dollar = *line;
 			flag = W_NONE;
 			lex_dollar(line, &flag);
-			if (append_part(tail, dollar, *line - dollar, W_DQ | flag) < 0)
-				return (-1);
+			if (append_part(tail, dollar, *line - dollar, W_DQ | flag)
+				!= LEX_NO_ERR)
+				return (LEX_ERR_MEMORY_ALLOCATION);
 			begin = *line;
 		}
 		else
@@ -49,7 +51,8 @@ static int	scan_dq(char **line, t_word ***tail)
 	return (finish_quote(line, tail, begin, W_DQ));
 }
 
-static int	scan_unquoted(char **line, t_word ***tail, t_assign_info *as)
+static t_lexer_err	scan_unquoted(char **line, t_word ***tail,
+						t_assign_info *as)
 {
 	char	*begin;
 	uint8_t	flag;
@@ -67,15 +70,15 @@ static int	scan_unquoted(char **line, t_word ***tail, t_assign_info *as)
 	else
 		while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))
 			validate_assign((*line)++, as);
-	if (append_part(tail, begin, *line - begin, flag) < 0)
-		return (-1);
-	return (0);
+	if (append_part(tail, begin, *line - begin, flag) != LEX_NO_ERR)
+		return (LEX_ERR_MEMORY_ALLOCATION);
+	return (LEX_NO_ERR);
 }
 
-static int	scan_word(char **line, t_word **head, t_assign_info *as)
+static t_lexer_err	scan_word(char **line, t_word **head, t_assign_info *as)
 {
-	t_word	**tail;
-	int		err;
+	t_word		**tail;
+	t_lexer_err	err;
 
 	tail = head;
 	while (**line && !is_tk_bound(*line))
@@ -91,14 +94,14 @@ static int	scan_word(char **line, t_word **head, t_assign_info *as)
 		if (err)
 			return (err);
 	}
-	return (0);
+	return (LEX_NO_ERR);
 }
 
 t_token_kind	lex_word(char **line, t_token *tk)
 {
 	t_word			*head;
 	t_assign_info	as;
-	int				err;
+	t_lexer_err		err;
 
 	head = NULL;
 	set_assign_info(&as, AS_INIT, NULL, W_NONE);
@@ -106,7 +109,7 @@ t_token_kind	lex_word(char **line, t_token *tk)
 	if (err)
 	{
 		free_word_parts(head);
-		if (err > 0)
+		if (err != LEX_ERR_MEMORY_ALLOCATION)
 			set_lexer_error(tk, err);
 		return (tk->token_kind);
 	}
