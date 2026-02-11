@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/07 22:04:56 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/10 21:15:56 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,12 +92,14 @@ typedef enum e_flag
 	W_DQ		= 1u << 1,
 	W_DOLL		= 1u << 2,
 	W_WILD		= 1u << 3,
-	W_ASSIGN	= 1u << 4
+	W_ASSIGN	= 1u << 4,
+	W_APPEND	= 1u << 5,
+	W_IDENT		= 1u << 6
 }	t_flag;
 
 typedef struct s_word	t_word;
 
-typedef struct s_word
+struct s_word
 {
 	char	*str;
 	int		len;
@@ -108,8 +110,7 @@ typedef struct s_word
 
 typedef struct s_assign	t_assign;
 
-typedef struct s_assign	t_assign;
-typedef struct s_assign
+struct s_assign
 {
 	t_word		*key;
 	t_word		*value;

@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/05 18:11:25 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/10 21:05:23 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,21 @@ void	skip_blank(char **line)
 		(*line)++;
 }
 
-unsigned int	str2fd(char **line)
+int	str2fd(char **line)
 {
 	long long	num;
+	int			digit;
 
 	num = 0;
 	while (ft_isdigit(**line))
 	{
-		if (num > (UINT_MAX - (**line - '0')) / 10)
-			num = UINT_MAX;
-		else
-			num = num * 10u + (**line - '0');
+		digit = **line - '0';
+		if (num > INT_MAX / 10 || (num == INT_MAX / 10 && digit > INT_MAX % 10))
+			return (-1);
+		num = num * 10 + digit;
 		(*line)++;
 	}
-	return ((unsigned int)num);
+	return ((int)num);
 }
 
 // Extended version of ft_strchr

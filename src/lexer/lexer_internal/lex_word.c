@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lex_word.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/04 18:19:16 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/10 22:20:55 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static int	scan_sq(char **line, t_word ***tail)
 	char	*begin;
 
 	begin = ++(*line);
-	while (**line && ft_strncmp(*line, "\'", 1) != 0)
+	while (**line && **line != '\'')
 		(*line)++;
 	return (finish_quote(line, tail, begin, W_SQ));
 }
@@ -30,9 +30,9 @@ static int	scan_dq(char **line, t_word ***tail)
 	uint8_t	flag;
 
 	begin = ++(*line);
-	while (**line && ft_strncmp(*line, "\"", 1) != 0)
+	while (**line && **line != '\"')
 	{
-		if (ft_strncmp(*line, "$", 1) == 0)
+		if (**line == '$')
 		{
 			if (append_part(tail, begin, *line - begin, W_DQ) < 0)
 				return (-1);
@@ -82,9 +82,9 @@ static int	scan_word(char **line, t_word **head, t_assign_info *as)
 	{
 		if (ft_strchr("\'\"$*", **line))
 			validate_assign(*line, as);
-		if (ft_strncmp(*line, "\'", 1) == 0)
+		if (**line == '\'')
 			err = scan_sq(line, &tail);
-		else if (ft_strncmp(*line, "\"", 1) == 0)
+		else if (**line == '\"')
 			err = scan_dq(line, &tail);
 		else
 			err = scan_unquoted(line, &tail, as);
@@ -101,9 +101,7 @@ t_token_kind	lex_word(char **line, t_token *tk)
 	int				err;
 
 	head = NULL;
-	as.state = AS_INIT;
-	as.eq_ptr = NULL;
-	as.flag = W_NONE;
+	set_assign_info(&as, AS_INIT, NULL, W_NONE);
 	err = scan_word(line, &head, &as);
 	if (err)
 	{
