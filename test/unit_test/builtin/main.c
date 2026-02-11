@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 14:31:54 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 15:17:08 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 16:03:35 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	main(int argc, char **argv, char **envp)
 	flag_args = malloc(sizeof(t_word_list));
 	flag_args->wd->str = ft_strdup("-n");
 	flag_args->wd->len = 2;
-	flag_args->wd->next = args;
+	flag_args->next = args;
 	echo_cmd(flag_args, &ctx);
 	// (iii) env
 	write(1, "==== env ====", 13);
@@ -83,10 +83,10 @@ int	main(int argc, char **argv, char **envp)
 	// (vii) unset
 	write(1, "==== unset ====", 15);
 	args = NULL;
-	unset(args, &ctx);
+	unset_cmd(args, &ctx);
 	args = malloc(sizeof(t_word_list));
 	args->wd->str = ft_strdup("HOME");
 	args->wd->len = 4;
 	args->next = NULL;
-	unset(args, &ctx);
+	unset_cmd(args, &ctx);
 }

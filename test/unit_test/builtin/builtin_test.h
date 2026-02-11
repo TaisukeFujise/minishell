@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 14:31:18 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 14:38:17 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 16:04:35 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,4 +20,4 @@
 
 #include <assert.h>
 
-#endif BUILTIN_TEST_H
+#endif

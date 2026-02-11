@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:41:53 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 12:54:23 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 16:02:26 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,5 @@ t_status	unset_cmd(t_word_list *args, t_ctx *ctx)
 		item = NULL;
 		args = args->next;
 	}
+	return (ST_OK);
 }

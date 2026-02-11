@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 19:33:34 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:00:48 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 16:54:08 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,8 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 		char *path)
 {
 	t_bucket_contents	*pwd;
-	char				*key_pwd;
 
-	if (update_oldpwd(tmp_table, env_table) != ST_OK)
+	if (_update_oldpwd(tmp_table, env_table) != ST_OK)
 		return (ST_FATAL);
 	pwd = hash_insert("PWD", env_table);
 	if (pwd == NULL)
