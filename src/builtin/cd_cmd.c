@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 19:33:34 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/12 23:45:32 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/13 00:49:33 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,9 @@ t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 		free(oldpwd->data.value);
 		oldpwd->data.value = NULL;
 	}
-	oldpwd->data.value = pwd->data.value;
+	oldpwd->data.value = ft_strdup(pwd->data.value);
+	if (oldpwd->data.value == NULL)
+		return (ST_FATAL);
 	return (ST_OK);
 }
 
@@ -97,7 +99,9 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 		free(pwd->data.value);
 		pwd->data.value = NULL;
 	}
-	pwd->data.value = path;
+	pwd->data.value = ft_strdup(path);
+	if (pwd->data.value == NULL)
+		return (ST_FATAL);
 	return (ST_OK);
 }
 
