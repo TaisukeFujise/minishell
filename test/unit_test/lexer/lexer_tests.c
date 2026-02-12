@@ -379,8 +379,8 @@ int	main(void)
 	static const t_expect_token	case_newline_mid[] = {
 		EXP_WORD("a", W_NONE), EXP_NL, EXP_WORD("b", W_NONE), EXP_EOF
 	};
-	static const t_expect_token	case_unclosed_sq[] = {EXP_ERR(ERR_UNCLOSED_QUOTE)};
-	static const t_expect_token	case_unclosed_dq[] = {EXP_ERR(ERR_UNCLOSED_QUOTE)};
+	static const t_expect_token	case_unclosed_sq[] = {EXP_ERR(LEX_ERR_UNCLOSED_SINGLE_QUOTE)};
+	static const t_expect_token	case_unclosed_dq[] = {EXP_ERR(LEX_ERR_UNCLOSED_DOUBLE_QUOTE)};
 
 	static const t_test_case	cases[] = {
 		CASE("empty", "", case_empty),

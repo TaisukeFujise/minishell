@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2026/01/08 16:40:38 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/10 21:05:23 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,27 +17,27 @@
 
 // Refer to section "3.45 Blank Character (<blank>)" 
 // in https://pubs.opengroup.org/onlinepubs/9799919799/
-
 void	skip_blank(char **line)
 {
 	while (**line != '\0' && ft_isblank(**line))
 		(*line)++;
 }
 
-unsigned int	str2fd(char **line)
+int	str2fd(char **line)
 {
 	long long	num;
+	int			digit;
 
 	num = 0;
 	while (ft_isdigit(**line))
 	{
-		if (num > (UINT_MAX - (**line - '0')) / 10)
-			num = UINT_MAX;
-		else
-			num = num * 10u + (**line - '0');
+		digit = **line - '0';
+		if (num > INT_MAX / 10 || (num == INT_MAX / 10 && digit > INT_MAX % 10))
+			return (-1);
+		num = num * 10 + digit;
 		(*line)++;
 	}
-	return ((unsigned int)num);
+	return ((int)num);
 }
 
 // Extended version of ft_strchr
@@ -60,30 +60,15 @@ char	*strchunk(const char *table, const char *str, size_t n)
 	return (NULL);
 }
 
-void	validate_assign(char *cur_ptr, t_token *token, t_assign_state *as)
+int	is_tk_bound(char *ch)
 {
-	if (*as == AS_DONE || *as == AS_INVALID)
+	return (ft_strchr(" \t\n|()><", *ch) || strchunk("&&||>><<", ch, 2));
+}
+
+void	set_lexer_error(t_token *token, int err)
+{
+	if (!token)
 		return ;
-	if (!ft_strncmp(cur_ptr, "=", 1))
-	{
-		if (*as == AS_VALID)
-		{
-			token->u_token.wd.eq_ptr = cur_ptr;
-			token->u_token.wd.flag |= W_ASSIGN;
-		}
-		*as = AS_DONE;
-		return ;
-	}
-	if (*as == AS_INIT)
-	{
-		if (ft_isalpha(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1))
-			*as = AS_VALID;
-		else
-			*as = AS_INVALID;
-	}
-	else
-	{
-		if (!(ft_isalnum(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1)))
-			*as = AS_INVALID;
-	}
+	token->token_kind = TK_ERR;
+	token->u_token.err = err;
 }

@@ -21,6 +21,6 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	dump_tokens(tokens);
-	free_tokens(tokens);
+	free_tokens(tokens, NULL);
 	return (0);
 }
