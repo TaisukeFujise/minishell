@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dump_tokens.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 17:38:31 by fendo             #+#    #+#             */
-/*   Updated: 2026/01/06 16:37:18 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/13 00:04:13 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,11 @@ static const char	*group_name(t_op_group op)
 
 static const char	*redir_name(t_op_redir op)
 {
-	if (op == REDIR_DGREAT)
+	if (op == REDIR_DGREATER)
 		return (">>");
 	if (op == REDIR_DLESS)
 		return ("<<");
-	if (op == REDIR_GREAT)
+	if (op == REDIR_GREATER)
 		return (">");
 	if (op == REDIR_LESS)
 		return ("<");
@@ -107,6 +107,20 @@ static void	print_word_flags(uint8_t flag)
 		printf("ASSIGN");
 		first = 0;
 	}
+	if (flag & W_APPEND)
+	{
+		if (!first)
+			printf("|");
+		printf("APPEND");
+		first = 0;
+	}
+	if (flag & W_ID)
+	{
+		if (!first)
+			printf("|");
+		printf("IDENT");
+		first = 0;
+	}
 	if (first)
 		printf("NONE");
 }
@@ -145,7 +159,7 @@ void	dump_tokens(t_token *head)
 		{
 			word = curr->u_token.wd;
 			print_word_parts(word);
-			if (word && (word->flag & W_ASSIGN))
+			if (word && (word->flag & (W_ASSIGN | W_APPEND)))
 			{
 				printf("  position of \'=\' : \"%zu\"\n",
 					word->eq_ptr - word->str);

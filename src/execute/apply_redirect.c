@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 12:31:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/05 14:58:08 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/07 00:20:38 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,7 @@
 #include "../../include/parser.h"
 #include "../../include/execute.h"
 
-t_status	apply_redir_greater(t_redirect *redirect);
-t_status	apply_redir_less(t_redirect *redirect);
-t_status	apply_redir_dgreater(t_redirect *redirect);
+t_status	apply_redir_excluding_dless(t_redirect *redirect, int oflag);
 t_status	apply_redir_dless(t_redirect *redirect);
 
 /*
@@ -34,11 +32,11 @@ t_status	apply_redirects(t_redirect *redirects)
 	while (redirects)
 	{
 		if (redirects->op == REDIR_GREATER)
-			status = apply_redir_greater(redirects);
+			status = apply_redir_excluding_dless(redirects, O_WRONLY | O_CREAT | O_TRUNC);
 		else if (redirects->op == REDIR_LESS)
-			status = apply_redir_less(redirects);
+			status = apply_redir_excluding_dless(redirects, O_RDONLY);
 		else if (redirects->op == REDIR_DGREATER)
-			status = apply_redir_dgreater(redirects);
+			status = apply_redir_excluding_dless(redirects, O_WRONLY | O_CREAT | O_APPEND);
 		else if (redirects->op == REDIR_DLESS)
 			status = apply_redir_dless(redirects);
 		else
@@ -51,54 +49,16 @@ t_status	apply_redirects(t_redirect *redirects)
 }
 
 /*
-	apply_redir_great redirect output like " 3> file".
-	- io_number "1" means " > file"
+	apply_redir_excluding_dless redirect the following output.
+	- "> file"
+	- "< file"
+	- ">> file"
 */
-t_status	apply_redir_greater(t_redirect *redirect)
+t_status	apply_redir_excluding_dless(t_redirect *redirect, int oflag)
 {
 	int	fd;
 
-	fd = open(redirect->target.str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd < 0)
-		return (ST_FAILURE);
-	if (dup2(fd, redirect->io_number) < 0)
-	{
-		close(fd);
-		return (ST_FAILURE);
-	}
-	close(fd);
-	return (ST_OK);
-}
-
-/*
-	apply_redir_less redirect input like " 4< file".
-	- io_number "0" means " < file"
-*/
-t_status	apply_redir_less(t_redirect *redirect)
-{
-	int	fd;
-
-	fd = open(redirect->target.str, O_RDONLY);
-	if (fd < 0)
-		return (ST_FAILURE);
-	if (dup2(fd, redirect->io_number) < 0)
-	{
-		close(fd);
-		return (ST_FAILURE);
-	}
-	close(fd);
-	return (ST_OK);
-}
-
-/*
-	apply_redir_dgreat redirect output in append mode like "4>> file"
-	- io_number "1" means " >> file"
-*/
-t_status	apply_redir_dgreater(t_redirect *redirect)
-{
-	int	fd;
-
-	fd = open(redirect->target.str, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	fd = open(redirect->target.str, oflag, 0644);
 	if (fd < 0)
 		return (ST_FAILURE);
 	if (dup2(fd, redirect->io_number) < 0)

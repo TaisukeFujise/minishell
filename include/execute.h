@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/04 09:36:12 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/06 18:58:19 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,12 @@ typedef struct s_savedfd
 	int	stdin;
 	int	stdout;
 }	t_savedfd;
+
+typedef enum s_tabletype
+{
+	TMP,
+	VARS,
+}	t_tabletype;
 
 /* init.c */
 int			init_ctx(t_ctx *ctx, char **envp);
@@ -55,8 +61,9 @@ void		close_fd_bitmap(t_fd_bitmap *fd_bitmap);
 void		dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
 
 /* assigns.c */
-t_status	apply_assigns_to_vars(t_hashtable *env_table, t_assign *assign);
-t_status	apply_assigns_to_tmp_env(t_hashtable *tmp_table, t_assign *assign);
+t_status	apply_assigns(t_hashtable *table, t_assign *assign, t_tabletype type);
+// t_status	apply_assigns_to_vars(t_hashtable *env_table, t_assign *assign);
+// t_status	apply_assigns_to_tmp_env(t_hashtable *tmp_table, t_assign *assign);
 
 /* apply_redirect.c */
 t_status	apply_redirects(t_redirect *redirects);

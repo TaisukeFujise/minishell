@@ -6,105 +6,63 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 22:00:38 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/05 18:10:30 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/11 21:55:44 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
 #include "minishell.h"
 
-int	append_part(t_word ***tail, char *str, int len, uint8_t flag)
+t_lexer_err	append_part(t_word ***tail, char *str, int len, uint8_t flag)
 {
 	t_word	*part;
 
 	if ((len < 0) || (len == 0 && !(flag & (W_SQ | W_DQ))))
-		return (0);
+		return (LEX_NO_ERR);
 	part = ft_calloc(1, sizeof(t_word));
 	if (!part)
-		return (-1);
+		return (LEX_ERR_MEMORY_ALLOCATION);
 	part->str = str;
 	part->len = len;
 	part->flag = flag;
 	**tail = part;
 	*tail = &part->next;
-	return (0);
+	return (LEX_NO_ERR);
 }
 
-int	finish_quote(char **line, t_word ***tail, char *begin, uint8_t flag)
+t_lexer_err	finish_quote(char **line, t_word ***tail, char *begin, uint8_t flag)
 {
 	const char	*quote;
 
 	quote = "\"";
 	if (flag & W_SQ)
 		quote = "\'";
-	if (ft_strncmp(*line, quote, 1) != 0)
-		return (ERR_UNCLOSED_QUOTE);
-	if (append_part(tail, begin, *line - begin, flag) < 0)
-		return (-1);
+	if (**line != *quote)
+	{
+		if (flag & W_SQ)
+			return (LEX_ERR_UNCLOSED_SINGLE_QUOTE);
+		return (LEX_ERR_UNCLOSED_DOUBLE_QUOTE);
+	}
+	if (append_part(tail, begin, *line - begin, flag) != LEX_NO_ERR)
+		return (LEX_ERR_MEMORY_ALLOCATION);
 	(*line)++;
-	return (0);
+	return (LEX_NO_ERR);
 }
 
 void	lex_dollar(char **cur_ptr, uint8_t *flag)
 {
 	(*cur_ptr)++;
-	if (!ft_strncmp(*cur_ptr, "?", 1))
+	if (**cur_ptr == '?')
 	{
 		(*cur_ptr)++;
 		*flag = W_DOLL;
 		return ;
 	}
-	else if (ft_isalpha(**cur_ptr) || !ft_strncmp(*cur_ptr, "_", 1))
+	else if (ft_isalpha(**cur_ptr) || **cur_ptr == '_')
 	{
 		(*cur_ptr)++;
-		while (ft_isalnum(**cur_ptr) || !ft_strncmp(*cur_ptr, "_", 1))
+		while (ft_isalnum(**cur_ptr) || **cur_ptr == '_')
 			(*cur_ptr)++;
 		*flag = W_DOLL;
-	}
-}
-
-void	validate_assign(char *cur_ptr, t_assign_info *as)
-{
-	if (as->state == AS_DONE || as->state == AS_INVALID)
-		return ;
-	if (!ft_strncmp(cur_ptr, "=", 1))
-	{
-		if (as->state == AS_VALID)
-		{
-			as->eq_ptr = cur_ptr;
-			as->flag |= W_ASSIGN;
-		}
-		as->state = AS_DONE;
-		return ;
-	}
-	if (as->state == AS_INIT)
-	{
-		if (ft_isalpha(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1))
-			as->state = AS_VALID;
-		else
-			as->state = AS_INVALID;
-	}
-	else
-	{
-		if (!(ft_isalnum(*cur_ptr) || !ft_strncmp(cur_ptr, "_", 1)))
-			as->state = AS_INVALID;
-	}
-}
-
-void	apply_assign_info(t_word *head, t_assign_info *as)
-{
-	t_word	*cur;
-
-	if (!head || !as)
-		return ;
-	head->eq_ptr = as->eq_ptr;
-	head->flag |= as->flag;
-	if (!(as->flag & W_ASSIGN))
-		return ;
-	cur = head;
-	while (cur)
-	{
-		cur->flag |= W_ASSIGN;
-		cur = cur->next;
 	}
 }
