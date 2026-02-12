@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:39:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 16:54:34 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/13 00:59:19 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ void	print_env(t_hashtable *tmp_table, t_hashtable *env_table)
 		i++;
 	}
 	i = 0;
+	if (tmp_table == NULL)
+		return ;
 	while (i < tmp_table->bucket_size)
 	{
 		item = hash_items(i, tmp_table);
@@ -80,5 +82,5 @@ void	free_item(t_bucket_contents **item)
 void	print_entry(t_bucket_contents *item)
 {
 	if (item->data.exported)
-		printf("%s=%s", item->key, item->data.value);
+		printf("%s=%s\n", item->key, item->data.value);
 }
