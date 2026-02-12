@@ -6,7 +6,7 @@
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/11 15:58:40 by tafujise          #+#    #+#              #
-#    Updated: 2026/02/11 16:07:49 by tafujise         ###   ########.fr        #
+#    Updated: 2026/02/11 20:04:29 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -63,4 +63,10 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+debug: CCFLAGS += $(DEBUG_FLAGS)
+debug:
+	$(MAKE) fclean
+	$(MAKE) -C $(LIBFT_DIR) CCFLAGS="$(CCFLAGS)" all
+	$(MAKE) CCFLAGS="$(CCFLAGS)" all
+
+.PHONY: all clean fclean re debug

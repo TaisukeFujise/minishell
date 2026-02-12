@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 19:33:34 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 16:54:08 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/12 23:45:32 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,6 @@ t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 		oldpwd->data.value = NULL;
 	}
 	oldpwd->data.value = pwd->data.value;
-	free(pwd->data.value);
-	pwd->data.value = NULL;
 	return (ST_OK);
 }
 
@@ -88,6 +86,7 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 {
 	t_bucket_contents	*pwd;
 
+	// (void)tmp_table;
 	if (_update_oldpwd(tmp_table, env_table) != ST_OK)
 		return (ST_FATAL);
 	pwd = hash_insert("PWD", env_table);
