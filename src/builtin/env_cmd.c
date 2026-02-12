@@ -6,13 +6,16 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:39:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/13 00:59:19 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/13 01:17:33 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/builtin.h"
 #include "../../include/parser.h"
 
+void		print_env_from_envtable(t_hashtable *tmp_table,
+				t_hashtable *env_table);
+void		print_env_from_tmptable(t_hashtable *tmp_table);
 void		free_item(t_bucket_contents **item);
 void		print_entry(t_bucket_contents *item);
 
@@ -26,11 +29,14 @@ t_status	env_cmd(t_word_list *args, t_ctx *ctx)
 	if (args != NULL)
 		return (ST_FAILURE); // env: too many arguments
 	if (args == NULL)
-		print_env(ctx->tmp_table, ctx->env_table);
+	{
+		print_env_from_envtable(ctx->tmp_table, ctx->env_table);
+		print_env_from_tmptable(ctx->tmp_table);
+	}
 	return (ST_OK);
 }
 
-void	print_env(t_hashtable *tmp_table, t_hashtable *env_table)
+void	print_env_from_envtable(t_hashtable *tmp_table, t_hashtable *env_table)
 {
 	int					i;
 	t_bucket_contents	*item;
@@ -56,6 +62,13 @@ void	print_env(t_hashtable *tmp_table, t_hashtable *env_table)
 		}
 		i++;
 	}
+}
+
+void	print_env_from_tmptable(t_hashtable *tmp_table)
+{
+	int					i;
+	t_bucket_contents	*item;
+
 	i = 0;
 	if (tmp_table == NULL)
 		return ;

@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:40:50 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 12:41:23 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/13 01:09:55 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 static int	_isvalid_idchars(char *str, int len);
 int			validate_identifier(t_word *wd);
 
+// Todo for fendo
 /*
 	export name[=word]...
 	"export" register the args to env table, and update the ctx->exit_code.
