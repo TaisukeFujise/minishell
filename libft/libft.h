@@ -6,19 +6,19 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 09:41:34 by fujisetaisu       #+#    #+#             */
-/*   Updated: 2026/02/11 10:52:12 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/13 01:31:06 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
-# include <stddef.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <stdint.h>
-# include <limits.h>
 # include <errno.h>
+# include <limits.h>
+# include <stddef.h>
+# include <stdint.h>
+# include <stdlib.h>
+# include <unistd.h>
 
 # define BUFFER_SIZE 100
 
@@ -64,6 +64,6 @@ void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
 char	*get_next_line(int fd);
-long	ft_strtol(char *nptr);
+long	ft_atol(char *nptr);
 
 #endif

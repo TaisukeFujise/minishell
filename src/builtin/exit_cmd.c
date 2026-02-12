@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:40:04 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:01:45 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/13 01:31:06 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ t_status	exit_cmd(t_word_list *args, t_ctx *ctx)
 		ctx->err.exit_code = 1;
 		return (ST_FAILURE); // exit: too many arguments
 	}
-	arg_num = ft_strtol(args->wd->str);
+	arg_num = ft_atol(args->wd->str);
 	if (errno == ERANGE)
 	{
 		write(STDERR_FILENO, "exit", 4);
