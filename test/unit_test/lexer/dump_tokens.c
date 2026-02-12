@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dump_tokens.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 17:38:31 by fendo             #+#    #+#             */
-/*   Updated: 2026/01/06 16:37:18 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/13 00:04:13 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ static void	print_word_flags(uint8_t flag)
 		printf("APPEND");
 		first = 0;
 	}
-	if (flag & W_IDENT)
+	if (flag & W_ID)
 	{
 		if (!first)
 			printf("|");

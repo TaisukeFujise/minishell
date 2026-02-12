@@ -29,8 +29,7 @@ TEST_OBJS:=$(TEST_SRCS:%.c=$(TEST_OBJDIR)/%.o)
 CC:=cc
 CFLAGS:=-Wall -Wextra -Werror -I$(ROOT)/include -I$(ROOT)/src/lexer -I$(LIBFT_DIR)
 
-all: $(NAME_LINE) $(NAME_REPL) $(NAME_TEST)
-
+all: $(NAME_LINE) $(NAME_REPL)
 $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
 
@@ -65,4 +64,4 @@ repl: $(NAME_REPL)
 
 line: $(NAME_LINE)
 
-.PHONY: all clean fclean re tests repl line
+.PHONY: all clean fclean re repl line

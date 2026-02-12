@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:40:40 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/11 22:41:18 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/13 00:04:07 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	apply_assign_info(t_word *head, t_assign_info *as)
 	if (!head)
 		return ;
 	if (as->state == AS_VALID && as->flag == W_NONE)
-		as->flag |= W_IDENT;
+		as->flag |= W_ID;
 	head->eq_ptr = as->eq_ptr;
 	head->flag |= as->flag;
 	if (!(as->flag & (W_ASSIGN | W_APPEND)))
