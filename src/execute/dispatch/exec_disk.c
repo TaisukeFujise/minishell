@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:49:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/13 15:58:43 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/13 23:52:55 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,16 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		close_pipes(pipe_in, pipe_out);
 		return (register_pid(ctx, pid));
 	}
+}
+
+t_status	disk_command(t_word_list *args, t_ctx *ctx)
+{
+	/*
+		Todo
+		- disk_command find disk command and execute it.
+		- It returns error, like "command not found", if there is no command.
+		< https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_09_01 >
+		2.9.1 Simple command
+		> Command Search and Execution
+	*/
 }
