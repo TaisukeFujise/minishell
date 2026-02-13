@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/10 21:05:23 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/13 23:16:35 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,6 @@
 #include "lexer_internal.h"
 #include <limits.h>
 #include <stddef.h>
-
-// Refer to section "3.45 Blank Character (<blank>)" 
-// in https://pubs.opengroup.org/onlinepubs/9799919799/
-void	skip_blank(char **line)
-{
-	while (**line != '\0' && ft_isblank(**line))
-		(*line)++;
-}
 
 int	str2fd(char **line)
 {
