@@ -3,92 +3,118 @@
 /*                                                        :::      ::::::::   */
 /*   lex_word.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/22 22:44:56 by fendo             #+#    #+#             */
-/*   Updated: 2026/01/08 16:34:04 by fendo            ###   ########.fr       */
+/*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
+/*   Updated: 2026/02/12 00:23:02 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
 #include "minishell.h"
 
-static void	_case_single_quote(char **line, uint8_t *q_state, t_token *token)
+static t_lexer_err	scan_sq(char **line, t_word ***tail)
 {
-	if (ft_strncmp(*line, "\'", 1) == 0)
-	{
-		*q_state = W_NONE;
-		token->u_token.wd.flag |= W_SQ;
-	}
-	(*line)++;
+	char	*begin;
+
+	begin = ++(*line);
+	while (**line && **line != '\'')
+		(*line)++;
+	return (finish_quote(line, tail, begin, W_SQ));
 }
 
-static void	_case_double_quote(char **line, uint8_t *q_state, t_token *token)
+static t_lexer_err	scan_dq(char **line, t_word ***tail)
 {
-	if (ft_strncmp(*line, "\"", 1) == 0)
+	char	*begin;
+	char	*dollar;
+	uint8_t	flag;
+
+	begin = ++(*line);
+	while (**line && **line != '\"')
 	{
-		*q_state = W_NONE;
-		token->u_token.wd.flag |= W_DQ;
-	}
-	else if (ft_strncmp(*line, "$", 1) == 0)
-		token->u_token.wd.flag |= W_DOLL;
-	(*line)++;
-	return ;
-}
-
-static void	_case_none(char **line, uint8_t *q_state,
-			t_token *token, t_assign_state *as)
-{
-	validate_assign(*line, token, as);
-	if (ft_strncmp(*line, "\'", 1) == 0)
-		*q_state = W_SQ;
-	else if (ft_strncmp(*line, "\"", 1) == 0)
-		*q_state = W_DQ;
-	else if (ft_strncmp(*line, "$", 1) == 0)
-		token->u_token.wd.flag |= W_DOLL;
-	else if (ft_strncmp(*line, "*", 1) == 0)
-		token->u_token.wd.flag |= W_WILD;
-	(*line)++;
-}
-
-static void	_set_word_token(char *begin_ptr, char *end_ptr,
-		uint8_t q_state, t_token *token)
-{
-	if (q_state != W_NONE)
-	{
-		token->token_kind = TK_ERR;
-		token->u_token.err = ERR_UNCLOSED_QUOTE;
-		return ;
-	}
-	token->token_kind = TK_WORD;
-	token->u_token.wd.word.str = begin_ptr;
-	token->u_token.wd.word.len = end_ptr - begin_ptr;
-}
-
-void	lex_word(char **line, t_token *token)
-{
-	char				*begin_ptr;
-	uint8_t				q_state;
-	t_assign_state		as;
-
-	begin_ptr = *line;
-	q_state = W_NONE;
-	as = AS_INIT;
-	token->u_token.wd.flag = W_NONE;
-	token->u_token.wd.eq_ptr = NULL;
-	while (**line != '\0')
-	{
-		if (q_state == W_SQ)
-			_case_single_quote(line, &q_state, token);
-		else if (q_state == W_DQ)
-			_case_double_quote(line, &q_state, token);
-		else
+		if (**line == '$')
 		{
-			if ((ft_strchr(" \t\n|()><", **line)
-					|| strchunk("&&||>><<", *line, 2)))
-				break ;
-			_case_none(line, &q_state, token, &as);
+			if (append_part(tail, begin, *line - begin, W_DQ)
+				!= LEX_NO_ERR)
+				return (LEX_ERR_MEMORY_ALLOCATION);
+			dollar = *line;
+			flag = W_NONE;
+			lex_dollar(line, &flag);
+			if (append_part(tail, dollar, *line - dollar, W_DQ | flag)
+				!= LEX_NO_ERR)
+				return (LEX_ERR_MEMORY_ALLOCATION);
+			begin = *line;
 		}
+		else
+			(*line)++;
 	}
-	_set_word_token(begin_ptr, *line, q_state, token);
+	return (finish_quote(line, tail, begin, W_DQ));
+}
+
+static t_lexer_err	scan_unquoted(char **line, t_word ***tail,
+						t_assign_info *as)
+{
+	char	*begin;
+	uint8_t	flag;
+
+	begin = *line;
+	flag = W_NONE;
+	if (**line == '$')
+		lex_dollar(line, &flag);
+	else if (**line == '*')
+	{
+		flag = W_WILD;
+		while (**line == '*')
+			(*line)++;
+	}
+	else
+		while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))
+			validate_assign((*line)++, as);
+	if (append_part(tail, begin, *line - begin, flag) != LEX_NO_ERR)
+		return (LEX_ERR_MEMORY_ALLOCATION);
+	return (LEX_NO_ERR);
+}
+
+static t_lexer_err	scan_word(char **line, t_word **head, t_assign_info *as)
+{
+	t_word		**tail;
+	t_lexer_err	err;
+
+	tail = head;
+	while (**line && !is_tk_bound(*line))
+	{
+		if (ft_strchr("\'\"$*", **line))
+			validate_assign(*line, as);
+		if (**line == '\'')
+			err = scan_sq(line, &tail);
+		else if (**line == '\"')
+			err = scan_dq(line, &tail);
+		else
+			err = scan_unquoted(line, &tail, as);
+		if (err)
+			return (err);
+	}
+	return (LEX_NO_ERR);
+}
+
+t_token_kind	lex_word(char **line, t_token *tk)
+{
+	t_word			*head;
+	t_assign_info	as;
+	t_lexer_err		err;
+
+	head = NULL;
+	set_assign_info(&as, AS_INIT, NULL, W_NONE);
+	err = scan_word(line, &head, &as);
+	if (err)
+	{
+		free_word_parts(head);
+		if (err != LEX_ERR_MEMORY_ALLOCATION)
+			set_lexer_error(tk, err);
+		return (tk->token_kind);
+	}
+	tk->token_kind = TK_WORD;
+	tk->u_token.wd = head;
+	apply_assign_info(head, &as);
+	return (tk->token_kind);
 }

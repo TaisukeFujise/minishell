@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strtol.c                                        :+:      :+:    :+:   */
+/*   ft_atol.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -14,7 +14,7 @@
 
 static long	_consume_symbol(char **nptr);
 
-long	ft_strtol(char *nptr)
+long	ft_atol(char *nptr)
 {
 	long				sign;
 	unsigned long long	acc;
@@ -62,5 +62,5 @@ static long	_consume_symbol(char **nptr)
 // int	main(void)
 // {
 // 	char *str = "-0";
-// 	printf("%ld\n", ft_strtol(str));
+// 	printf("%ld\n", ft_atol(str));
 // }

@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 19:33:34 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/12 23:45:32 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/13 14:06:17 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 		return (ST_FAILURE); // minishell: cd: too many arguments.
 	if (chdir(args->wd->str) < 0)
 		return (ST_FATAL);
+	// cd: no such file or directory: <directory name> or cd: permission denied: <directory name>
 	path = getcwd(NULL, 0);
 	if (path == NULL)
 		return (ST_FATAL);
@@ -77,7 +78,9 @@ t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 		free(oldpwd->data.value);
 		oldpwd->data.value = NULL;
 	}
-	oldpwd->data.value = pwd->data.value;
+	oldpwd->data.value = ft_strdup(pwd->data.value);
+	if (oldpwd->data.value == NULL)
+		return (ST_FATAL);
 	return (ST_OK);
 }
 
@@ -97,7 +100,9 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 		free(pwd->data.value);
 		pwd->data.value = NULL;
 	}
-	pwd->data.value = path;
+	pwd->data.value = ft_strdup(path);
+	if (pwd->data.value == NULL)
+		return (ST_FATAL);
 	return (ST_OK);
 }
 
