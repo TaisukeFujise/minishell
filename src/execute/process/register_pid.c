@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/execute.h"
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
+#include "../../../include/execute.h"
+#include "../../../include/minishell.h"
+#include "../../../include/parser.h"
 
 /*
 	register_pid stack pid on ctx->pids, and increment ctx->npid

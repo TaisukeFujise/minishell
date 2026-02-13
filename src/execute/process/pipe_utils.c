@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/execute.h"
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
+#include "../../../include/execute.h"
+#include "../../../include/minishell.h"
+#include "../../../include/parser.h"
 
 t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out)
 {

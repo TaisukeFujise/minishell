@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
+#include "../../../include/minishell.h"
 
 int			status_to_exitcode(int status);
 void		reset_ctx_pid(t_ctx *ctx);

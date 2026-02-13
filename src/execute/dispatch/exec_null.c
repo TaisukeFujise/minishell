@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/execute.h"
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
+#include "../../../include/execute.h"
+#include "../../../include/minishell.h"
+#include "../../../include/parser.h"
 
 void		exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx,
 				int pipe_in, int pipe_out);

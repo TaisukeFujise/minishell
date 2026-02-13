@@ -29,7 +29,7 @@ BUILTIN_SRCS := cd_cmd.c\
 				unset_cmd.c\
 # 				export_cmd.c\
 
-EXEC_SRCS := init.c
+EXEC_SRCS := init_ctx.c
 
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
 

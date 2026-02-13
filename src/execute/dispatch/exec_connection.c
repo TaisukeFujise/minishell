@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
+#include "../../../include/minishell.h"
+#include "../../../include/parser.h"
 
 t_status	exec_connection(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {

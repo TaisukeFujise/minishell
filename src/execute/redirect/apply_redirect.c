@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/execute.h"
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
+#include "../../../include/execute.h"
+#include "../../../include/minishell.h"
+#include "../../../include/parser.h"
 
 t_status	apply_redir_excluding_dless(t_redirect *redirect, int oflag);
 t_status	apply_redir_dless(t_redirect *redirect);

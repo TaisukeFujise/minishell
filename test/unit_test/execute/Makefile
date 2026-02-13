@@ -21,15 +21,15 @@ LIBFT := $(LIBFT_DIR)/libft.a
 
 TEST_SRCS := main.c
 EXECUTE_SRCS := \
-	init.c \
-	bitmap.c\
+	init_ctx.c \
+	fd_bitmap.c\
 	exec_null.c \
 	pipe_utils.c \
 	register_pid.c \
-	stdio_backup.c \
+	stdio_guard.c \
 	apply_redirect.c \
 	assigns.c\
-	create_filename.c\
+	heredoc_tmpfile.c\
 
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
 
@@ -37,7 +37,13 @@ SRCS := $(TEST_SRCS) $(EXECUTE_SRCS) $(HASHMAP_SRCS)
 
 OBJDIR := obj
 OBJS := $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))
-vpath %.c $(ROOT)/src/hashmap $(ROOT)/src/execute .
+vpath %.c $(ROOT)/src/hashmap \
+	$(ROOT)/src/execute \
+	$(ROOT)/src/execute/dispatch \
+	$(ROOT)/src/execute/expansion \
+	$(ROOT)/src/execute/process \
+	$(ROOT)/src/execute/redirect \
+	.
 
 LDLIBS := -lreadline
 
