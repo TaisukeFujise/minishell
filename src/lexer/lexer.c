@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "lexer_internal/lexer_internal.h"
-#include <stdbool.h>
 
 t_token_kind	lexer_step(char **line, t_token *token, t_lex_state *st)
 {
@@ -49,54 +48,30 @@ int	free_word_parts(t_word *head)
 	return (1);
 }
 
-t_token	*free_tokens(t_token *head, t_token *extra)
+void	free_token(t_token *token)
 {
-	t_token	*tmp;
-
-	while (head)
-	{
-		tmp = head->next;
-		if (head->token_kind == TK_WORD)
-			free_word_parts(head->u_token.wd);
-		free(head);
-		head = tmp;
-	}
-	free(extra);
-	return (NULL);
+	if (!token)
+		return ;
+	if (token->token_kind == TK_WORD)
+		free_word_parts(token->u_token.wd);
+	token->token_kind = TK_UNSET;
 }
 
-// Return a token whose token_kind=TK_ERR if and only if quotes don't close.
-// Return NULL if and only if malloc fails.
-t_token	*tokenize(char *line)
+void	init_lex_state(t_lex_state *st, char *line)
 {
-	t_token			*head;
-	t_token			**tail;
-	t_token			*token;
-	t_lex_state		st;
-	t_token_kind	tk_kind;
+	if (!st)
+		return ;
+	st->line = line;
+	st->paren_depth = 0;
+}
 
-	if (!line)
-		return (NULL);
-	head = NULL;
-	tail = &head;
-	st.paren_depth = 0;
-	while (true)
-	{
-		token = ft_calloc(1, sizeof(t_token));
-		if (!token)
-			return (free_tokens(head, NULL));
-		tk_kind = lexer_step(&line, token, &st);
-		if (tk_kind == TK_UNSET)
-			return (free_tokens(head, token));
-		if (tk_kind == TK_ERR)
-		{
-			free_tokens(head, NULL);
-			return (token);
-		}
-		(*tail) = token;
-		tail = &token->next;
-		if (tk_kind == TK_EOF)
-			break ;
-	}
-	return (head);
+t_status	tokenize(t_lex_state *st, t_token *token)
+{
+	if (!st || !token)
+		return (ST_FATAL);
+	if (lexer_step(&st->line, token, st) == TK_UNSET)
+		return (ST_FATAL);
+	if (token->token_kind == TK_ERR)
+		return (ST_FAILURE);
+	return (ST_OK);
 }

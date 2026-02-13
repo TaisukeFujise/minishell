@@ -17,7 +17,7 @@ t_lexer_err	append_part(t_word ***tail, char *str, int len, uint8_t flag)
 {
 	t_word	*part;
 
-	if ((len < 0) || (len == 0 && !(flag & (W_SQ | W_DQ))))
+	if (len == 0 && !(flag & (W_SQ | W_DQ)))
 		return (LEX_NO_ERR);
 	part = ft_calloc(1, sizeof(t_word));
 	if (!part)
@@ -30,20 +30,24 @@ t_lexer_err	append_part(t_word ***tail, char *str, int len, uint8_t flag)
 	return (LEX_NO_ERR);
 }
 
-t_lexer_err	finish_quote(char **line, t_word ***tail, char *begin, uint8_t flag)
+t_lexer_err	commit_part(t_word ***tail, char **begin,
+				char *end, uint8_t flag)
 {
-	const char	*quote;
+	if (end <= *begin)
+		return (LEX_NO_ERR);
+	if (append_part(tail, *begin, end - *begin, flag) != LEX_NO_ERR)
+		return (LEX_ERR_MEMORY_ALLOCATION);
+	*begin = end;
+	return (LEX_NO_ERR);
+}
 
-	quote = "\"";
-	if (flag & W_SQ)
-		quote = "\'";
-	if (**line != *quote)
-	{
-		if (flag & W_SQ)
-			return (LEX_ERR_UNCLOSED_SINGLE_QUOTE);
-		return (LEX_ERR_UNCLOSED_DOUBLE_QUOTE);
-	}
-	if (append_part(tail, begin, *line - begin, flag) != LEX_NO_ERR)
+t_lexer_err	close_quote_part(char **line, t_word ***tail,
+				char *begin, uint8_t flag)
+{
+	if (commit_part(tail, &begin, *line, flag) != LEX_NO_ERR)
+		return (LEX_ERR_MEMORY_ALLOCATION);
+	if (*line == begin && begin[-1] == *begin
+		&& append_part(tail, begin, 0, flag) != LEX_NO_ERR)
 		return (LEX_ERR_MEMORY_ALLOCATION);
 	(*line)++;
 	return (LEX_NO_ERR);

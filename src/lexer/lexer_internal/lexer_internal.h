@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:40:40 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/10 22:19:19 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/13 18:03:05 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,6 @@ typedef struct s_assign_info
 	uint8_t			flag;
 }	t_assign_info;
 
-typedef struct s_lex_state
-{
-	int		paren_depth;
-}	t_lex_state;
-
 t_token_kind	lex_control(char **line, t_token *token);
 t_token_kind	lex_connect(char **line, t_token *token);
 t_token_kind	lex_group(char **line, t_token *token, t_lex_state *st);
@@ -50,7 +45,9 @@ void			set_lexer_error(t_token *token, int err);
 int				free_word_parts(t_word *head);
 int				is_tk_bound(char *ch);
 t_lexer_err		append_part(t_word ***tail, char *str, int len, uint8_t flag);
-t_lexer_err		finish_quote(char **line, t_word ***tail,
+t_lexer_err		commit_part(t_word ***tail, char **begin,
+					char *end, uint8_t flag);
+t_lexer_err		close_quote_part(char **line, t_word ***tail,
 					char *begin, uint8_t flag);
 void			lex_dollar(char **cur_ptr, uint8_t *flag);
 void			apply_assign_info(t_word *head, t_assign_info *as);
