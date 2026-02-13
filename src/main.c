@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/09 20:11:53 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/13 03:51:16 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "../include/signal_handle.h"
 #include "../include/execute.h"
 #include "../include/lexer.h"
+#include "../include/parser.h"
 
 volatile sig_atomic_t g_signum = 0;
 

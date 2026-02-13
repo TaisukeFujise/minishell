@@ -144,20 +144,25 @@ static void	print_word_parts(const t_word *head)
 		printf("  part[0]: (none)\n");
 }
 
-void	dump_tokens(t_token *head)
+void	dump_tokens(char *line)
 {
-	t_token	*curr;
-	size_t	index;
-	t_word	*word;
+	t_token			token;
+	t_status		status;
+	size_t			index;
+	t_word			*word;
+	t_lex_state		st;
 
+	ft_bzero(&token, sizeof(token));
+	init_lex_state(&st, line);
 	index = 0;
-	curr = head;
-	while (curr)
+	while (1)
 	{
-		printf("[%zu] %s\n", index, token_kind_name(curr->token_kind));
-		if (curr->token_kind == TK_WORD)
+		free_token(&token);
+		status = tokenize(&st, &token);
+		printf("[%zu] %s\n", index, token_kind_name(token.token_kind));
+		if (token.token_kind == TK_WORD)
 		{
-			word = curr->u_token.wd;
+			word = token.u_token.wd;
 			print_word_parts(word);
 			if (word && (word->flag & (W_ASSIGN | W_APPEND)))
 			{
@@ -165,17 +170,19 @@ void	dump_tokens(t_token *head)
 					word->eq_ptr - word->str);
 			}
 		}
-		else if (curr->token_kind == TK_CONNECT)
-			printf("  op   : %s\n", connect_name(curr->u_token.op_connect));
-		else if (curr->token_kind == TK_GROUP)
-			printf("  op   : %s\n", group_name(curr->u_token.op_group));
-		else if (curr->token_kind == TK_REDIR)
-			printf("  op   : %s\n", redir_name(curr->u_token.op_redir));
-		else if (curr->token_kind == TK_IO_NUMBER)
-			printf("  fd   : %d\n", curr->u_token.io_num);
-		else if (curr->token_kind == TK_ERR)
-			printf("  err  : %d\n", curr->u_token.err);
-		curr = curr->next;
+		else if (token.token_kind == TK_CONNECT)
+			printf("  op   : %s\n", connect_name(token.u_token.op_connect));
+		else if (token.token_kind == TK_GROUP)
+			printf("  op   : %s\n", group_name(token.u_token.op_group));
+		else if (token.token_kind == TK_REDIR)
+			printf("  op   : %s\n", redir_name(token.u_token.op_redir));
+		else if (token.token_kind == TK_IO_NUMBER)
+			printf("  fd   : %d\n", token.u_token.io_num);
+		else if (token.token_kind == TK_ERR)
+			printf("  err  : %d\n", token.u_token.err);
+		if (status != ST_OK || token.token_kind == TK_EOF)
+			break ;
 		index++;
 	}
+	free_token(&token);
 }

@@ -38,11 +38,11 @@ typedef enum e_lexer_err
 }	t_lexer_err;
 
 typedef struct s_token	t_token;
+typedef struct s_lex_state	t_lex_state;
 
 struct s_token
 {
 	t_token_kind	token_kind;
-	t_token			*next;
 	union
 	{
 		t_word			*wd;
@@ -55,7 +55,15 @@ struct s_token
 	}	u_token;
 };
 
-t_token	*tokenize(char *line);
-t_token	*free_tokens(t_token *head, t_token *extra);
+struct s_lex_state
+{
+	char	*line;
+	int		paren_depth;
+};
+
+void			init_lex_state(t_lex_state *st, char *line);
+t_token_kind	lexer_step(char **line, t_token *token, t_lex_state *st);
+t_status		tokenize(t_lex_state *st, t_token *token);
+void			free_token(t_token *token);
 
 #endif

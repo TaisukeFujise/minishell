@@ -20,13 +20,14 @@ static t_lexer_err	scan_sq(char **line, t_word ***tail)
 	begin = ++(*line);
 	while (**line && **line != '\'')
 		(*line)++;
-	return (finish_quote(line, tail, begin, W_SQ));
+	if (**line != '\'')
+		return (LEX_ERR_UNCLOSED_SINGLE_QUOTE);
+	return (close_quote_part(line, tail, begin, W_SQ));
 }
 
 static t_lexer_err	scan_dq(char **line, t_word ***tail)
 {
 	char	*begin;
-	char	*dollar;
 	uint8_t	flag;
 
 	begin = ++(*line);
@@ -34,21 +35,22 @@ static t_lexer_err	scan_dq(char **line, t_word ***tail)
 	{
 		if (**line == '$')
 		{
-			if (append_part(tail, begin, *line - begin, W_DQ)
-				!= LEX_NO_ERR)
-				return (LEX_ERR_MEMORY_ALLOCATION);
-			dollar = *line;
 			flag = W_NONE;
 			lex_dollar(line, &flag);
-			if (append_part(tail, dollar, *line - dollar, W_DQ | flag)
-				!= LEX_NO_ERR)
+			if (commit_part(tail, &begin, *line, W_DQ | flag) != LEX_NO_ERR)
 				return (LEX_ERR_MEMORY_ALLOCATION);
-			begin = *line;
 		}
 		else
-			(*line)++;
+		{
+			while (**line && **line != '\"' && **line != '$')
+				(*line)++;
+			if (commit_part(tail, &begin, *line, W_DQ) != LEX_NO_ERR)
+				return (LEX_ERR_MEMORY_ALLOCATION);
+		}
 	}
-	return (finish_quote(line, tail, begin, W_DQ));
+	if (**line != '\"')
+		return (LEX_ERR_UNCLOSED_DOUBLE_QUOTE);
+	return (close_quote_part(line, tail, begin, W_DQ));
 }
 
 static t_lexer_err	scan_unquoted(char **line, t_word ***tail,
@@ -70,9 +72,7 @@ static t_lexer_err	scan_unquoted(char **line, t_word ***tail,
 	else
 		while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))
 			validate_assign((*line)++, as);
-	if (append_part(tail, begin, *line - begin, flag) != LEX_NO_ERR)
-		return (LEX_ERR_MEMORY_ALLOCATION);
-	return (LEX_NO_ERR);
+	return (commit_part(tail, &begin, *line, flag));
 }
 
 static t_lexer_err	scan_word(char **line, t_word **head, t_assign_info *as)
