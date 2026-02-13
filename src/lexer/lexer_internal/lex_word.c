@@ -18,8 +18,7 @@ static t_lexer_err	scan_sq(char **line, t_word ***tail)
 	char	*begin;
 
 	begin = ++(*line);
-	while (**line && **line != '\'')
-		(*line)++;
+	ft_strspan(line, "\'", false);
 	if (**line != '\'')
 		return (LEX_ERR_UNCLOSED_SINGLE_QUOTE);
 	return (close_quote_part(line, tail, begin, W_SQ));
@@ -42,8 +41,7 @@ static t_lexer_err	scan_dq(char **line, t_word ***tail)
 		}
 		else
 		{
-			while (**line && **line != '\"' && **line != '$')
-				(*line)++;
+			ft_strspan(line, "\"$", false);
 			if (commit_part(tail, &begin, *line, W_DQ) != LEX_NO_ERR)
 				return (LEX_ERR_MEMORY_ALLOCATION);
 		}
@@ -66,8 +64,7 @@ static t_lexer_err	scan_unquoted(char **line, t_word ***tail,
 	else if (**line == '*')
 	{
 		flag = W_WILD;
-		while (**line == '*')
-			(*line)++;
+		ft_strspan(line, "*", true);
 	}
 	else
 		while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))

@@ -144,6 +144,20 @@ static void	print_word_parts(const t_word *head)
 		printf("  part[0]: (none)\n");
 }
 
+static void	print_word_value(const t_word *head)
+{
+	const t_word	*part;
+
+	printf("\"");
+	part = head;
+	while (part)
+	{
+		printf("%.*s", part->len, part->str);
+		part = part->next;
+	}
+	printf("\"");
+}
+
 void	dump_tokens(char *line)
 {
 	t_token			token;
@@ -159,10 +173,12 @@ void	dump_tokens(char *line)
 	{
 		free_token(&token);
 		status = tokenize(&st, &token);
-		printf("[%zu] %s\n", index, token_kind_name(token.token_kind));
 		if (token.token_kind == TK_WORD)
 		{
 			word = token.u_token.wd;
+			printf("[%zu] WORD: ", index);
+			print_word_value(word);
+			printf("\n");
 			print_word_parts(word);
 			if (word && (word->flag & (W_ASSIGN | W_APPEND)))
 			{
@@ -170,16 +186,20 @@ void	dump_tokens(char *line)
 					word->eq_ptr - word->str);
 			}
 		}
-		else if (token.token_kind == TK_CONNECT)
-			printf("  op   : %s\n", connect_name(token.u_token.op_connect));
-		else if (token.token_kind == TK_GROUP)
-			printf("  op   : %s\n", group_name(token.u_token.op_group));
-		else if (token.token_kind == TK_REDIR)
-			printf("  op   : %s\n", redir_name(token.u_token.op_redir));
-		else if (token.token_kind == TK_IO_NUMBER)
-			printf("  fd   : %d\n", token.u_token.io_num);
-		else if (token.token_kind == TK_ERR)
-			printf("  err  : %d\n", token.u_token.err);
+		else
+		{
+			printf("[%zu] %s\n", index, token_kind_name(token.token_kind));
+			if (token.token_kind == TK_CONNECT)
+				printf("  op   : %s\n", connect_name(token.u_token.op_connect));
+			else if (token.token_kind == TK_GROUP)
+				printf("  op   : %s\n", group_name(token.u_token.op_group));
+			else if (token.token_kind == TK_REDIR)
+				printf("  op   : %s\n", redir_name(token.u_token.op_redir));
+			else if (token.token_kind == TK_IO_NUMBER)
+				printf("  fd   : %d\n", token.u_token.io_num);
+			else if (token.token_kind == TK_ERR)
+				printf("  err  : %d\n", token.u_token.err);
+		}
 		if (status != ST_OK || token.token_kind == TK_EOF)
 			break ;
 		index++;

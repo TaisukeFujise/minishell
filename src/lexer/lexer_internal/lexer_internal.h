@@ -37,7 +37,6 @@ t_token_kind	lex_redirect(char **line, t_token *token);
 t_token_kind	lex_io_number(char **line, t_token *token);
 t_token_kind	lex_word(char **line, t_token *token);
 
-void			skip_blank(char **line);
 int				str2fd(char **line);
 char			*strchunk(const char *tbl, const char *str, size_t n);
 void			validate_assign(char *cur_ptr, t_assign_info *as);
