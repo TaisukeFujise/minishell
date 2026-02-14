@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 19:33:34 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/13 14:06:17 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/14 17:09:30 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,19 +104,4 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 	if (pwd->data.value == NULL)
 		return (ST_FATAL);
 	return (ST_OK);
-}
-
-int	count_args(t_word_list *args)
-{
-	int	count;
-
-	count = 0;
-	if (args == NULL)
-		return (count);
-	while (args)
-	{
-		count++;
-		args = args->next;
-	}
-	return (count);
 }

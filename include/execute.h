@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:13:54 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/14 17:10:28 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,5 +91,9 @@ t_status	collect_child_result(t_ctx *ctx);
 
 /* create_filename.c */
 char		*create_tmp_filename(void);
+
+/* utils */
+/* count_args.c */
+int			count_args(t_word_list *args);
 
 #endif
