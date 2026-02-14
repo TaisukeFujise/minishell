@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/14 17:23:21 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/15 03:05:43 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,12 @@ typedef enum s_tabletype
 	TMP,
 	VARS,
 }			t_tabletype;
+
+typedef struct s_exec_params
+{
+	char	**argv;
+	char	**envp;
+}			t_exec_params;
 
 /* init.c */
 int			init_ctx(t_ctx *ctx, char **envp);
@@ -92,10 +98,13 @@ void		close_savedfd(t_savedfd saved);
 t_status	undo_stdio(t_savedfd saved);
 
 // <utils>
-/* build_exec_args.c */
-char		**build_exec_argv(t_word_list *args);
-char		**build_exec_evnp(t_hashtable *tmp_table, t_hashtable *env_table);
-/* count_args.c */
+/* args_utils.c */
 int			count_args(t_word_list *args);
+int			build_exec_params(t_exec_params *exec_params, t_word_list *args,
+				t_hashtable *tmp_table, t_hashtable *env_table);
+void		free_exec_params(char **argv, char **envp);
+/* path_utils.c */
+char		*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table);
+char		*extract_path_entry(char *path_value);
 
 #endif
