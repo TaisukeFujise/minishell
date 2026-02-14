@@ -6,17 +6,17 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:39:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/13 01:17:33 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/15 03:39:04 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/builtin.h"
+#include "../../include/hashmap.h"
 #include "../../include/parser.h"
 
 void		print_env_from_envtable(t_hashtable *tmp_table,
 				t_hashtable *env_table);
 void		print_env_from_tmptable(t_hashtable *tmp_table);
-void		free_item(t_bucket_contents **item);
 void		print_entry(t_bucket_contents *item);
 
 /*
@@ -82,14 +82,6 @@ void	print_env_from_tmptable(t_hashtable *tmp_table)
 		}
 		i++;
 	}
-}
-
-void	free_item(t_bucket_contents **item)
-{
-	free((*item)->data.value);
-	free((*item)->key);
-	free(*item);
-	*item = NULL;
 }
 
 void	print_entry(t_bucket_contents *item)
