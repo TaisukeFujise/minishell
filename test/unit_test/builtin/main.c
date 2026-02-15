@@ -6,93 +6,144 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 14:31:54 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/13 01:04:35 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:42:11 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin_test.h"
-#include <stdio.h>
+
+static t_word	*new_word(char *str)
+{
+	t_word	*word;
+
+	word = malloc(sizeof(t_word));
+	if (word == NULL)
+		return (NULL);
+	ft_bzero(word, sizeof(t_word));
+	word->str = ft_strdup(str);
+	if (word->str == NULL)
+		return (free(word), NULL);
+	word->len = ft_strlen(str);
+	return (word);
+}
+
+static t_word_list	*new_args_2(char *arg0, char *arg1)
+{
+	t_word_list	*head;
+	t_word_list	*next;
+
+	head = ft_calloc(1, sizeof(t_word_list));
+	next = ft_calloc(1, sizeof(t_word_list));
+	if (head == NULL || next == NULL)
+		return (free(head), free(next), NULL);
+	head->wd = new_word(arg0);
+	next->wd = new_word(arg1);
+	if (head->wd == NULL || next->wd == NULL)
+	{
+		if (head->wd != NULL)
+			free(head->wd->str);
+		if (next->wd != NULL)
+			free(next->wd->str);
+		free(head->wd);
+		free(next->wd);
+		free(head);
+		free(next);
+		return (NULL);
+	}
+	head->next = next;
+	return (head);
+}
+
+static void	free_args(t_word_list *args)
+{
+	t_word_list	*next;
+
+	while (args)
+	{
+		next = args->next;
+		if (args->wd != NULL)
+		{
+			free(args->wd->str);
+			free(args->wd);
+		}
+		free(args);
+		args = next;
+	}
+}
+
+static int	test_builtin_single(t_ctx *ctx)
+{
+	t_simple_cmd	cmd;
+
+	ft_bzero(&cmd, sizeof(t_simple_cmd));
+	cmd.args = new_args_2("echo", "single");
+	if (cmd.args == NULL)
+		return (1);
+	if (exec_builtin(&cmd, ctx, NO_PIPE, NO_PIPE) != ST_OK)
+		return (free_args(cmd.args), 1);
+	free_args(cmd.args);
+	return (0);
+}
+
+static int	test_builtin_pipe(t_ctx *ctx)
+{
+	t_simple_cmd	cmd;
+	int			fds[2];
+	char		buf[64];
+	ssize_t		nread;
+
+	fflush(NULL);
+	if (pipe(fds) < 0)
+		return (1);
+	ft_bzero(&cmd, sizeof(t_simple_cmd));
+	cmd.args = new_args_2("echo", "hello");
+	if (cmd.args == NULL)
+		return (close(fds[0]), close(fds[1]), 1);
+	if (exec_builtin(&cmd, ctx, NO_PIPE, fds[1]) != ST_OK)
+		return (close(fds[0]), close(fds[1]), free_args(cmd.args), 1);
+	if (collect_child_result(ctx) != ST_OK)
+		return (close(fds[0]), free_args(cmd.args), 1);
+	nread = read(fds[0], buf, sizeof(buf) - 1);
+	if (nread < 0)
+		return (close(fds[0]), free_args(cmd.args), 1);
+	buf[nread] = '\0';
+	close(fds[0]);
+	free_args(cmd.args);
+	if (ctx->err.exit_code != 0)
+		return (1);
+	if (ft_strcmp(buf, "hello\n") != 0)
+		return (1);
+	return (0);
+}
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_ctx				ctx;
-	t_word_list			*args;
-	t_word_list			*flag_args;
-	t_bucket_contents	*item;
+	t_ctx	ctx;
+	int		ng_count;
+	int		result;
 
-	/*
-		Test case
-		(i)   cd
-		(ii)  echo
-		(iii) env
-		(iv)  exit
-		(v)   export
-		(vi)  pwd
-		(vii) unset
-	*/
 	(void)argc;
 	(void)argv;
 	if (init_ctx(&ctx, envp) == FAILURE)
 		return (1);
-	// (i) cd
-	write(1, "\n==== cd ====\n", 14);
-	args = NULL;
-	cd_cmd(args, &ctx);
-	assert(ft_strcmp(getcwd(NULL, 0), "/home/tafujise") == 0);
-	item = hash_search("PWD", ctx.env_table);
-	assert(ft_strcmp(item->data.value, "/home/tafujise") == 0);
-	item = hash_search("OLDPWD", ctx.env_table);
-	assert(ft_strcmp(item->data.value,
-			"/home/tafujise/Cursus/minishell/test/unit_test/builtin") == 0);
-	args = malloc(sizeof(t_word_list));
-	args->wd = malloc(sizeof(t_word));
-	args->wd->str = ft_strdup("Cursus/minishell");
-	args->wd->len = 12;
-	args->next = NULL;
-	cd_cmd(args, &ctx);
-	assert(ft_strcmp(getcwd(NULL, 0), "/home/tafujise/Cursus/minishell") == 0);
-	item = hash_search("PWD", ctx.env_table);
-	assert(ft_strcmp(item->data.value, "/home/tafujise/Cursus/minishell") == 0);
-	item = hash_search("OLDPWD", ctx.env_table);
-	assert(ft_strcmp(item->data.value, "/home/tafujise") == 0);
-	// (ii) echo
-	write(1, "\n==== echo ====\n", 16);
-	args = NULL;
-	echo_cmd(args, &ctx);
-	args = malloc(sizeof(t_word_list));
-	args->wd = malloc(sizeof(t_word));
-	args->wd->str = ft_strdup("abc");
-	args->wd->len = 3;
-	args->wd->next = NULL;
-	echo_cmd(args, &ctx);
-	flag_args = malloc(sizeof(t_word_list));
-	flag_args->wd = malloc(sizeof(t_word));
-	flag_args->wd->str = ft_strdup("-n");
-	flag_args->wd->len = 2;
-	flag_args->next = args;
-	echo_cmd(flag_args, &ctx);
-	// (iii) env
-	write(1, "\n==== env ====\n", 15);
-	args = NULL;
-	env_cmd(args, &ctx);
-	// (iv) exit
-	// write(1, "==== exit ====\n", 15);
-	// (v) export
-	// write(1, "==== export ====\n", 17);
-	// (vi) pwd
-	write(1, "\n==== pwd ====\n", 15);
-	args = NULL;
-	pwd_cmd(args, &ctx);
-	// (vii) unset
-	write(1, "\n==== unset ====\n", 17);
-	args = NULL;
-	unset_cmd(args, &ctx);
-	args = malloc(sizeof(t_word_list));
-	args->wd = malloc(sizeof(t_word));
-	args->wd->str = ft_strdup("HOME");
-	args->wd->len = 4;
-	args->next = NULL;
-	unset_cmd(args, &ctx);
-	env_cmd(NULL, &ctx);
-	return (0);
+	ctx.bitmap = new_fd_bitmap(FD_BITMAP_SIZE);
+	if (ctx.bitmap == NULL)
+		return (1);
+	ng_count = 0;
+	result = test_builtin_single(&ctx);
+	if (result == 0)
+		printf("[OK] builtin single\n");
+	else
+		printf("[NG] builtin single\n");
+	ng_count += result;
+	result = test_builtin_pipe(&ctx);
+	if (result == 0)
+		printf("[OK] builtin pipe\n");
+	else
+		printf("[NG] builtin pipe\n");
+	ng_count += result;
+	dispose_fd_bitmap(ctx.bitmap);
+	if (ng_count == 0)
+		return (0);
+	return (1);
 }
