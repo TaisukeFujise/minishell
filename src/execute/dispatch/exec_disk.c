@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:49:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 01:00:12 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:16:17 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,6 @@ void	disk_command(char **argv, char **envp, t_ctx *ctx)
 		if (path_value == NULL)
 			exit(1);
 		exit_code = run_path_search_command(path_value, argv, envp);
-		free(path_value);
 		exit(exit_code);
 	}
 }

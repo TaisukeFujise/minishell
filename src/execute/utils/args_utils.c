@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 02:38:46 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 00:55:07 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:14:19 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char	*make_env_entry(char *key, char *value)
 
 	if (key == NULL || value == NULL)
 		return (NULL);
-	entry = malloc(sizeof(char) * (ft_strlen(key) + ft_strlen(value) + 1));
+	entry = malloc(sizeof(char) * (ft_strlen(key) + ft_strlen(value) + 2));
 	if (entry == NULL)
 		return (NULL);
 	i = 0;
@@ -178,16 +178,9 @@ char	**build_exec_evnp(t_hashtable *tmp_table, t_hashtable *env_table)
 int	build_exec_params(t_exec_params *exec_params, t_word_list *args,
 		t_hashtable *tmp_table, t_hashtable *env_table)
 {
-	int	total_entry;
-
 	exec_params->argv = build_exec_argv(args);
 	if (exec_params->argv == NULL)
 		return (FAILURE);
-	total_entry = 0;
-	if (tmp_table != NULL)
-		total_entry += tmp_table->entry_count;
-	if (env_table != NULL)
-		total_entry += env_table->entry_count;
 	exec_params->envp = build_exec_evnp(tmp_table, env_table);
 	if (exec_params->envp == NULL)
 		return (free_exec_params(exec_params->argv, exec_params->envp),

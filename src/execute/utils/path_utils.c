@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 02:39:44 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/15 15:59:12 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:15:32 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table)
 	if (item != NULL)
 		return (item->data.value);
 	item = hash_search("PATH", env_table);
-	if (item != NULL)
+	if (item == NULL)
 		return (NULL);
 	return (item->data.value);
 }
