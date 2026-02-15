@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   bitmap.c                                           :+:      :+:    :+:   */
+/*   fd_bitmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 23:52:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:03:16 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 02:05:29 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void	close_fd_bitmap(t_fd_bitmap *fd_bitmap)
 {
 	int	i;
 
+	if (fd_bitmap == NULL || fd_bitmap->bitmap == NULL)
+		return ;
 	i = 0;
 	while (i < fd_bitmap->size)
 	{
@@ -44,6 +46,8 @@ void	close_fd_bitmap(t_fd_bitmap *fd_bitmap)
 
 void	dispose_fd_bitmap(t_fd_bitmap *fd_bitmap)
 {
+	if (fd_bitmap == NULL)
+		return ;
 	free(fd_bitmap->bitmap);
 	free(fd_bitmap);
 }

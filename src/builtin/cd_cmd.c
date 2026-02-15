@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../include/builtin.h"
+#include "../../include/execute.h"
 #include "../../include/parser.h"
 
 t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table);

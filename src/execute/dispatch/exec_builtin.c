@@ -6,18 +6,18 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:06:19 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 02:01:46 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/execute.h"
+#include "../../../include/builtin.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
 void		exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 				int pipe_out);
-t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-				int pipe_out);
+t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
 t_status	builtin_cmd(t_word_list *args, t_ctx *ctx);
 
 /*
@@ -54,7 +54,8 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		}
 	}
 	else
-		return (exec_builtin_in_parent(cmd, ctx, pipe_in, pipe_out));
+		return (exec_builtin_in_parent(cmd, ctx));
+	return (ST_FATAL);
 }
 
 /*
@@ -80,7 +81,7 @@ void	exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		exit(EXIT_FAILURE);
 	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) != ST_OK)
 		exit(EXIT_FAILURE);
-	exit(builtin_cmd(cmd->args, ctx));
+	_exit(builtin_cmd(cmd->args, ctx));
 }
 
 /*
@@ -91,8 +92,7 @@ void	exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	- builtin_cmd
 	- undo_stdio
 */
-t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-		int pipe_out)
+t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 {
 	t_status	result;
 	t_savedfd	saved;
@@ -138,6 +138,8 @@ t_status	builtin_cmd(t_word_list *args, t_ctx *ctx)
 		Todo
 		- builtin_command find builtin cmd and execute it.
 	*/
+	if (args == NULL || args->wd == NULL || args->wd->str == NULL)
+		return (ST_FATAL);
 	if (ft_strcmp(args->wd->str, "cd") == 0)
 		return (cd_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "echo") == 0)
@@ -146,8 +148,8 @@ t_status	builtin_cmd(t_word_list *args, t_ctx *ctx)
 		return (env_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "exit") == 0)
 		return (exit_cmd(args->next, ctx));
-	else if (ft_strcmp(args->wd->str, "export") == 0)
-		return (export_cmd(args->next, ctx));
+	// else if (ft_strcmp(args->wd->str, "export") == 0)
+	// 	return (export_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "pwd") == 0)
 		return (pwd_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "unset") == 0)
