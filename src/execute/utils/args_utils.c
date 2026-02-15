@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 02:38:46 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/15 03:41:22 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/15 16:02:36 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ char	**build_exec_evnp(t_hashtable *tmp_table, t_hashtable *env_table,
 {
 	int					i;
 	char				**envp;
-	char				*head_envp;
+	char				**head_envp;
 	t_bucket_contents	*item;
 	t_bucket_contents	*item_tmp;
 
@@ -72,6 +72,7 @@ char	**build_exec_evnp(t_hashtable *tmp_table, t_hashtable *env_table,
 	if (envp == NULL)
 		return (NULL);
 	head_envp = envp;
+	i = 0;
 	while (i < env_table->bucket_size)
 	{
 		item = hash_items(i, env_table);
@@ -82,9 +83,9 @@ char	**build_exec_evnp(t_hashtable *tmp_table, t_hashtable *env_table,
 				*envp = ft_strdup(item->data.value);
 			else
 				*envp = ft_strdup(item_tmp->data.value);
-			free_item(item_tmp);
+			free_item(&item_tmp);
 			if (*envp == NULL)
-				return (free_envp(head_envp), NULL);
+				return (free_exec_params(NULL, head_envp), NULL);
 			envp++;
 			item = item->next;
 		}
@@ -98,7 +99,7 @@ char	**build_exec_evnp(t_hashtable *tmp_table, t_hashtable *env_table,
 		{
 			*envp = ft_strdup(item->data.value);
 			if (*envp == NULL)
-				return (free_envp(head_envp), NULL);
+				return (free_exec_params(NULL, head_envp), NULL);
 			envp++;
 			item = item->next;
 		}
@@ -112,14 +113,17 @@ int	build_exec_params(t_exec_params *exec_params, t_word_list *args,
 {
 	int	total_entry;
 
+	puts("b1");
 	exec_params->argv = build_exec_argv(args);
 	if (exec_params->argv == NULL)
 		return (FAILURE);
+	puts("b2");
 	total_entry = 0;
 	if (tmp_table != NULL)
 		total_entry += tmp_table->entry_count;
 	if (env_table != NULL)
 		total_entry += env_table->entry_count;
+	puts("b3");
 	exec_params->envp = build_exec_evnp(tmp_table, env_table, total_entry);
 	if (exec_params->envp == NULL)
 		return (free_exec_params(exec_params->argv, exec_params->envp),

@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/15 03:05:43 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/15 15:28:18 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,12 @@ typedef struct s_exec_params
 	char	**argv;
 	char	**envp;
 }			t_exec_params;
+
+typedef struct s_pipes
+{
+	int		pipe_in;
+	int		pipe_out;
+}			t_pipes;
 
 /* init.c */
 int			init_ctx(t_ctx *ctx, char **envp);

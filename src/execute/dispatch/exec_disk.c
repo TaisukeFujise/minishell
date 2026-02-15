@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:49:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/15 03:10:07 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/15 16:01:21 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
+void		exec_disk_in_child(t_simple_cmd *cmd, t_ctx *ctx,
+				t_exec_params exec_params, t_pipes pipes);
 void		disk_command(char **argv, char **envp, t_ctx *ctx);
 bool		has_slash(char *str);
 int			run_path_search_command(char *path_value, char **argv, char **envp);
@@ -33,8 +35,11 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		int pipe_out)
 {
 	pid_t			pid;
+	t_pipes			pipes;
 	t_exec_params	exec_params;
 
+	pipes.pipe_in = pipe_in;
+	pipes.pipe_out = pipe_out;
 	if (build_exec_params(&exec_params, cmd->args, ctx->tmp_table,
 			ctx->env_table) == FAILURE)
 		return (ST_FATAL);
@@ -43,18 +48,7 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		return (free_exec_params(exec_params.argv, exec_params.envp),
 			ST_FAILURE);
 	else if (pid == 0)
-	{
-		close_fd_bitmap(ctx->bitmap);
-		if (attach_pipe_to_stdio(pipe_in, pipe_out) != ST_OK)
-			exit(EXIT_FAILURE);
-		pipe_in = NO_PIPE;
-		pipe_out = NO_PIPE;
-		if (apply_redirects(cmd->redirects) != ST_OK)
-			exit(EXIT_FAILURE);
-		if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) != ST_OK)
-			exit(EXIT_FAILURE);
-		disk_command(exec_params.argv, exec_params.envp, ctx);
-	}
+		exec_disk_in_child(cmd, ctx, exec_params, pipes);
 	else
 	{
 		ctx->already_forked = 1;
@@ -62,12 +56,32 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		return (free_exec_params(exec_params.argv, exec_params.envp),
 			register_pid(ctx, pid));
 	}
+	return (ST_OK);
 }
+
+/*
+	Todo left
+	- restore signals
+*/
+void	exec_disk_in_child(t_simple_cmd *cmd, t_ctx *ctx,
+		t_exec_params exec_params, t_pipes pipes)
+{
+	close_fd_bitmap(ctx->bitmap);
+	if (attach_pipe_to_stdio(pipes.pipe_in, pipes.pipe_out) != ST_OK)
+		exit(EXIT_FAILURE);
+	pipes.pipe_in = NO_PIPE;
+	pipes.pipe_out = NO_PIPE;
+	if (apply_redirects(cmd->redirects) != ST_OK)
+		exit(EXIT_FAILURE);
+	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) != ST_OK)
+		exit(EXIT_FAILURE);
+	disk_command(exec_params.argv, exec_params.envp, ctx);
+}
+
 /*
 	Todo
 	- disk_command find disk command and execute it.
 	- It returns error, like "command not found", if there is no command.
-	< https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_09_01 >
 	2.9.1 Simple command
 	> Command Search and Execution
 */
@@ -127,7 +141,7 @@ int	run_path_search_command(char *path_value, char **argv, char **envp)
 		if (errno != ENOENT)
 			exit_code = 126;
 		path_value += ft_strlen(dir);
-		if (*path_value == ":")
+		if (*path_value == ':')
 			path_value++;
 	}
 	return (exit_code);

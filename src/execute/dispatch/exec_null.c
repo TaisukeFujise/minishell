@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:07:39 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/15 15:19:54 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	pid_t	pid;
 
 	if (pipe_in != NO_PIPE || pipe_out != NO_PIPE)
-	// command beside pipe in child process
 	{
 		pid = fork();
 		if (pid < 0)

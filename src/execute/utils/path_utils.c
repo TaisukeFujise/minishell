@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 02:39:44 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/15 02:39:46 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/15 15:59:12 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,10 @@ char	*extract_path_entry(char *path_value)
 	int		i;
 	char	*dir;
 
+	i = 0;
 	while (path_value[i])
 	{
-		if (path_value[i] == ":")
+		if (path_value[i] == ':')
 			break ;
 		i++;
 	}
