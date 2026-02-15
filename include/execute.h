@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/15 15:28:18 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 02:52:57 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,5 +112,10 @@ void		free_exec_params(char **argv, char **envp);
 /* path_utils.c */
 char		*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table);
 char		*extract_path_entry(char *path_value);
+/* envp_utils.c */
+char		*make_env_entry(char *key, char *value);
+char		**table_to_envp(t_hashtable *table, char **envp);
+char		**tables_to_envp(t_hashtable *tmp_table, t_hashtable *env_table,
+				char **envp);
 
 #endif

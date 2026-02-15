@@ -6,7 +6,7 @@
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/11 15:58:40 by tafujise          #+#    #+#              #
-#    Updated: 2026/02/16 01:32:14 by tafujise         ###   ########.fr        #
+#    Updated: 2026/02/16 02:53:43 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,7 @@ EXEC_SRCS := init_ctx.c\
 			assigns.c\
 			args_utils.c\
 			heredoc_tmpfile.c\
+			envp_utils.c\
 
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
 
