@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:34:37 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 02:05:32 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 02:09:50 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,5 @@ t_status	exit_cmd(t_word_list *args, t_ctx *ctx);
 // t_status	export_cmd(t_word_list *args, t_ctx *ctx);
 t_status	pwd_cmd(t_word_list *args, t_ctx *ctx);
 t_status	unset_cmd(t_word_list *args, t_ctx *ctx);
-int			count_args(t_word_list *args);
-void		print_env(t_hashtable *tmp_table, t_hashtable *env_table);
 
 #endif
