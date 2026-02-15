@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 02:18:04 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 02:54:34 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 02:56:38 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,19 +90,6 @@ char	**tables_to_envp(t_hashtable *tmp_table, t_hashtable *env_table,
 			item_tmp = hash_search(item->key, tmp_table);
 			if (_item_to_envp(item, item_tmp, &envp) == FAILURE)
 				return (free_exec_params(NULL, head_envp), NULL);
-			// 	if (item_tmp != NULL)
-			// 	{
-			// 		*envp++ = make_env_entry(item_tmp->key,
-			// item_tmp->data.value);
-			// 		if (*(envp - 1) == NULL)
-			// 			return (free_exec_params(NULL, head_envp), NULL);
-			// 	}
-			// 	else if (item->data.exported)
-			// 	{
-			// 		*envp++ = make_env_entry(item->key, item->data.value);
-			// 		if (*(envp - 1) == NULL)
-			// 			return (free_exec_params(NULL, head_envp), NULL);
-			// 	}
 			item = item->next;
 		}
 	}
