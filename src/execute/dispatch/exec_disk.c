@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:49:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/15 16:01:21 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:00:12 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		return (free_exec_params(exec_params.argv, exec_params.envp),
 			ST_FAILURE);
 	else if (pid == 0)
+	{
 		exec_disk_in_child(cmd, ctx, exec_params, pipes);
+		return (ST_OK);
+	}
 	else
 	{
 		ctx->already_forked = 1;
@@ -56,7 +59,6 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		return (free_exec_params(exec_params.argv, exec_params.envp),
 			register_pid(ctx, pid));
 	}
-	return (ST_OK);
 }
 
 /*
