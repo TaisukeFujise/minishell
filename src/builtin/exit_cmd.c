@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../include/builtin.h"
+#include "../../include/execute.h"
 #include "../../include/parser.h"
 
 /*
