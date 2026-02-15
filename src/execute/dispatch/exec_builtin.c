@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 03:01:49 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 06:00:22 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 			close_pipes(pipe_in, pipe_out);
 			return (register_pid(ctx, pid));
 		}
+		return (ST_FATAL);
 	}
 	else
 		return (exec_builtin_in_parent(cmd, ctx));
-	return (ST_FATAL);
 }
 
 /*

@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 03:01:07 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 06:00:14 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 			close_pipes(pipe_in, pipe_out);
 			return (register_pid(ctx, pid));
 		}
-		return (ST_OK);
+		return (ST_FATAL);
 	}
 	else
 		return (exec_null_command_in_parent(cmd, ctx));
