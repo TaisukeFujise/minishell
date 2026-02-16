@@ -46,15 +46,15 @@ void	print_table(t_hashtable *table)
 	print_bucket_array(table->bucket_array, table->bucket_size);
 }
 
-void	print_executor(t_exec *executor)
+void	print_ctx(t_ctx *ctx)
 {
-	if (executor == NULL)
+	if (ctx == NULL)
 	{
-		puts("executor: NULL");
+		puts("ctx: NULL");
 		// return ;
 	}
-	puts("==executor==");
-	printf("exit_code: %d\n", executor->exit_code);
-	print_table(executor->env_table);
-	print_table(executor->temp_table);
+	puts("==ctx==");
+	printf("exit_code: %d\n", ctx->err.exit_code);
+	print_table(ctx->env_table);
+	print_table(ctx->tmp_table);
 }
