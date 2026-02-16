@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:49:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 22:47:57 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 22:52:33 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,9 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 void	exec_disk_in_child(t_simple_cmd *cmd, t_ctx *ctx,
 		t_exec_params exec_params, t_pipes pipes)
 {
-	close_fd_bitmap(ctx->bitmap);
 	if (attach_pipe_to_stdio(pipes.pipe_in, pipes.pipe_out) != ST_OK)
 		exit(EXIT_FAILURE);
+	close_fd_bitmap(ctx->bitmap);
 	pipes.pipe_in = NO_PIPE;
 	pipes.pipe_out = NO_PIPE;
 	if (apply_redirects(cmd->redirects) != ST_OK)

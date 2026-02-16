@@ -116,6 +116,16 @@ static int	test_builtin_pipe(t_ctx *ctx)
 	return (0);
 }
 
+/*
+	Executed test cases
+	1. builtin single
+		- run builtin command without pipe: echo single
+		- expect: exec_builtin returns ST_OK
+	2. builtin pipe
+		- run builtin command with pipe output: echo hello | (capture pipe)
+		- expect: collect_child_result returns ST_OK
+		- expect: exit_code=0, captured stdout="hello\n"
+*/
 int	main(int argc, char **argv, char **envp)
 {
 	t_ctx	ctx;

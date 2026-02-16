@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:17 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 22:47:47 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 22:52:32 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 
 t_status	exec_connection(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
-	t_status	result;
-
 	if (node->node_kind == NODE_COMPLETE)
 		return (exec_complete(node, ctx, pipe_in, pipe_out));
 	if (node->node_kind == NODE_ANDOR)
@@ -73,9 +71,9 @@ t_status	exec_pipeline(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 		fd_bitmap = new_fd_bitmap(pipe_fd[0] + 8);
 	if (fd_bitmap == NULL)
 		return (ST_FAILURE);
-	ft_memcpy(fd_bitmap, ctx->bitmap->bitmap, ctx->bitmap->size);
+	ft_memcpy(fd_bitmap->bitmap, ctx->bitmap->bitmap, ctx->bitmap->size);
 	dispose_fd_bitmap(ctx->bitmap);
-	fd_bitmap[pipe_fd[0]] = 1;
+	fd_bitmap->bitmap[pipe_fd[0]] = 1;
 	ctx->bitmap = fd_bitmap;
 	execute_internal(node->left, ctx, pipe_in, pipe_fd[1]);
 	close(pipe_fd[1]);
