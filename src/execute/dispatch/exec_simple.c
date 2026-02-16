@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:15 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:03:54 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 21:54:34 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ bool		find_builtin(char *str);
 */
 t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
-	ctx->already_forked = 0; // initialize ctx->already_forked flag.
-	if (expand_words(node->u_node.simple_command, ctx) != ST_OK)
-		return (ST_FAILURE);
+	ctx->already_forked = 0;
+	// if (expand_words(node->u_node.simple_command, ctx) != ST_OK)
+	// 	return (ST_FAILURE);
 	if (node->u_node.simple_command.args == 0)
 		return (exec_null_command(&node->u_node.simple_command, ctx, pipe_in,
 				pipe_out));
