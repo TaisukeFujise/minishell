@@ -6,12 +6,12 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 02:01:46 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 21:20:00 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../include/execute.h"
 #include "../../../include/builtin.h"
+#include "../../../include/execute.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
@@ -108,13 +108,11 @@ t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 	{
 		close_savedfd(saved);
 		return (undo_stdio(saved));
-		// It doesn't matter if this func fails or not.
 	}
 	if (builtin_cmd(cmd->args, ctx) != ST_OK)
 	{
 		close_savedfd(saved);
 		return (undo_stdio(saved));
-		// It doesn't matter fi this func fails or not.
 	}
 	result = undo_stdio(saved);
 	close_savedfd(saved);
