@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:04:04 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 22:43:12 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,14 @@
 /*
 	execute init fd_bitmap and wrap execute_internal.
 	after the func call, dispose the fd_bitmap, and return t_status result.
+	parse error passes NULL root ast.
 */
 t_status	execute(t_node *root, t_ctx *ctx)
 {
 	t_status	result;
 
 	if (root == NULL)
-		return (ST_OK); // parse error passes NULL root ast.
+		return (ST_OK);
 	ctx->bitmap = new_fd_bitmap(FD_BITMAP_SIZE);
 	if (ctx->bitmap == NULL)
 		return (ST_FATAL);
