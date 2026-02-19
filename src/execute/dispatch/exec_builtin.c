@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/19 15:32:06 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/19 15:43:54 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		exit(EXIT_FAILURE);
 	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) != ST_OK)
 		exit(EXIT_FAILURE);
-	_exit(builtin_cmd(cmd->args, ctx));
+	exit(builtin_cmd(cmd->args, ctx));
 }
 
 /*
