@@ -6,12 +6,12 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 02:01:46 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/19 15:32:06 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../include/execute.h"
 #include "../../../include/builtin.h"
+#include "../../../include/execute.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
@@ -101,24 +101,21 @@ t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 		return (ST_FAILURE);
 	if (apply_redirects(cmd->redirects) != ST_OK)
 	{
-		close_savedfd(saved);
-		return (ST_FAILURE);
+		result = undo_stdio(saved);
+		return (close_savedfd(saved), result);
 	}
 	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) == ST_FATAL)
 	{
-		close_savedfd(saved);
-		return (undo_stdio(saved));
-		// It doesn't matter if this func fails or not.
+		result = undo_stdio(saved);
+		return (close_savedfd(saved), result);
 	}
 	if (builtin_cmd(cmd->args, ctx) != ST_OK)
 	{
-		close_savedfd(saved);
-		return (undo_stdio(saved));
-		// It doesn't matter fi this func fails or not.
+		result = undo_stdio(saved);
+		return (close_savedfd(saved), result);
 	}
 	result = undo_stdio(saved);
-	close_savedfd(saved);
-	return (result);
+	return (close_savedfd(saved), result);
 }
 
 /*
