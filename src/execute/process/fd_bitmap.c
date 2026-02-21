@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 23:52:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 02:05:29 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/19 16:12:26 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_fd_bitmap	*new_fd_bitmap(int size)
 		return (NULL);
 	new->bitmap = ft_calloc(sizeof(char), size);
 	if (new->bitmap == NULL)
-		return (NULL);
+		return (free(new), NULL);
 	new->size = size;
 	return (new);
 }

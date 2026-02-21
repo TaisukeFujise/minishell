@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 12:31:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:08:17 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/21 14:16:33 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,8 @@ t_status	apply_redir_dless(t_redirect *redirect)
 			return (ST_FAILURE);
 		fd = open(filename, O_RDWR | O_CREAT | O_EXCL, 0644);
 		if (fd < 0 && errno != EEXIST)
-			return (ST_FAILURE);
+			return (free(filename), ST_FAILURE);
+		free(filename);
 	}
 	redirect->hd.content_fd = fd;
 	if (unlink(filename) < 0)
