@@ -19,23 +19,23 @@ SRCS:=main.c\
 	  lexer/lexer_internal/lex_ops.c\
 	  lexer/lexer_internal/lex_word.c\
 	  lexer/lexer_internal/lexer_utils.c\
-	  execute/apply_redirect.c\
-	  execute/assigns.c\
-	  execute/bitmap.c\
-	  execute/collect_child.c\
-	  execute/create_filename.c\
-	  execute/exec_builtin.c\
-	  execute/exec_connection.c\
-	  execute/exec_disk.c\
-	  execute/exec_null.c\
-	  execute/exec_simple.c\
-	  execute/exec_subshell.c\
 	  execute/execute.c\
-	  execute/expand.c\
-	  execute/init.c\
-	  execute/pipe_utils.c\
-	  execute/register_pid.c\
-	  execute/stdio_backup.c\
+	  execute/init_ctx.c\
+	  execute/dispatch/exec_builtin.c\
+	  execute/dispatch/exec_connection.c\
+	  execute/dispatch/exec_disk.c\
+	  execute/dispatch/exec_null.c\
+	  execute/dispatch/exec_simple.c\
+	  execute/dispatch/exec_subshell.c\
+	  execute/expansion/assigns.c\
+	  execute/expansion/expand.c\
+	  execute/process/fd_bitmap.c\
+	  execute/process/pipe_utils.c\
+	  execute/process/register_pid.c\
+	  execute/process/wait_children.c\
+	  execute/redirect/apply_redirect.c\
+	  execute/redirect/heredoc_tmpfile.c\
+	  execute/redirect/stdio_guard.c\
 	  hashmap/hashmap_crud.c\
 	  hashmap/hashmap_free.c\
 	  hashmap/hashmap_utils.c

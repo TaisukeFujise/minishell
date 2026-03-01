@@ -1,28 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   collect_child.c                                    :+:      :+:    :+:   */
+/*   wait_children.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 23:52:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/05 15:26:19 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/21 14:12:36 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
+#include "../../../include/minishell.h"
 
-int	status_to_exitcode(int status);
-void	reset_ctx_pid(t_ctx *ctx);
+int			status_to_exitcode(int status);
+void		reset_ctx_pid(t_ctx *ctx);
 
+/*
+	Todo
+	- Wait the arrays of pids
+	- Convert last pid's status to exit code and store in ctx->exit_code
+	- Clean-up ctx's the arrays of pids.
+*/
 t_status	collect_child_result(t_ctx *ctx)
 {
-	/*
-		Todo
-		- Wait the arrays of pids
-		- Convert last pid's status to exit code and store in ctx->exit_code
-		- Clean-up ctx's the arrays of pids.
-	*/
 	int	i;
 	int	status;
 
@@ -30,15 +30,19 @@ t_status	collect_child_result(t_ctx *ctx)
 	status = 0;
 	if (ctx->pids == NULL || ctx->npid < 1)
 		return (ST_FATAL);
-	while (i < (ctx->npid - 1))
+	while (i < ctx->npid)
 	{
 		if (waitpid(ctx->pids[i], &status, 0) < 0)
-			return (ST_FAILURE);
+		{
+			if (errno != EINTR)
+				return (ST_FATAL);
+			ctx->err.exit_code = 130;
+			continue ;
+		}
 		i++;
 	}
-	if (waitpid(ctx->pids[i], &status, 0) < 0)
-		return (ST_FAILURE);
-	ctx->err.exit_code = status_to_exitcode(status);
+	if (ctx->err.exit_code != 130)
+		ctx->err.exit_code = status_to_exit_code(status);
 	reset_ctx_pid(ctx);
 	return (ST_OK);
 }

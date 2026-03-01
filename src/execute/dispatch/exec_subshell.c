@@ -1,28 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_disk.c                                        :+:      :+:    :+:   */
+/*   exec_subshell.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/28 00:49:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/03 19:14:08 by tafujise         ###   ########.fr       */
+/*   Created: 2026/01/28 00:09:12 by tafujise          #+#    #+#             */
+/*   Updated: 2026/02/11 11:03:56 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
+#include "../../../include/minishell.h"
+#include "../../../include/parser.h"
 
-/*
-	Todo
-	execute disk command(external command).
-*/
-t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
-	t_status	result;
-	// Here!!!
-	// apply_assigns_to_tmp_env
-	if (apply_redirects(cmd->redirects) == ST_FATAL)
-		return (ST_FATAL);
-	return (result);
+	/*
+		Todo
+		- subshell
+	*/
 }
