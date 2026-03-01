@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/06 18:37:19 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/17 17:15:37 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,9 @@ t_status	execute(t_node *root, t_ctx *ctx)
 {
 	t_status	result;
 
+	// AST is always non-NULL and the root node is always NODE_COMPLETE.
 	if (root == NULL)
-		return (ST_OK);// parse error passes NULL root ast.
+		return (ST_OK);
 	ctx->bitmap = new_fd_bitmap(FD_BITMAP_SIZE);
 	if (ctx->bitmap == NULL)
 		return (ST_FATAL);

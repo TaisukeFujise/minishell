@@ -37,6 +37,13 @@ typedef struct s_fd_bitmap
 	char	*bitmap;
 }	t_fd_bitmap;
 
+typedef struct s_arenas
+{
+	t_arena	ast;
+	t_arena	tmp;
+	t_arena	heredoc;
+}	t_arenas;
+
 typedef struct s_error
 {
 	int		exit_code;

@@ -1,0 +1,15 @@
+# Run from minishell/ directory
+# build: make -C test/unit_test/lexer
+
+./test/unit_test/lexer/dump_tokens_line 'echo a|cat'
+./test/unit_test/lexer/dump_tokens_line '2>out 2 >out 99999999999999999999>o'
+./test/unit_test/lexer/dump_tokens_line 'A=1 B+=2 _ID 1A=2'
+./test/unit_test/lexer/dump_tokens_line '"a$HOME" '\''$X'\'' $USER $1 *'
+./test/unit_test/lexer/dump_tokens_line "\"\" ''"
+./test/unit_test/lexer/dump_tokens_line '('
+./test/unit_test/lexer/dump_tokens_line ')'
+./test/unit_test/lexer/dump_tokens_line $' \techo\t>>out'
+./test/unit_test/lexer/dump_tokens_line 'echo a & # ;'
+
+# interactive mode (paste raw lines):
+# ./test/unit_test/lexer/dump_tokens_repl

@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:40:40 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/13 00:04:07 by fendo            ###   ########.fr       */
+/*   Updated: 2026/03/01 02:36:34 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,13 @@ void	set_assign_info(t_assign_info *as, t_assign_state state,
 	as->flag = flag;
 }
 
+/*
+	lex rule (side-channel FSM, parallel to <WORD>):
+	- AS_INIT:  NAME_S -> AS_VALID
+	- AS_VALID: NAME_C -> AS_VALID
+	- AS_VALID: "="      -> AS_DONE (W_ASSIGN)
+	- AS_VALID: "+="     -> AS_DONE (W_APPEND)
+*/
 void	validate_assign(char *cur_ptr, t_assign_info *as)
 {
 	if (as->state == AS_INIT)
@@ -39,6 +46,10 @@ void	validate_assign(char *cur_ptr, t_assign_info *as)
 	}
 }
 
+/*
+	lex rule (side-channel FSM):
+	- word end: AS_VALID -> W_ID, AS_DONE -> propagate W_ASSIGN/W_APPEND
+*/
 void	apply_assign_info(t_word *head, t_assign_info *as)
 {
 	t_word	*cur;

@@ -165,9 +165,11 @@ void	dump_tokens(char *line)
 	size_t			index;
 	t_word			*word;
 	t_lex_state		st;
+	t_arena			arena;
 
 	ft_bzero(&token, sizeof(token));
-	init_lex_state(&st, line);
+	ft_arena_init(&arena, ARENA_DEFAULT_CHUNK_SIZE);
+	init_lex_state(&st, line, &arena);
 	index = 0;
 	while (1)
 	{
@@ -205,4 +207,5 @@ void	dump_tokens(char *line)
 		index++;
 	}
 	free_token(&token);
+	ft_arena_destroy(&arena);
 }

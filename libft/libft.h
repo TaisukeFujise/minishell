@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 09:41:34 by fujisetaisu       #+#    #+#             */
-/*   Updated: 2025/12/20 20:15:57 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/24 16:08:34 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,26 @@
 # include <stdbool.h>
 
 # define BUFFER_SIZE 100
+# define ARENA_DEFAULT_CHUNK_SIZE 4096
 
 # define SUCCESS 0
 # define ERROR -1
+
+typedef struct s_arena_chunk	t_arena_chunk;
+
+struct s_arena_chunk
+{
+	t_arena_chunk	*prev;
+	size_t			capacity;
+	size_t			used;
+	char			data[];
+};
+
+typedef struct s_arena
+{
+	t_arena_chunk	*current;
+	size_t			default_cap;
+}	t_arena;
 
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);
@@ -65,5 +82,14 @@ void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
 char	*get_next_line(int fd);
+void	ft_arena_init(t_arena *arena, size_t default_cap);
+void	*ft_arena_alloc(t_arena *arena, size_t size);
+void	*ft_arena_calloc(t_arena *arena, size_t count, size_t size);
+void	*ft_arena_realloc(t_arena *arena, void *ptr,
+			size_t old_size, size_t new_size);
+char	*ft_arena_strdup(t_arena *arena, const char *src);
+char	*ft_arena_strndup(t_arena *arena, const char *src, size_t n);
+void	ft_arena_reset(t_arena *arena);
+void	ft_arena_destroy(t_arena *arena);
 
 #endif

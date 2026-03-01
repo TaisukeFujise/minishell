@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:33 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/10 21:03:28 by fendo            ###   ########.fr       */
+/*   Updated: 2026/02/17 23:53:37 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,20 +50,22 @@ struct s_token
 		t_op_group		op_group;
 		t_op_redir		op_redir;
 		int				io_num;
-		char			*nl_ptr;
 		t_lexer_err		err;
 	}	u_token;
+	const char		*lexeme_begin;
+	size_t			lexeme_len;
 };
 
 struct s_lex_state
 {
 	char	*line;
 	int		paren_depth;
+	t_arena	*arena;
 };
 
-void			init_lex_state(t_lex_state *st, char *line);
-t_token_kind	lexer_step(char **line, t_token *token, t_lex_state *st);
+void			init_lex_state(t_lex_state *st, char *line, t_arena *arena);
 t_status		tokenize(t_lex_state *st, t_token *token);
+void			sync_next_line(t_lex_state *st);
 void			free_token(t_token *token);
 
 #endif
