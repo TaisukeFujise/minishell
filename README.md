@@ -1,56 +1,34 @@
 # minishell
 
-This project is about creating a simple shell.
-
 ![image](./images/image.png)
 
-## ディレクトリ構成
+## Description
+
+This project is about building a simple shell in C.
+
+The goal is to handle command execution, redirections, pipelines, environment expansion, and built-in commands while understanding the basics of Unix shell behavior.
+
+## Instructions
+```bash
+make
+./minishell
 ```
-/
-├─ src/
-│  ├─ main.c
-│  └─ module1/
-│     └─ module1-0.c
-├─ includes/
-│  └─ module1.h
-├─ test/
-│  ├─ integration_test/
-│  │  └─ pending...
-│  └─ unit_test/
-│     └─ category1/
-│        ├─ category.c
-│        └─ Makefile
-├─ Makefile
-└─ .gitignore
-```
-## ブランチルール
 
-- ベースブランチ：**main**
-    - PRのreview終了後にmerge可能
-- 作業ブランチ：
-    - 機能追加：**feature / 内容**
-    - バグ修正：**fix / 内容**
-    - 実験：**tmp / 内容（PR不要）**
+## Features
 
-  - 例）ブランチ例
-    - feature/parser-redirection
-    - fix/heredoc-leak
-    - refactor/parser-cleanup
-    - tmp/tafujise-test
+- Built-in commands: `echo`, `cd`, `pwd`, `export`, `unset`, `env`, `exit`
+- Operators: `|`, `&&`, `||`, `(`, `)`
+- Redirections: `<`, `>`, `<<`, `>>`
+- Environment variable expansion
+- Interactive input with `readline`
 
-## コミットルール
+## Resources
+### Core Concepts
+- **Bash Reference Manual**  
+  https://www.gnu.org/software/bash/manual/bash.html
 
-- 1 PR につきコミットは 4〜5 件にまとめる
-- 各コミットメッセージの先頭にプレフィックスを付ける
+- **POSIX Shell Command Language**  
+  https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html
 
-## コミットメッセージプレフィックス一覧
-
-- feat: 新機能
-- fix: バグ修正
-- docs: ドキュメントの変更
-
-## プレフィックスの書き方例
-
-- feat: add lexer for pipeline tokens
-- fix: handle null env pointer on exit
-- docs: update commit rules section
+## Use of AI
+AI tools were used for research.
