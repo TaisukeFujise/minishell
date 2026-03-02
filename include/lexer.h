@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 03:00:33 by fendo             #+#    #+#             */
-/*   Updated: 2026/03/02 22:40:06 by fendo            ###   ########.fr       */
+/*   Updated: 2026/03/02 23:30:21 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ typedef enum e_lexer_err
 }	t_lexer_err;
 
 typedef struct s_token	t_token;
+typedef struct s_lex_state	t_lex_state;
 
 struct s_token
 {
 	t_token_kind	token_kind;
-	t_token			*next;
 	union
 	{
 		t_word			*wd;
@@ -50,12 +50,22 @@ struct s_token
 		t_op_group		op_group;
 		t_op_redir		op_redir;
 		int				io_num;
-		char			*nl_ptr;
 		t_lexer_err		err;
 	}	u_token;
+	const char		*lexeme_begin;
+	size_t			lexeme_len;
 };
 
-t_token	*tokenize(char *line);
-t_token	*free_tokens(t_token *head, t_token *extra);
+struct s_lex_state
+{
+	char	*line;
+	int		paren_depth;
+	t_arena	*arena;
+};
+
+void			init_lex_state(t_lex_state *st, char *line, t_arena *arena);
+t_status		tokenize(t_lex_state *st, t_token *token);
+void			sync_next_line(t_lex_state *st);
+void			free_token(t_token *token);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:34:37 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/04 20:39:23 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/03/02 23:28:17 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,4 +21,4 @@ t_status	export_cmd(t_word_list *args, t_ctx *ctx);
 t_status	pwd_cmd(t_word_list *args, t_ctx *ctx);
 t_status	unset_cmd(t_word_list *args, t_ctx *ctx);
 
-#endif BUILTIN_H
+#endif
