@@ -22,7 +22,8 @@ static int	align_size(size_t size, size_t *aligned)
 	return (0);
 }
 
-static int	grow_in_place(t_arena *arena, void *ptr, size_t old_size, size_t new_size)
+static int	grow_in_place(t_arena *arena, void *ptr,
+				size_t old_size, size_t new_size)
 {
 	size_t	old_aligned;
 	size_t	new_aligned;
@@ -50,7 +51,8 @@ static int	grow_in_place(t_arena *arena, void *ptr, size_t old_size, size_t new_
 	return (1);
 }
 
-void	*ft_arena_realloc(t_arena *arena, void *ptr, size_t old_size, size_t new_size)
+void	*ft_arena_realloc(t_arena *arena, void *ptr,
+			size_t old_size, size_t new_size)
 {
 	void	*new_ptr;
 	size_t	copy_len;
@@ -71,3 +73,34 @@ void	*ft_arena_realloc(t_arena *arena, void *ptr, size_t old_size, size_t new_si
 		ft_memcpy(new_ptr, ptr, copy_len);
 	return (new_ptr);
 }
+
+// int	main(void)
+// {
+// 	t_arena	arena;
+// 	char	*buf;
+// 	char	*grown;
+// 	char	*shrunk;
+
+// 	ft_arena_init(&arena, 128);
+// 	buf = ft_arena_alloc(&arena, 4);
+// 	if (!buf)
+// 		return (1);
+// 	buf[0] = 'a';
+// 	buf[1] = 'b';
+// 	buf[2] = 'c';
+// 	buf[3] = '\0';
+// 	grown = ft_arena_realloc(&arena, buf, 4, 12);
+// 	if (!grown || grown[0] != 'a' || grown[1] != 'b' || grown[2] != 'c')
+// 	{
+// 		ft_arena_destroy(&arena);
+// 		return (1);
+// 	}
+// 	shrunk = ft_arena_realloc(&arena, grown, 12, 2);
+// 	if (!shrunk || shrunk[0] != 'a' || shrunk[1] != 'b')
+// 	{
+// 		ft_arena_destroy(&arena);
+// 		return (1);
+// 	}
+// 	ft_arena_destroy(&arena);
+// 	return (0);
+// }

@@ -25,3 +25,19 @@ char	*ft_arena_strdup(t_arena *arena, const char *src)
 	ft_memcpy(dst, src, total);
 	return (dst);
 }
+
+// int	main(void)
+// {
+// 	t_arena	arena;
+// 	char	*copy;
+
+// 	ft_arena_init(&arena, 128);
+// 	copy = ft_arena_strdup(&arena, "hello");
+// 	if (!copy || ft_strcmp(copy, "hello") != 0)
+// 	{
+// 		ft_arena_destroy(&arena);
+// 		return (1);
+// 	}
+// 	ft_arena_destroy(&arena);
+// 	return (0);
+// }

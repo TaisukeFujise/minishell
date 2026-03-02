@@ -78,3 +78,21 @@ void	*ft_arena_alloc(t_arena *arena, size_t size)
 	chunk->used += aligned;
 	return (ptr);
 }
+
+// int	main(void)
+// {
+// 	t_arena	arena;
+// 	void	*a;
+// 	void	*b;
+
+// 	ft_arena_init(&arena, 128);
+// 	a = ft_arena_alloc(&arena, 8);
+// 	b = ft_arena_alloc(&arena, 16);
+// 	if (!a || !b)
+// 	{
+// 		ft_arena_destroy(&arena);
+// 		return (1);
+// 	}
+// 	ft_arena_destroy(&arena);
+// 	return (0);
+// }

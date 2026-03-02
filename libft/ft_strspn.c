@@ -1,6 +1,6 @@
 #include "libft.h"
 
-size_t	ft_strspan(char **line, const char *charset, bool is_include)
+size_t	ft_strspn(char **line, const char *charset, bool is_include)
 {
 	size_t	len;
 
