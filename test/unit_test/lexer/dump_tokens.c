@@ -12,6 +12,7 @@
 
 #include "lexer.h"
 #include <stdio.h>
+#include <string.h>
 
 static const char	*token_kind_name(t_token_kind kind)
 {
@@ -167,7 +168,7 @@ void	dump_tokens(char *line)
 	t_lex_state		st;
 	t_arena			arena;
 
-	ft_bzero(&token, sizeof(token));
+	memset(&token, 0, sizeof(token));
 	ft_arena_init(&arena, ARENA_DEFAULT_CHUNK_SIZE);
 	init_lex_state(&st, line, &arena);
 	index = 0;

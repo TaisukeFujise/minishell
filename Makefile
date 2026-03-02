@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
+#    By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2026/02/04 13:59:46 by tafujise         ###   ########.fr        #
+#    Updated: 2026/03/03 00:45:29 by fendo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,19 @@ SRCS:=main.c\
 	  signal/signal_handle.c\
 	  lexer/lexer.c\
 	  lexer/lexer_internal/lex_ops.c\
+	  lexer/lexer_internal/lex_assign_util.c\
 	  lexer/lexer_internal/lex_word.c\
+	  lexer/lexer_internal/lex_word_util.c\
 	  lexer/lexer_internal/lexer_utils.c\
+	  parser/parser_internal/parse_command.c\
+	  parser/parser_internal/parse_connective.c\
+	  parser/parser_internal/parser_assign.c\
+	  parser/parser_internal/parser_error.c\
+	  parser/parser_internal/parser_heredoc.c\
+	  parser/parser_internal/parser_nodes.c\
+	  parser/parser_internal/parser_redirect.c\
+	  parser/parser_internal/parser_stream.c\
+	  
 	  execute/apply_redirect.c\
 	  execute/assigns.c\
 	  execute/bitmap.c\
