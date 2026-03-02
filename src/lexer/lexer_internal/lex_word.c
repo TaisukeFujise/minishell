@@ -6,53 +6,81 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/12 00:23:02 by fendo            ###   ########.fr       */
+/*   Updated: 2026/03/02 23:43:15 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
-#include "minishell.h"
+#include "../../../include/minishell.h"
 
-static t_lexer_err	scan_sq(char **line, t_word ***tail)
+/*
+	parse.y ref:
+	- read_token_word: single quote scanning (L5385-L5415)
+	lex rule:
+	- <SQ> [^']+ -> part(W_SQ)
+	- <SQ> "'"   -> end quote, return to <WORD>
+	- <SQ> "\0"  -> TK_ERR(UNCLOSED_SINGLE_QUOTE)
+*/
+static t_lexer_err	scan_sq(char **line, t_word_builder *wb)
 {
 	char	*begin;
 
 	begin = ++(*line);
-	while (**line && **line != '\'')
-		(*line)++;
-	return (finish_quote(line, tail, begin, W_SQ));
+	ft_strspn(line, "\'", false);
+	if (**line != '\'')
+		return (LEX_ERR_UNCLOSED_SINGLE_QUOTE);
+	return (close_quote_part(wb, line, begin, W_SQ));
 }
 
-static t_lexer_err	scan_dq(char **line, t_word ***tail)
+/*
+	parse.y ref:
+	- read_token_word: double quote scanning (L5417-L5503)
+	lex rule:
+	- <DQ> \$NAME   -> part(W_DQ|W_DOLL)
+	- <DQ> \$\?       -> part(W_DQ|W_DOLL)
+	- <DQ> \$         -> part(W_DQ)  (bare dollar)
+	- <DQ> [^"$\0]+   -> part(W_DQ)
+	- <DQ> '"'        -> end quote, return to <WORD>
+	- <DQ> "\0"       -> TK_ERR(UNCLOSED_DOUBLE_QUOTE)
+*/
+static t_lexer_err	scan_dq(char **line, t_word_builder *wb)
 {
 	char	*begin;
-	char	*dollar;
 	uint8_t	flag;
+	uint8_t	dollar_flag;
 
 	begin = ++(*line);
 	while (**line && **line != '\"')
 	{
+		flag = W_DQ;
 		if (**line == '$')
 		{
-			if (append_part(tail, begin, *line - begin, W_DQ)
-				!= LEX_NO_ERR)
-				return (LEX_ERR_MEMORY_ALLOCATION);
-			dollar = *line;
-			flag = W_NONE;
-			lex_dollar(line, &flag);
-			if (append_part(tail, dollar, *line - dollar, W_DQ | flag)
-				!= LEX_NO_ERR)
-				return (LEX_ERR_MEMORY_ALLOCATION);
-			begin = *line;
+			dollar_flag = W_NONE;
+			lex_dollar(line, &dollar_flag);
+			flag |= dollar_flag;
 		}
 		else
-			(*line)++;
+			ft_strspn(line, "\"$", false);
+		if (commit_part(wb, &begin, *line, flag) != LEX_NO_ERR)
+			return (LEX_ERR_MEMORY_ALLOCATION);
 	}
-	return (finish_quote(line, tail, begin, W_DQ));
+	if (**line != '\"')
+		return (LEX_ERR_UNCLOSED_DOUBLE_QUOTE);
+	return (close_quote_part(wb, line, begin, W_DQ));
 }
 
-static t_lexer_err	scan_unquoted(char **line, t_word ***tail,
-						t_assign_info *as)
+/*
+	parse.y ref:
+	- read_token_word: '$' handling (L5507-L5567), default char (L5700+)
+	lex rule:
+	- <WORD> \$NAME  -> part(W_DOLL)
+	- <WORD> \$\?      -> part(W_DOLL)
+	- <WORD> \$        -> part(W_NONE)
+	- <WORD> \*+       -> part(W_WILD)
+	- <WORD> PLAIN+  -> part(W_NONE)
+*/
+static t_lexer_err	scan_unquoted(char **line, t_word_builder *wb,
+									t_assign_info *as)
 {
 	char	*begin;
 	uint8_t	flag;
@@ -64,40 +92,53 @@ static t_lexer_err	scan_unquoted(char **line, t_word ***tail,
 	else if (**line == '*')
 	{
 		flag = W_WILD;
-		while (**line == '*')
-			(*line)++;
+		ft_strspn(line, "*", true);
 	}
 	else
 		while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))
 			validate_assign((*line)++, as);
-	if (append_part(tail, begin, *line - begin, flag) != LEX_NO_ERR)
-		return (LEX_ERR_MEMORY_ALLOCATION);
-	return (LEX_NO_ERR);
+	return (commit_part(wb, &begin, *line, flag));
 }
 
-static t_lexer_err	scan_word(char **line, t_word **head, t_assign_info *as)
+/*
+	parse.y ref:
+	- read_token_word: main loop (L5345-L5700)
+	lex rule:
+	- <WORD> dispatch: scan_sq / scan_dq / scan_unquoted
+	- <WORD> BOUND|DBOUND|\0 -> emit TK_WORD, BEGIN(INITIAL)
+*/
+static t_lexer_err	scan_word(char **line, t_word **head,
+								t_assign_info *as, t_arena *arena)
 {
-	t_word		**tail;
-	t_lexer_err	err;
+	t_word_builder	wb;
+	t_lexer_err		err;
 
-	tail = head;
+	wb.arena = arena;
+	wb.tail = head;
 	while (**line && !is_tk_bound(*line))
 	{
 		if (ft_strchr("\'\"$*", **line))
 			validate_assign(*line, as);
 		if (**line == '\'')
-			err = scan_sq(line, &tail);
+			err = scan_sq(line, &wb);
 		else if (**line == '\"')
-			err = scan_dq(line, &tail);
+			err = scan_dq(line, &wb);
 		else
-			err = scan_unquoted(line, &tail, as);
+			err = scan_unquoted(line, &wb, as);
 		if (err)
 			return (err);
 	}
 	return (LEX_NO_ERR);
 }
 
-t_token_kind	lex_word(char **line, t_token *tk)
+/*
+	parse.y ref:
+	- read_token_word: entry + got_token (L5305, L5720-L5741)
+	lex rule:
+	- <INITIAL> -> BEGIN(WORD) -> emit TK_WORD
+	- apply_assign_info: Apply the result of side-channel FSM
+*/
+t_token_kind	lex_word(char **line, t_token *tk, t_arena *arena)
 {
 	t_word			*head;
 	t_assign_info	as;
@@ -105,10 +146,9 @@ t_token_kind	lex_word(char **line, t_token *tk)
 
 	head = NULL;
 	set_assign_info(&as, AS_INIT, NULL, W_NONE);
-	err = scan_word(line, &head, &as);
+	err = scan_word(line, &head, &as, arena);
 	if (err)
 	{
-		free_word_parts(head);
 		if (err != LEX_ERR_MEMORY_ALLOCATION)
 			set_lexer_error(tk, err);
 		return (tk->token_kind);
