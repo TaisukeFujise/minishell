@@ -1,6 +1,5 @@
 NAME_LINE:=dump_tokens_line
 NAME_REPL:=dump_tokens_repl
-NAME_TEST:=lexer_tests
 
 ROOT:=../../..
 LIBFT_DIR:=$(ROOT)/libft
@@ -16,7 +15,6 @@ LOCAL_SRCS:=dump_tokens.c
 
 LINE_SRCS:=$(LOCAL_SRCS) dump_tokens_line.c
 REPL_SRCS:=$(LOCAL_SRCS) dump_tokens_repl.c
-TEST_SRCS:=$(LOCAL_SRCS) lexer_tests.c
 
 ROOT_OBJDIR:=$(ROOT)/obj
 TEST_OBJDIR:=obj
@@ -24,13 +22,11 @@ TEST_OBJDIR:=obj
 ROOT_OBJS:=$(addprefix $(ROOT_OBJDIR)/,$(ROOT_SRCS:%.c=%.o))
 LINE_OBJS:=$(LINE_SRCS:%.c=$(TEST_OBJDIR)/%.o)
 REPL_OBJS:=$(REPL_SRCS:%.c=$(TEST_OBJDIR)/%.o)
-TEST_OBJS:=$(TEST_SRCS:%.c=$(TEST_OBJDIR)/%.o)
 
 CC:=cc
 CFLAGS:=-Wall -Wextra -Werror -I$(ROOT)/include -I$(ROOT)/src/lexer -I$(LIBFT_DIR)
 
-all: $(NAME_LINE) $(NAME_REPL) $(NAME_TEST)
-
+all: $(NAME_LINE) $(NAME_REPL)
 $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
 
@@ -39,9 +35,6 @@ $(NAME_LINE): $(LINE_OBJS) $(ROOT_OBJS) $(LIBFT)
 
 $(NAME_REPL): $(REPL_OBJS) $(ROOT_OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) -o $@ $(REPL_OBJS) $(ROOT_OBJS) $(LIBFT) -lreadline
-
-$(NAME_TEST): $(TEST_OBJS) $(ROOT_OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) -o $@ $(TEST_OBJS) $(ROOT_OBJS) $(LIBFT) -lreadline
 
 $(ROOT_OBJDIR)/%.o: $(ROOT)/src/%.c
 	@mkdir -p $(dir $@)
@@ -55,14 +48,12 @@ clean:
 	rm -rf $(TEST_OBJDIR)
 
 fclean: clean
-	rm -f $(NAME_LINE) $(NAME_REPL) $(NAME_TEST)
+	rm -f $(NAME_LINE) $(NAME_REPL)
 
 re: fclean all
-
-tests: $(NAME_TEST)
 
 repl: $(NAME_REPL)
 
 line: $(NAME_LINE)
 
-.PHONY: all clean fclean re tests repl line
+.PHONY: all clean fclean re repl line

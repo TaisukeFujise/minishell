@@ -6,7 +6,7 @@
 #    By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/12 09:41:21 by fujisetaisu       #+#    #+#              #
-#    Updated: 2026/03/02 22:42:48 by fendo            ###   ########.fr        #
+#    Updated: 2026/03/02 23:04:17 by fendo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,7 @@ SRCS := ft_isalpha.c\
 		ft_strtrim.c\
 		ft_split.c\
 		ft_itoa.c\
-		ft_strspan.c\
+		ft_strspn.c\
 		ft_strmapi.c\
 		ft_striteri.c\
 		ft_putchar_fd.c\
