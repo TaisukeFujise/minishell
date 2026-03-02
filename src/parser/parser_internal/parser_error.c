@@ -15,7 +15,6 @@ static char	*token_text(t_token *tk, size_t *text_len)
 
 char	*unexpected_token_msg(t_parser_state *ps, t_token *tk)
 {
-	const char	*prefix = PARSER_MSG_UNEXPECTED_PREFIX;
 	char		*text;
 	size_t		text_len;
 	size_t		prefix_len;
@@ -24,13 +23,13 @@ char	*unexpected_token_msg(t_parser_state *ps, t_token *tk)
 	text = token_text(tk, &text_len);
 	if (!text)
 		return (PARSER_MSG_SYNTAX);
-	prefix_len = ft_strlen(prefix);
+	prefix_len = ft_strlen(PARSER_MSG_UNEXPECTED_PREFIX);
 	if (text_len > SIZE_MAX - prefix_len - 1)
 		return (PARSER_MSG_SYNTAX);
 	msg = ft_arena_alloc(&ps->arenas->ast, prefix_len + text_len + 2);
 	if (!msg)
 		return (PARSER_MSG_FATAL);
-	ft_memcpy(msg, prefix, prefix_len);
+	ft_memcpy(msg, PARSER_MSG_UNEXPECTED_PREFIX, prefix_len);
 	ft_memcpy(msg + prefix_len, text, text_len);
 	msg[prefix_len + text_len] = '\'';
 	msg[prefix_len + text_len + 1] = '\0';
