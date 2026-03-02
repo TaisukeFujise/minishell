@@ -9,7 +9,7 @@ LIBFT := $(LIBFT_DIR)/libft.a
 
 TEST_SRCS := main.c print_test.c
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
-EXECUTE_SRCS := init.c
+EXECUTE_SRCS := init_ctx.c
 
 SRCS := $(TEST_SRCS) $(HASHMAP_SRCS) $(EXECUTE_SRCS)
 
