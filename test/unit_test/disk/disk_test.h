@@ -1,23 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.c                                           :+:      :+:    :+:   */
+/*   disk_test.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/29 17:56:04 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/30 20:28:46 by tafujise         ###   ########.fr       */
+/*   Created: 2026/02/15 15:33:07 by tafujise          #+#    #+#             */
+/*   Updated: 2026/02/15 15:33:09 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
+#ifndef BUILTIN_TEST_H
+#define BUILTIN_TEST_H
 
-/*
-	Todo
-	- expand args and assignment word!!!.
-*/
-t_status	expand_words(t_simple_cmd *cmd, t_ctx *ctx)
-{
+#include "../../../include/minishell.h"
+#include "../../../include/parser.h"
+#include "../../../include/execute.h"
+#include "../../../include/builtin.h"
 
-}
+#include <assert.h>
+
+#endif
+

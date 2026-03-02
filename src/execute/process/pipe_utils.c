@@ -6,14 +6,13 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 23:34:14 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/06 17:49:31 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:04:14 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
-#include "../../include/execute.h"
+#include "../../../include/execute.h"
+#include "../../../include/minishell.h"
+#include "../../../include/parser.h"
 
 t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out)
 {

@@ -5,12 +5,12 @@
 #                                                     +:+ +:+         +:+      #
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2026/02/03 18:30:51 by tafujise          #+#    #+#              #
-#    Updated: 2026/02/04 09:37:58 by tafujise         ###   ########.fr        #
+#    Created: 2026/02/15 15:31:59 by tafujise          #+#    #+#              #
+#    Updated: 2026/02/16 02:53:31 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME:=execute_test
+NAME:=disk_test
 ROOT:= ../../..
 
 CC := cc
@@ -26,10 +26,15 @@ EXECUTE_SRCS := \
 	exec_null.c \
 	pipe_utils.c \
 	register_pid.c \
+	wait_children.c \
 	stdio_guard.c \
 	apply_redirect.c \
 	assigns.c\
 	heredoc_tmpfile.c\
+	exec_disk.c\
+	args_utils.c\
+	path_utils.c\
+	envp_utils.c\
 
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
 
@@ -43,6 +48,7 @@ vpath %.c $(ROOT)/src/hashmap \
 	$(ROOT)/src/execute/expansion \
 	$(ROOT)/src/execute/process \
 	$(ROOT)/src/execute/redirect \
+	$(ROOT)/src/execute/utils \
 	.
 
 LDLIBS := -lreadline

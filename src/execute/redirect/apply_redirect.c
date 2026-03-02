@@ -6,13 +6,13 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 12:31:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/07 00:20:38 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:08:17 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
-#include "../../include/execute.h"
+#include "../../../include/execute.h"
+#include "../../../include/minishell.h"
+#include "../../../include/parser.h"
 
 t_status	apply_redir_excluding_dless(t_redirect *redirect, int oflag);
 t_status	apply_redir_dless(t_redirect *redirect);
@@ -32,11 +32,13 @@ t_status	apply_redirects(t_redirect *redirects)
 	while (redirects)
 	{
 		if (redirects->op == REDIR_GREATER)
-			status = apply_redir_excluding_dless(redirects, O_WRONLY | O_CREAT | O_TRUNC);
+			status = apply_redir_excluding_dless(redirects,
+					O_WRONLY | O_CREAT | O_TRUNC);
 		else if (redirects->op == REDIR_LESS)
 			status = apply_redir_excluding_dless(redirects, O_RDONLY);
 		else if (redirects->op == REDIR_DGREATER)
-			status = apply_redir_excluding_dless(redirects, O_WRONLY | O_CREAT | O_APPEND);
+			status = apply_redir_excluding_dless(redirects,
+					O_WRONLY | O_CREAT | O_APPEND);
 		else if (redirects->op == REDIR_DLESS)
 			status = apply_redir_dless(redirects);
 		else
@@ -71,7 +73,9 @@ t_status	apply_redir_excluding_dless(t_redirect *redirect, int oflag)
 }
 
 /*
-	apply_redir_dless redirect the input read by until a line containing the delimiter, like "4<< EOF"
+	apply_redir_dless redirect the input read
+	by until a line containing the delimiter,
+		like "4<< EOF"
 	- io_number "0" means "<< file"
 */
 t_status	apply_redir_dless(t_redirect *redirect)

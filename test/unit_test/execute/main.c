@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 08:40:17 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/04 08:24:51 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/08 17:37:22 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	print_table(t_hashtable *table)
 
 void	print_ctx(t_ctx ctx)
 {
-	printf("exit_code: %d\n", ctx.exit_code);
+	printf("exit_code: %d\n", ctx.err.exit_code);
 	print_table(ctx.env_table);
 	// print_table(ctx.tmp_table);
 	// print_bitmap(ctx.bitmap);
