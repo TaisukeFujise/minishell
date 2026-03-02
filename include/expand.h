@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 19:46:17 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/04 19:05:12 by fendo            ###   ########.fr       */
+/*   Updated: 2026/03/01 19:28:04 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,4 +16,14 @@
 # include "lexer.h"
 # include "parser.h"
 
-# endif
+/*
+** Public API
+** - expand_simple_cmd: Expand args and redirects of a simple command
+** - expand_heredoc_body: Expand heredoc body if delimiter is unquoted
+*/
+
+t_status	expand_simple_cmd(t_simple_cmd *cmd, t_ctx *ctx, t_arenas *arenas);
+char		*expand_heredoc_body(const char *body, size_t len, bool quoted,
+				t_ctx *ctx, t_arena *arena);
+
+#endif

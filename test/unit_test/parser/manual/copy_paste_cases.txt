@@ -248,3 +248,54 @@ cat << eof
 # use the parser_dump_line section above for:
 # - multiline && / || / |
 # - subshell compound_list with NEWLINE separators
+
+# [repl recovery sequence: paste in order]
+echo before_recovery
+echo "unclosed
+echo after_unclosed_double
+echo 'unclosed
+echo after_unclosed_single
+)
+echo after_rparen_error
+echo a &&
+echo after_connective_error
+cat << eof
+X
+eof
+echo after_heredoc
+
+# [repl heredoc variants]
+cat << EOF
+$HOME
+EOF
+cat << "EOF"
+$HOME
+EOF
+cat << 'EOF'
+$HOME
+EOF
+cat << a << b
+X
+a
+Y
+b
+(cat << z) && echo done
+Z
+z
+
+# [repl extra combined one-line]
+((cmd1) && (cmd2)) || (cmd3)
+<in (cmd1 | cmd2) >out
+2>>err (cmd1 && cmd2)
+(A=1 B+=2 cmd x) | (cmd2 y)
+(cmd1 && (cmd2 | cmd3)) || (cmd4 && cmd5)
+((cmd1) | (cmd2)) && ((cmd3) | (cmd4))
+((A=1 cmd1 >out) && (B+=2 cmd2 <in)) || (cmd3 2>>err)
+
+# [repl unsupported-token behavior]
+echo a ; echo b
+echo a & echo b
+echo a # comment
+; echo a
+& echo a
+# only comment

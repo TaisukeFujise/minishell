@@ -67,7 +67,7 @@ static char	*read_next_heredoc_line(t_parser_state *ps)
 	return (ft_arena_strndup(&ps->arenas->tmp, start, end - start));
 }
 
-static void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)
+void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)
 {
 	char	*delim;
 	char	*line;
@@ -92,27 +92,4 @@ static void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)
 		return (parser_fail(ps, ST_FAILURE, hd_eof_warn_msg(ps, delim)));
 	redir->hd.raw_str.str = content;
 	redir->hd.raw_str.len = len;
-}
-
-/*
-	parse.y ref:
-	- gather_here_documents pending queue drain (L3120-L3136)
-	grammar_ebnf ref:
-	- no direct production (io_here body collection phase)
-*/
-void	collect_heredocs(t_parser_state *ps)
-{
-	t_hd_item	*item;
-
-	if (ps->hd_head == NULL)
-		return ;
-	while (ps->hd_head && ps->status == ST_OK)
-	{
-		item = ps->hd_head;
-		ps->hd_head = item->next;
-		if (ps->hd_head == NULL)
-			ps->hd_tail = NULL;
-		collect_one_heredoc(ps, item->redir);
-	}
-	ps->hd_count = 0;
 }

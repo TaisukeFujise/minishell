@@ -47,7 +47,6 @@ t_node		*make_binary(t_parser_state *ps, t_op_connect op,
 				t_node *left, t_node *right);
 
 /* parse_command.c */
-void		register_heredoc(t_parser_state *ps, t_redirect *redir);
 t_node		*parse_simple(t_parser_state *ps);
 t_node		*parse_subshell(t_parser_state *ps);
 
@@ -59,6 +58,11 @@ t_node		*parse_compound_list(t_parser_state *ps);
 t_assign	*word_to_assign(t_parser_state *ps, t_word *word);
 
 /* parser_heredoc.c */
+void		collect_one_heredoc(t_parser_state *ps, t_redirect *redir);
+
+/* parser_redirect.c */
 void		collect_heredocs(t_parser_state *ps);
+void		register_heredoc(t_parser_state *ps, t_redirect *redir);
+void		add_redir(t_parser_state *ps, t_redirect **list);
 
 #endif

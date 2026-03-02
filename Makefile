@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
+#    By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2026/02/04 13:59:46 by tafujise         ###   ########.fr        #
+#    Updated: 2026/03/02 01:07:16 by fendo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,14 @@ SRCS:=main.c\
 	  lexer/lexer_internal/lex_ops.c\
 	  lexer/lexer_internal/lex_word.c\
 	  lexer/lexer_internal/lexer_utils.c\
+	  expand/expand.c\
+	  expand/expand_internal/expand_buf.c\
+	  expand/expand_internal/expand_ctx.c\
+	  expand/expand_internal/expand_glob.c\
+	  expand/expand_internal/expand_param.c\
+	  expand/expand_internal/expand_split.c\
+	  expand/expand_internal/expand_utils.c\
+	  expand/expand_internal/expand_word.c\
 	  execute/apply_redirect.c\
 	  execute/assigns.c\
 	  execute/bitmap.c\
@@ -44,6 +52,7 @@ HEADDIR:=include
 HEADERS:=minishell.h\
 		 signal_handle.h\
 		 lexer.h\
+		 expand.h\
 		 execute.h\
 		 parser.h\
 		 hashmap.h

@@ -66,32 +66,3 @@ t_node	*parse_andor(t_parser_state *ps)
 	}
 	return (left);
 }
-
-/*
-	parse.y ref (closest in bash grammar):
-	- compound_list/list split by newline_list (L1262-L1307)
-	grammar_ebnf ref:
-	- complete_commands
-*/
-t_node	*parse_compound_list(t_parser_state *ps)
-{
-	t_node	*head;
-	t_node	*child;
-
-	child = parse_andor(ps);
-	if (ps->status != ST_OK || !child)
-		return (NULL);
-	head = new_node(ps, NODE_COMPLETE);
-	if (!head)
-		return (NULL);
-	head->left = child;
-	if (ps->status == ST_OK
-		&& skip_newline(ps, SKIP_AND_COLLECT)
-		&& (peek(ps)->token_kind == TK_WORD
-			|| peek(ps)->token_kind == TK_REDIR
-			|| peek(ps)->token_kind == TK_IO_NUMBER
-			|| (peek(ps)->token_kind == TK_GROUP
-				&& peek(ps)->u_token.op_group == GROUP_LPAREN)))
-		head->right = parse_compound_list(ps);
-	return (head);
-}

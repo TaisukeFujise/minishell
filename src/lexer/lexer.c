@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:32:33 by fendo             #+#    #+#             */
-/*   Updated: 2026/03/01 15:20:25 by fendo            ###   ########.fr       */
+/*   Updated: 2026/03/02 23:22:36 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ void	sync_next_line(t_lex_state *st)
 	- DBOUND  (&&|\|\||>>|<<)
 	- PLAIN   [^ \t\n|()><'"$*]
 */
-
 t_status	tokenize(t_lex_state *st, t_token *token)
 {
 	char	*begin;
@@ -69,7 +68,7 @@ t_status	tokenize(t_lex_state *st, t_token *token)
 	if (!st || !token)
 		return (ST_FATAL);
 	free_token(token);
-	ft_strspan(&st->line, " \t", true);
+	ft_strspn(&st->line, " \t", true);
 	begin = st->line;
 	if (lex_control(&st->line, token) == TK_EOF && st->paren_depth != 0)
 		set_lexer_error(token, LEX_ERR_UNCLOSED_SUBSHELL);

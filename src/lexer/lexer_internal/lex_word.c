@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/03/01 02:37:21 by fendo            ###   ########.fr       */
+/*   Updated: 2026/03/02 23:03:59 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static t_lexer_err	scan_sq(char **line, t_word_builder *wb)
 	char	*begin;
 
 	begin = ++(*line);
-	ft_strspan(line, "\'", false);
+	ft_strspn(line, "\'", false);
 	if (**line != '\'')
 		return (LEX_ERR_UNCLOSED_SINGLE_QUOTE);
 	return (close_quote_part(wb, line, begin, W_SQ));
@@ -60,7 +60,7 @@ static t_lexer_err	scan_dq(char **line, t_word_builder *wb)
 			flag |= dollar_flag;
 		}
 		else
-			ft_strspan(line, "\"$", false);
+			ft_strspn(line, "\"$", false);
 		if (commit_part(wb, &begin, *line, flag) != LEX_NO_ERR)
 			return (LEX_ERR_MEMORY_ALLOCATION);
 	}
@@ -91,7 +91,7 @@ static t_lexer_err	scan_unquoted(char **line, t_word_builder *wb,
 	else if (**line == '*')
 	{
 		flag = W_WILD;
-		ft_strspan(line, "*", true);
+		ft_strspn(line, "*", true);
 	}
 	else
 		while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))
