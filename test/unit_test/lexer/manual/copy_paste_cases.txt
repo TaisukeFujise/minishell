@@ -1,0 +1,108 @@
+# Run from minishell/ directory
+# build: make -C test/unit_test/lexer
+
+./test/unit_test/lexer/dump_tokens_line 'echo a|cat'
+./test/unit_test/lexer/dump_tokens_line '2>out 2 >out 99999999999999999999>o'
+./test/unit_test/lexer/dump_tokens_line 'A=1 B+=2 _ID 1A=2'
+./test/unit_test/lexer/dump_tokens_line '"a$HOME" '\''$X'\'' $USER $1 *'
+./test/unit_test/lexer/dump_tokens_line "\"\" ''"
+./test/unit_test/lexer/dump_tokens_line '('
+./test/unit_test/lexer/dump_tokens_line ')'
+./test/unit_test/lexer/dump_tokens_line $' \techo\t>>out'
+./test/unit_test/lexer/dump_tokens_line 'echo a & # ;'
+
+# interactive mode (paste raw lines):
+# ./test/unit_test/lexer/dump_tokens_repl
+
+# note:
+# - paste one line per prompt ("dump tokens> ")
+# - unclosed quote / invalid token cases should continue on next prompt
+
+# [basic words / quoting]
+echo a
+echo a b c
+echo a""b
+echo ''""
+echo ""
+echo ''
+echo "" ''
+echo "$HOME"
+echo '$HOME'
+echo "$HOME" '$HOME' $HOME $?
+echo $1
+echo $$
+echo $
+echo *
+echo "*" '*'
+echo a\ b
+echo \\
+echo \$
+echo ~
+
+# [assignment / identifier]
+A=1
+A=1 B=2
+A=1 B+=2
+_A=1
+1A=1
+A+=
+A=
+A= cmd
+A=1 cmd x
+A=1 B+=2 cmd x
+cmd A=1 B+=2
+export A=1 B+=2
+
+# [operator boundary without spaces]
+a&&b
+a||b
+a|b
+2>out
+2>>out
+0<in
+10>>out
+0002>out
+2147483647>out
+2147483648>out
+99999999999999999999>out
+2>out3
+2><out
+2>>out|cat
+
+# [group / redir mix]
+(echo a)
+((echo a))
+(echo a)>out
+(echo a)2>err
+((echo a)&&(echo b))
+>out <in
+>out cmd
+<in cmd >out
+
+# [dollar / wildcard edge]
+echo $?
+echo $$ $?$? $$$
+echo $_ $A1 $A_1
+echo $- $@ $!
+echo "$$" "$?" "$1"
+echo '$$' '$?' '$1'
+echo "**" ***
+
+# [unsupported chars in this lexer phase]
+echo a ; echo b
+echo a & echo b
+echo a # comment
+echo '#' ';' '&'
+echo a\;b
+echo a\&b
+
+# [error / recovery sequence: paste in order]
+echo ok_before
+echo "unclosed
+echo ok_after_double
+echo 'unclosed
+echo ok_after_single
+(
+)
+|||
+echo final_ok

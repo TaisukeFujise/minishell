@@ -6,23 +6,21 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 19:58:11 by fendo             #+#    #+#             */
-/*   Updated: 2026/02/10 21:05:23 by fendo            ###   ########.fr       */
+/*   Updated: 2026/03/02 23:40:17 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../../libft/libft.h"
 #include "lexer_internal.h"
 #include <limits.h>
 #include <stddef.h>
 
-// Refer to section "3.45 Blank Character (<blank>)" 
-// in https://pubs.opengroup.org/onlinepubs/9799919799/
-void	skip_blank(char **line)
-{
-	while (**line != '\0' && ft_isblank(**line))
-		(*line)++;
-}
-
+/*
+	parse.y ref:
+	- read_token_word: all_digit_token / NUMBER (L5731-L5741)
+	lex rule:
+	- DIGIT+ -> int (overflow -> -1)
+*/
 int	str2fd(char **line)
 {
 	long long	num;
@@ -60,12 +58,17 @@ char	*strchunk(const char *table, const char *str, size_t n)
 	return (NULL);
 }
 
+/*
+	lex rule:
+	- BOUND  = [ \t\n|()><]
+	- DBOUND = (&&|\|\||>>|<<)
+*/
 int	is_tk_bound(char *ch)
 {
 	return (ft_strchr(" \t\n|()><", *ch) || strchunk("&&||>><<", ch, 2));
 }
 
-void	set_lexer_error(t_token *token, int err)
+void	set_lexer_error(t_token *token, t_lexer_err err)
 {
 	if (!token)
 		return ;
