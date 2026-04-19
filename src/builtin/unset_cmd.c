@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:41:53 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 16:02:26 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/25 00:23:09 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ t_status	unset_cmd(t_word_list *args, t_ctx *ctx)
 
 	i = 0;
 	if (args == NULL)
-		return (ST_FAILURE); // unset: not enough arguments
+		return (ST_OK);
 	if (args->wd->len < 1)
 		return (ST_FAILURE);
 	while (args->wd->str[i])
 	{
 		if (!(ft_isalnum(args->wd->str[i]) || args->wd->str[i] == '_'))
 			return (ST_FAILURE);
-				// unset: (args->wd->str): invalid parameter name
+		// unset: (args->wd->str): invalid parameter name
 		i++;
 	}
 	if (ft_isdigit(*(args->wd->str)))
@@ -40,6 +40,8 @@ t_status	unset_cmd(t_word_list *args, t_ctx *ctx)
 	while (args)
 	{
 		item = hash_remove(args->wd->str, ctx->env_table);
+		free(item->key);
+		free(item->data.value);
 		free(item);
 		item = NULL;
 		args = args->next;

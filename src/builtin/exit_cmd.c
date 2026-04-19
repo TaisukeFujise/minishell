@@ -6,13 +6,15 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:40:04 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/13 01:31:06 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/24 23:49:28 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/builtin.h"
 #include "../../include/execute.h"
 #include "../../include/parser.h"
+
+bool		is_valid_number(char *str);
 
 /*
 	exit [n]
@@ -34,6 +36,12 @@ t_status	exit_cmd(t_word_list *args, t_ctx *ctx)
 		ctx->err.exit_code = 1;
 		return (ST_FAILURE); // exit: too many arguments
 	}
+	if (is_valid_number(args->wd->str) == false)
+	{
+		write(STDERR_FILENO, "exit", 4);
+		ctx->err.exit_code = 2;
+		return (ST_FATAL);
+	}
 	arg_num = ft_atol(args->wd->str);
 	if (errno == ERANGE)
 	{
@@ -42,6 +50,22 @@ t_status	exit_cmd(t_word_list *args, t_ctx *ctx)
 		return (ST_FATAL); // exit: (arg->wd->str): numeric argument reguired
 	}
 	write(STDOUT_FILENO, "exit", 4);
-	ctx->err.exit_code = arg_num % 256;
+	ctx->err.exit_code = (((arg_num % 256) + 256) % 256);
 	return (ST_EXIT);
+}
+
+bool	is_valid_number(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] == '+' || str[i] == '-')
+		i++;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (false);
+		i++;
+	}
+	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 19:33:34 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/14 17:09:30 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/24 23:07:54 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,15 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 	path = getcwd(NULL, 0);
 	if (path == NULL)
 		return (ST_FATAL);
-	return (update_pwd(ctx->tmp_table, ctx->env_table, path));
+	if (update_pwd(ctx->tmp_table, ctx->env_table, path) != ST_OK)
+		return (free(path), ST_FATAL);
+	return (ST_OK);
 }
 
 t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 {
 	t_bucket_contents	*pwd;
+	char				*oldpwd_key;
 	t_bucket_contents	*oldpwd;
 
 	pwd = hash_search("PWD", tmp_table);
@@ -71,9 +74,12 @@ t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 		if (pwd == NULL)
 			return (ST_OK);
 	}
-	oldpwd = hash_insert("OLDPWD", env_table);
-	if (oldpwd == NULL)
+	oldpwd_key = ft_strdup("OLDPWD");
+	if (oldpwd_key == NULL)
 		return (ST_FATAL);
+	oldpwd = hash_insert(oldpwd_key, env_table);
+	if (oldpwd == NULL)
+		return (free(oldpwd_key), ST_FATAL);
 	if (oldpwd->data.value != NULL)
 	{
 		free(oldpwd->data.value);
@@ -81,7 +87,7 @@ t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 	}
 	oldpwd->data.value = ft_strdup(pwd->data.value);
 	if (oldpwd->data.value == NULL)
-		return (ST_FATAL);
+		return (free(oldpwd_key), ST_FATAL);
 	return (ST_OK);
 }
 
@@ -89,20 +95,23 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 		char *path)
 {
 	t_bucket_contents	*pwd;
+	char				*pwd_key;
 
-	// (void)tmp_table;
 	if (_update_oldpwd(tmp_table, env_table) != ST_OK)
 		return (ST_FATAL);
-	pwd = hash_insert("PWD", env_table);
-	if (pwd == NULL)
+	pwd_key = ft_strdup("PWD");
+	if (pwd_key == NULL)
 		return (ST_FATAL);
+	pwd = hash_insert(pwd_key, env_table);
+	if (pwd == NULL)
+		return (free(pwd_key), ST_FATAL);
 	if (pwd->data.value != NULL)
 	{
 		free(pwd->data.value);
 		pwd->data.value = NULL;
 	}
-	pwd->data.value = ft_strdup(path);
+	pwd->data.value = path;
 	if (pwd->data.value == NULL)
-		return (ST_FATAL);
+		return (free(pwd_key), ST_FATAL);
 	return (ST_OK);
 }
