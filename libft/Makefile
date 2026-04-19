@@ -6,7 +6,7 @@
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/12 09:41:21 by fujisetaisu       #+#    #+#              #
-#    Updated: 2026/02/13 01:31:06 by tafujise         ###   ########.fr        #
+#    Updated: 2026/04/19 20:14:27 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,12 +44,21 @@ SRCS := ft_isalpha.c\
 		ft_strtrim.c\
 		ft_split.c\
 		ft_itoa.c\
+		ft_strspn.c\
 		ft_strmapi.c\
 		ft_striteri.c\
 		ft_putchar_fd.c\
 		ft_putstr_fd.c\
 		ft_putendl_fd.c\
 		ft_putnbr_fd.c\
+		ft_arena_init.c\
+		ft_arena_alloc.c\
+		ft_arena_calloc.c\
+		ft_arena_realloc.c\
+		ft_arena_strdup.c\
+		ft_arena_strndup.c\
+		ft_arena_reset.c\
+		ft_arena_destroy.c\
 		get_next_line.c\
 		ft_atol.c\
 

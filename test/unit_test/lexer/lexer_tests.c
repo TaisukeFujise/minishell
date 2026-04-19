@@ -1,6 +1,7 @@
 #include "lexer.h"
-#include "libft.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct s_expect_token
 {
@@ -45,10 +46,10 @@ static int	match_word(const t_token *tok, const t_expect_token *exp)
 		return (0);
 	len = exp->word_len;
 	if (len < 0)
-		len = (int)ft_strlen(exp->word);
+		len = (int)strlen(exp->word);
 	if (tok->u_token.wd.word.len != len)
 		return (0);
-	if (ft_strncmp(tok->u_token.wd.word.str, exp->word, len) != 0)
+	if (strncmp(tok->u_token.wd.word.str, exp->word, (size_t)len) != 0)
 		return (0);
 	if (tok->u_token.wd.flag != exp->flag)
 		return (0);
@@ -191,7 +192,7 @@ static void	print_expected(const t_expect_token *exp)
 		printf("\n");
 		len = exp->word_len;
 		if (len < 0 && exp->word)
-			len = (int)ft_strlen(exp->word);
+			len = (int)strlen(exp->word);
 		if (exp->word)
 			printf("    word : \"%.*s\"\n", len, exp->word);
 		else
@@ -270,7 +271,7 @@ static int	run_case(const t_test_case *tc)
 	size_t	i;
 	int		ok;
 
-	input = ft_strdup(tc->input);
+	input = strdup(tc->input);
 	if (!input)
 	{
 		fprintf(stderr, "[FAIL] %s: malloc failed\n", tc->name);
