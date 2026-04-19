@@ -29,18 +29,14 @@ SRCS:=main.c\
 	  parser/parser_internal/parser_nodes.c\
 	  parser/parser_internal/parser_redirect.c\
 	  parser/parser_internal/parser_stream.c\
-	  
-	  execute/apply_redirect.c\
-	  execute/assigns.c\
-	  execute/bitmap.c\
-	  execute/collect_child.c\
-	  execute/create_filename.c\
-	  execute/exec_builtin.c\
-	  execute/exec_connection.c\
-	  execute/exec_disk.c\
-	  execute/exec_null.c\
-	  execute/exec_simple.c\
-	  execute/exec_subshell.c\
+	  parser/parser.c\
+	  builtin/cd_cmd.c\
+	  builtin/echo_cmd.c\
+	  builtin/env_cmd.c\
+	  builtin/exit_cmd.c\
+	  builtin/export_cmd.c\
+	  builtin/pwd_cmd.c\
+	  builtin/unset_cmd.c\
 	  execute/execute.c\
 	  execute/init_ctx.c\
 	  execute/dispatch/exec_builtin.c\
@@ -80,7 +76,13 @@ OBJS:=$(addprefix $(OBJDIR)/,$(SRCS:%.c=%.o))
 
 CC:=cc
 
-CCFLAGS:=-Wall -Wextra -Werror -I$(HEADDIR) -I$(LIBFT_DIR)
+READLINE_PREFIX:=$(shell brew --prefix readline 2>/dev/null)
+ifneq ($(READLINE_PREFIX),)
+READLINE_INC:=-I$(READLINE_PREFIX)/include
+READLINE_LIB:=-L$(READLINE_PREFIX)/lib
+endif
+
+CCFLAGS:=-Wall -Wextra -Werror -I$(HEADDIR) -I$(LIBFT_DIR) $(READLINE_INC)
 
 DEBUG_FLAGS:=-g -O0
 
@@ -91,7 +93,7 @@ $(LIBFT): FORCE
 FORCE:
 
 $(NAME): $(OBJS) $(LIBFT)
-	$(CC) -o $(NAME) $(OBJS) $(LIBFT) -lreadline
+	$(CC) -o $(NAME) $(OBJS) $(LIBFT) $(READLINE_LIB) -lreadline
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
 	@mkdir -p $(dir $@)
