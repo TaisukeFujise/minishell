@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 02:38:46 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 02:20:47 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/04/19 22:19:42 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,35 @@ int	build_exec_params(t_exec_params *exec_params, t_word_list *args,
 	return (SUCCESS);
 }
 
+static char	*word_to_str(t_word *wd)
+{
+	t_word	*part;
+	int		total;
+	char	*str;
+	int		i;
+
+	total = 0;
+	part = wd;
+	while (part)
+	{
+		total += part->len;
+		part = part->next;
+	}
+	str = malloc(total + 1);
+	if (str == NULL)
+		return (NULL);
+	i = 0;
+	part = wd;
+	while (part)
+	{
+		ft_memcpy(str + i, part->str, part->len);
+		i += part->len;
+		part = part->next;
+	}
+	str[total] = '\0';
+	return (str);
+}
+
 char	**_build_exec_argv(t_word_list *args)
 {
 	int		count;
@@ -88,7 +117,9 @@ char	**_build_exec_argv(t_word_list *args)
 	i = 0;
 	while (args)
 	{
-		av[i] = ft_strdup(args->wd->str);
+		av[i] = word_to_str(args->wd);
+		if (av[i] == NULL)
+			return (free_exec_params(av, NULL), NULL);
 		args = args->next;
 		i++;
 	}
