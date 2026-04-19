@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:49:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 21:54:06 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/04/19 21:24:36 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,13 +122,16 @@ bool	has_slash(char *str)
 	return (false);
 }
 
+/*
+	127 means errno ENOENT("command not found")
+*/
 int	run_path_search_command(char *path_value, char **argv, char **envp)
 {
 	char	*dir;
 	char	*pathname;
 	int		exit_code;
 
-	exit_code = 127; // 127 means errno ENOENT("command not found")
+	exit_code = 127;
 	while (*path_value)
 	{
 		dir = extract_path_entry(path_value);

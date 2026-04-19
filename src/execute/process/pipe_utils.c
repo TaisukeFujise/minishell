@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 23:34:14 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:04:14 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/19 16:10:26 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,13 @@ t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out)
 	{
 		if (dup2(pipe_in, STDIN_FILENO) < 0)
 			return (ST_FAILURE);
-		if (pipe_in > 0)
-			close(pipe_in);
+		close(pipe_in);
 	}
 	if (pipe_out != NO_PIPE)
 	{
 		if (dup2(pipe_out, STDOUT_FILENO) < 0)
 			return (ST_FAILURE);
-		if (pipe_out > 0)
-			close(pipe_out);
+		close(pipe_out);
 	}
 	return (ST_OK);
 }

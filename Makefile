@@ -6,7 +6,7 @@
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2026/02/16 02:54:01 by tafujise         ###   ########.fr        #
+#    Updated: 2026/04/19 20:15:30 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,30 @@ SRCS:=main.c\
 	  signal/signal_handle.c\
 	  lexer/lexer.c\
 	  lexer/lexer_internal/lex_ops.c\
+	  lexer/lexer_internal/lex_assign_util.c\
 	  lexer/lexer_internal/lex_word.c\
+	  lexer/lexer_internal/lex_word_util.c\
 	  lexer/lexer_internal/lexer_utils.c\
+	  parser/parser_internal/parse_command.c\
+	  parser/parser_internal/parse_connective.c\
+	  parser/parser_internal/parser_assign.c\
+	  parser/parser_internal/parser_error.c\
+	  parser/parser_internal/parser_heredoc.c\
+	  parser/parser_internal/parser_nodes.c\
+	  parser/parser_internal/parser_redirect.c\
+	  parser/parser_internal/parser_stream.c\
+	  
+	  execute/apply_redirect.c\
+	  execute/assigns.c\
+	  execute/bitmap.c\
+	  execute/collect_child.c\
+	  execute/create_filename.c\
+	  execute/exec_builtin.c\
+	  execute/exec_connection.c\
+	  execute/exec_disk.c\
+	  execute/exec_null.c\
+	  execute/exec_simple.c\
+	  execute/exec_subshell.c\
 	  execute/execute.c\
 	  execute/init_ctx.c\
 	  execute/dispatch/exec_builtin.c\
