@@ -111,9 +111,11 @@ t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 		result = undo_stdio(saved);
 		return (close_savedfd(saved), result);
 	}
-	if (builtin_cmd(cmd->args, ctx) != ST_OK)
+	result = builtin_cmd(cmd->args, ctx);
+	if (result != ST_OK)
 	{
-		result = undo_stdio(saved);
+		if (undo_stdio(saved) == ST_FATAL)
+			return (close_savedfd(saved), ST_FATAL);
 		return (close_savedfd(saved), result);
 	}
 	result = undo_stdio(saved);

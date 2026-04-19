@@ -42,7 +42,7 @@ t_status	collect_child_result(t_ctx *ctx)
 		i++;
 	}
 	if (ctx->err.exit_code != 130)
-		ctx->err.exit_code = status_to_exit_code(status);
+		ctx->err.exit_code = status_to_exitcode(status);
 	reset_ctx_pid(ctx);
 	return (ST_OK);
 }

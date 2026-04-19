@@ -96,7 +96,6 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 {
 	t_bucket_contents	*pwd;
 	char				*pwd_key;
-	char				*oldpwd_key;
 
 	if (_update_oldpwd(tmp_table, env_table) != ST_OK)
 		return (ST_FATAL);
