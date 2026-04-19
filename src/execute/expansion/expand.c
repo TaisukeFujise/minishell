@@ -19,4 +19,7 @@
 */
 t_status	expand_words(t_simple_cmd *cmd, t_ctx *ctx)
 {
+	(void)cmd;
+	(void)ctx;
+	return (ST_OK);
 }

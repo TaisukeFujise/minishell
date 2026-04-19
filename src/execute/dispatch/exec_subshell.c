@@ -15,8 +15,9 @@
 
 t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
-	/*
-		Todo
-		- subshell
-	*/
+	(void)node;
+	(void)ctx;
+	(void)pipe_in;
+	(void)pipe_out;
+	return (ST_OK);
 }

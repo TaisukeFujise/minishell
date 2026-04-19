@@ -31,12 +31,12 @@ void	handle_command_termination(t_status status, char *user_input, t_node *node,
 	*/
 	if (status == ST_EXIT)
 	{
-		rl_clear_history();
+		clear_history();
 		exit(ctx->err.exit_code);
 	}
 	if (status == ST_FATAL)
 	{
-		rl_clear_history();
+		clear_history();
 		exit(1);
 	}
 }
@@ -116,6 +116,6 @@ int main(int argc, char **argv, char **envp)
 			because node and ctx itself are not allocated memory.
 		*/
 	}
-	rl_clear_history();
+	clear_history();
 	return (ctx.err.exit_code);
 }
