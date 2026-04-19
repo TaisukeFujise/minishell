@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 06:00:22 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/04/19 20:16:27 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,8 @@ void	exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		exit(EXIT_FAILURE);
 	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) != ST_OK)
 		exit(EXIT_FAILURE);
-	_exit(builtin_cmd(cmd->args, ctx));
+	builtin_cmd(cmd->args, ctx);
+	exit(ctx->err.exit_code);
 }
 
 /*
@@ -101,22 +102,21 @@ t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 		return (ST_FAILURE);
 	if (apply_redirects(cmd->redirects) != ST_OK)
 	{
-		close_savedfd(saved);
-		return (ST_FAILURE);
+		result = undo_stdio(saved);
+		return (close_savedfd(saved), result);
 	}
 	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) == ST_FATAL)
 	{
-		close_savedfd(saved);
-		return (undo_stdio(saved));
+		result = undo_stdio(saved);
+		return (close_savedfd(saved), result);
 	}
 	if (builtin_cmd(cmd->args, ctx) != ST_OK)
 	{
-		close_savedfd(saved);
-		return (undo_stdio(saved));
+		result = undo_stdio(saved);
+		return (close_savedfd(saved), result);
 	}
 	result = undo_stdio(saved);
-	close_savedfd(saved);
-	return (result);
+	return (close_savedfd(saved), result);
 }
 
 /*
