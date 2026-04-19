@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/10 21:15:56 by fendo            ###   ########.fr       */
+/*   Updated: 2026/03/02 23:30:38 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,13 @@ typedef struct s_fd_bitmap
 	int		size;
 	char	*bitmap;
 }	t_fd_bitmap;
+
+typedef struct s_arenas
+{
+	t_arena	ast;
+	t_arena	tmp;
+	t_arena	heredoc;
+}	t_arenas;
 
 typedef struct s_error
 {
@@ -94,7 +101,7 @@ typedef enum e_flag
 	W_WILD		= 1u << 3,
 	W_ASSIGN	= 1u << 4,
 	W_APPEND	= 1u << 5,
-	W_IDENT		= 1u << 6
+	W_ID		= 1u << 6
 }	t_flag;
 
 typedef struct s_word	t_word;

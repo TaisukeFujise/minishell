@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 09:41:34 by fujisetaisu       #+#    #+#             */
-/*   Updated: 2026/02/13 01:31:06 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/04/19 19:56:46 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,29 @@
 # include <stdint.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <stdbool.h>
 
 # define BUFFER_SIZE 100
+# define ARENA_DEFAULT_CHUNK_SIZE 4096
 
 # define SUCCESS 0
 # define ERROR -1
+
+typedef struct s_arena_chunk	t_arena_chunk;
+
+struct s_arena_chunk
+{
+	t_arena_chunk	*prev;
+	size_t			capacity;
+	size_t			used;
+	char			data[];
+};
+
+typedef struct s_arena
+{
+	t_arena_chunk	*current;
+	size_t			default_cap;
+}	t_arena;
 
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);
@@ -57,6 +75,7 @@ char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strtrim(char const *s1, char const *set);
 char	**ft_split(char const *s, char c);
 char	*ft_itoa(int n);
+size_t	ft_strspn(char **line, const char *charset, bool is_include);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 void	ft_striteri(char *s, void (*f)(unsigned int, char *));
 void	ft_putchar_fd(char c, int fd);
@@ -65,5 +84,14 @@ void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
 char	*get_next_line(int fd);
 long	ft_atol(char *nptr);
+void	ft_arena_init(t_arena *arena, size_t default_cap);
+void	*ft_arena_alloc(t_arena *arena, size_t size);
+void	*ft_arena_calloc(t_arena *arena, size_t count, size_t size);
+void	*ft_arena_realloc(t_arena *arena, void *ptr,
+			size_t old_size, size_t new_size);
+char	*ft_arena_strdup(t_arena *arena, const char *src);
+char	*ft_arena_strndup(t_arena *arena, const char *src, size_t n);
+void	ft_arena_reset(t_arena *arena);
+void	ft_arena_destroy(t_arena *arena);
 
 #endif
