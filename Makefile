@@ -115,4 +115,10 @@ debug:
 	$(MAKE) -C $(LIBFT_DIR) CCFLAGS="$(CCFLAGS)" all
 	$(MAKE) CCFLAGS="$(CCFLAGS)" all
 
-.PHONY: all clean fclean re debug
+docker-build:
+	docker build -t minishell .
+
+docker-run:
+	docker run -it -v $(PWD):/minishell minishell
+
+.PHONY: all clean fclean re debug docker-build docker-run
