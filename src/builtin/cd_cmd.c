@@ -34,7 +34,6 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 	t_bucket_contents	*home;
 	char				*path;
 
-	(void)ctx;
 	if (args == NULL)
 	{
 		home = hash_search("HOME", ctx->tmp_table);
@@ -46,7 +45,10 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 		}
 		if (chdir(home->data.value) < 0)
 			return (ST_FATAL); // perror can express
-		return (update_pwd(ctx->tmp_table, ctx->env_table, home->data.value));
+		path = ft_strdup(home->data.value);
+		if (path == NULL)
+			return (ST_FATAL);
+		return (update_pwd(ctx->tmp_table, ctx->env_table, path));
 	}
 	if (count_args(args) > 2)
 		return (ST_FAILURE); // minishell: cd: too many arguments.
