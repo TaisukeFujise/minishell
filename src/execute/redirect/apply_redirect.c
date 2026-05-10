@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 12:31:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/05/10 18:36:59 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/05/10 21:50:52 by fujisetaisuke    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
-t_status	apply_redir_excluding_dless(t_redirect *redirect, int oflag);
-t_status	apply_redir_dless(t_redirect *redirect);
+static int	open_tmp_write_fd(char **filename);
+static int	open_heredoc_fd(t_redirect *redirect);
+static int	open_redirect_fd(t_redirect *redirect);
 
 /*
 	apply_redirects call redirect func depending on redirect->op.
@@ -27,82 +28,73 @@ t_status	apply_redir_dless(t_redirect *redirect);
 t_status	apply_redirects(t_redirect *redirects)
 {
 	t_status	status;
+	int			fd;
 
 	status = ST_OK;
 	while (redirects)
 	{
-		if (redirects->op == REDIR_GREATER)
-			status = apply_redir_excluding_dless(redirects,
-					O_WRONLY | O_CREAT | O_TRUNC);
-		else if (redirects->op == REDIR_LESS)
-			status = apply_redir_excluding_dless(redirects, O_RDONLY);
-		else if (redirects->op == REDIR_DGREATER)
-			status = apply_redir_excluding_dless(redirects,
-					O_WRONLY | O_CREAT | O_APPEND);
-		else if (redirects->op == REDIR_DLESS)
-			status = apply_redir_dless(redirects);
-		else
-			status = ST_FATAL;
-		if (status != ST_OK)
-			return (status);
+		fd = open_redirect_fd(redirects);
+		if (fd < 0)
+			return (ST_FAILURE);
+		if (dup2(fd, redirects->io_number) < 0)
+			return (close(fd), ST_FAILURE);
+		close(fd);
 		redirects = redirects->next;
 	}
 	return (status);
 }
 
-/*
-	apply_redir_excluding_dless redirect the following output.
-	- "> file"
-	- "< file"
-	- ">> file"
-*/
-t_status	apply_redir_excluding_dless(t_redirect *redirect, int oflag)
+static int	open_redirect_fd(t_redirect *redirect)
+{
+	if (redirect->op == REDIR_GREATER)
+		return (open(redirect->target.str, O_WRONLY | O_CREAT | O_TRUNC, 0644));
+	else if (redirect->op == REDIR_LESS)
+		return (open(redirect->target.str, O_RDONLY, 0644));
+	else if (redirect->op == REDIR_DGREATER)
+		return (open(redirect->target.str, O_WRONLY | O_CREAT | O_APPEND,
+				0644));
+	else if (redirect->op == REDIR_DLESS)
+		return (open_heredoc_fd(redirect));
+	else
+		return (-1);
+}
+
+static int	open_heredoc_fd(t_redirect *redirect)
+{
+	char	*filename;
+	int		write_fd;
+	int		read_fd;
+
+	filename = NULL;
+	write_fd = open_tmp_write_fd(&filename);
+	if (write_fd < 0)
+		return (-1);
+	if (write(write_fd, redirect->hd.raw_str.str, redirect->hd.raw_str.len) < 0)
+		return (free(filename), close(write_fd), -1);
+	close(write_fd);
+	read_fd = open(filename, O_RDONLY);
+	if (read_fd < 0)
+		return (free(filename), -1);
+	if (unlink(filename) < 0)
+		return (free(filename), close(read_fd), -1);
+	redirect->hd.content_fd = read_fd;
+	return (free(filename), read_fd);
+}
+
+static int	open_tmp_write_fd(char **filename)
 {
 	int	fd;
 
-	fd = open(redirect->target.str, oflag, 0644);
-	if (fd < 0)
-		return (ST_FAILURE);
-	if (dup2(fd, redirect->io_number) < 0)
-	{
-		close(fd);
-		return (ST_FAILURE);
-	}
-	close(fd);
-	return (ST_OK);
-}
-
-/*
-	apply_redir_dless redirect the input read
-	by until a line containing the delimiter,
-		like "4<< EOF"
-	- io_number "0" means "<< file"
-*/
-t_status	apply_redir_dless(t_redirect *redirect)
-{
-	int		fd;
-	char	*filename;
-
-	filename = NULL;
 	fd = -1;
 	while (fd < 0)
 	{
-		free(filename);
-		filename = create_tmp_filename();
-		if (filename == NULL)
-			return (ST_FAILURE);
-		fd = open(filename, O_RDWR | O_CREAT | O_EXCL, 0644);
+		free(*filename);
+		*filename = create_tmp_filename();
+		if (*filename == NULL)
+			return (-1);
+		fd = open(*filename, O_WRONLY | O_CREAT | O_EXCL, 0644);
 		if (fd < 0 && errno != EEXIST)
-			return (free(filename), ST_FAILURE);
+			return (free(*filename), *filename = NULL, -1);
 	}
-	redirect->hd.content_fd = fd;
-	if (unlink(filename) < 0)
-		return (free(filename), close(fd), ST_FAILURE);
-	free(filename);
-	if (write(fd, redirect->hd.raw_str.str, redirect->hd.raw_str.len) < 0)
-		return (close(fd), ST_FAILURE);
-	if (dup2(fd, redirect->io_number) < 0)
-		return (close(fd), ST_FAILURE);
-	close(fd);
-	return (ST_OK);
+	return (fd);
 }
