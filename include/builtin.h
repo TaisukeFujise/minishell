@@ -20,7 +20,7 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx);
 t_status	echo_cmd(t_word_list *args, t_ctx *ctx);
 t_status	env_cmd(t_word_list *args, t_ctx *ctx);
 t_status	exit_cmd(t_word_list *args, t_ctx *ctx);
-// t_status	export_cmd(t_word_list *args, t_ctx *ctx);
+t_status	export_cmd(t_word_list *args, t_ctx *ctx);
 t_status	pwd_cmd(t_word_list *args, t_ctx *ctx);
 t_status	unset_cmd(t_word_list *args, t_ctx *ctx);
 

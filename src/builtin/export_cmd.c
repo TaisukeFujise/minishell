@@ -3,20 +3,71 @@
 /*                                                        :::      ::::::::   */
 /*   export_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:40:50 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/13 01:09:55 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/05/10 17:14:08 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/builtin.h"
-#include "../../include/parser.h"
 
-static int	_isvalid_idchars(char *str, int len);
-int			validate_identifier(t_word *wd);
+static int	print_export(t_bucket_contents *item)
+{
+	if (!item->data.exported)
+		return (0);
+	printf("declare -x %s", item->key);
+	if (item->data.value)
+		printf("=\"%s\"", item->data.value);
+	printf("\n");
+	return (0);
+}
 
-// Todo for fendo
+static t_status	set_value(t_word *wd, t_bucket_contents *item)
+{
+	char				*value;
+
+	value = ft_strndup(wd->eq_ptr + 1,
+			wd->len - (int)(wd->eq_ptr + 1 - wd->str));
+	if (!value)
+		return (ST_FATAL);
+	if ((wd->flag & W_APPEND) && item->data.value)
+	{
+		value = ft_strjoin_free(item->data.value, value, 1 << 1);
+		if (!value)
+			return (ST_FATAL);
+	}
+	free(item->data.value);
+	item->data.value = value;
+	return (ST_OK);
+}
+
+static t_status	put_export(t_word *wd, t_ctx *ctx)
+{
+	t_bucket_contents	*item;
+	char				*key;
+	int					len;
+
+	len = wd->len;
+	if (wd->flag & (W_ASSIGN | W_APPEND))
+		len = wd->eq_ptr - wd->str - ((wd->flag & W_APPEND) != 0);
+	key = ft_strndup(wd->str, len);
+	if (!key)
+		return (ST_FATAL);
+	item = hash_insert(key, ctx->env_table);
+	if (!item)
+	{
+		free(key);
+		return (ST_FATAL);
+	}
+	if (item->key != key)
+		free(key);
+	item->data.exported = true;
+	if (wd->flag & (W_ASSIGN | W_APPEND))
+		return (set_value(wd, item));
+	return (ST_OK);
+}
+
 /*
 	export name[=word]...
 	"export" register the args to env table, and update the ctx->exit_code.
@@ -27,83 +78,22 @@ int			validate_identifier(t_word *wd);
 */
 t_status	export_cmd(t_word_list *args, t_ctx *ctx)
 {
-	char				*key;
-	char				*value;
-	t_bucket_contents	*item;
+	t_status	status;
 
-	if (args == NULL)
-		print_env(ctx->tmp_table, ctx->env_table);
+	if (!args)
+		return (hash_walk(ctx->env_table, print_export), ST_OK);
+	status = ST_OK;
 	while (args)
 	{
-		if (validate_identifier(args->wd) == FAILURE)
-			return (ST_FAILURE);
-		// export: (args->wd->str): not a valid identifier
-		if (args->wd->flag & W_ASSIGN)
+		if (!(args->wd->flag & (W_ID | W_ASSIGN | W_APPEND)))
 		{
-			key = extract_key(args->wd->str);
-			value = extract_value(args->wd->str);
-			item = hash_insert(key, ctx->env_table);
-			if (item == NULL)
-				return (ST_FATAL);
-			if (item->data.value != NULL)
-			{
-				free(item->data.value);
-				item->data.value = NULL;
-			}
-			item->data.value = value;
+			ft_putendl_fd("minishell: export: not a valid identifier",
+				STDERR_FILENO);
+			status = ST_FAILURE;
 		}
-		else
-		{
-			// If args->wd is already in variable table, make it exported.
-			item = hash_search(args->wd->str, ctx->env_table);
-			if (item == NULL)
-				return (ST_OK);
-			item->data.exported = true;
-		}
+		else if (put_export(args->wd, ctx) == ST_FATAL)
+			return (ST_FATAL);
 		args = args->next;
 	}
-	return (ST_OK);
-}
-
-/*
-	Rule of identifier in POSIX.
-	(i) available character
-		[A-Z], [a-z], [0-9], "_"
-	(ii) rule
-		- At initial charcter, number is not allowed.
-		- Minimum length of name is a one character.
-*/
-int	validate_identifier(t_word *wd)
-{
-	int	id_len;
-
-	if (wd->flag & W_ASSIGN)
-		id_len = count_id(wd->str);
-	else
-		id_len = wd->len;
-	if (id_len < 1)
-		return (FAILURE);
-	if (_isvalid_idchars(wd->str, id_len) == FAILURE)
-		return (FAILURE);
-	if (ft_isdigit(*(wd->str)))
-		return (FAILURE);
-	return (SUCCESS);
-}
-
-/*
-	available character
-		[A-Z], [a-z], [0-9], "_"
-*/
-static int	_isvalid_idchars(char *str, int len)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] && i < len)
-	{
-		if (!(ft_isalnum(str[i]) || (str[i] == '_')))
-			return (FAILURE);
-		i++;
-	}
-	return (SUCCESS);
+	return (status);
 }
