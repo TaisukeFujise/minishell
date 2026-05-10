@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 14:31:54 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 01:42:11 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/05/10 21:54:05 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,26 +134,14 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	if (init_ctx(&ctx, envp) == FAILURE)
-		return (1);
-	ctx.bitmap = new_fd_bitmap(FD_BITMAP_SIZE);
-	if (ctx.bitmap == NULL)
-		return (1);
-	ng_count = 0;
-	result = test_builtin_single(&ctx);
-	if (result == 0)
-		printf("[OK] builtin single\n");
-	else
-		printf("[NG] builtin single\n");
-	ng_count += result;
-	result = test_builtin_pipe(&ctx);
-	if (result == 0)
-		printf("[OK] builtin pipe\n");
-	else
-		printf("[NG] builtin pipe\n");
-	ng_count += result;
-	dispose_fd_bitmap(ctx.bitmap);
-	if (ng_count == 0)
-		return (0);
-	return (1);
+	int NG_count = 0;
+
+	NG_count += test_cd(envp);
+	NG_count += test_echo();
+	NG_count += test_env(envp);
+	NG_count += test_exit();
+	NG_count += test_export(envp);
+	NG_count += test_pwd(envp);
+	NG_count += test_unset(envp);
+	return (NG_count != 0);
 }

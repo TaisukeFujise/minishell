@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/04/19 22:23:33 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/05/10 21:57:07 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ typedef struct s_fd_bitmap
 
 typedef struct s_arenas
 {
-	t_arena	ast;
-	t_arena	tmp;
-	t_arena	heredoc;
-}	t_arenas;
+	t_arena						ast;
+	t_arena						tmp;
+	t_arena						heredoc;
+}								t_arenas;
 
 typedef struct s_error
 {
@@ -98,15 +98,15 @@ typedef enum e_op_redir
 
 typedef enum e_flag
 {
-	W_NONE		= 0u,
-	W_SQ		= 1u << 0,
-	W_DQ		= 1u << 1,
-	W_DOLL		= 1u << 2,
-	W_WILD		= 1u << 3,
-	W_ASSIGN	= 1u << 4,
-	W_APPEND	= 1u << 5,
-	W_ID		= 1u << 6
-}	t_flag;
+	W_NONE = 0u,
+	W_SQ = 1u << 0,
+	W_DQ = 1u << 1,
+	W_DOLL = 1u << 2,
+	W_WILD = 1u << 3,
+	W_ASSIGN = 1u << 4,
+	W_APPEND = 1u << 5,
+	W_ID = 1u << 6
+}								t_flag;
 
 typedef struct s_word			t_word;
 
