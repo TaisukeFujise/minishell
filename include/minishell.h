@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/05/09 00:19:18 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/05/10 21:57:07 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,16 +53,17 @@ typedef struct s_error
 typedef struct s_ctx
 {
 	t_error						err;
-	t_hashtable *env_table; // environment variable table. When execve, this is
-							// converted to envp.
-	// Reset following member on every command.
-	t_hashtable *tmp_table; // tmp environment variable table. This is set by
-							// assignment word in front of cmd.
+	t_hashtable					*env_table;
+	// environment variable table. When execve,this is converted to envp.
+	/* Reset following member on every command. */
+	t_hashtable					*tmp_table;
+	// tmp environment variable table.This is set by assignment word in front of cmd.
 	t_fd_bitmap					*bitmap;
 	// It's for managing fd,especially pipe read end fd,when using pipe.
-	pid_t *pids;        // Array of pids.
-	int npid;           // Count of pids.
-	int already_forked; // Flag about whether already forked or not.
+	pid_t						*pids;
+	int							npid;
+	int							already_forked;
+	int							subshell_level;
 }								t_ctx;
 
 typedef enum e_status
