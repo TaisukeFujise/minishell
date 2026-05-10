@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 22:09:51 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/14 17:10:28 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 02:52:57 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,28 @@ typedef enum s_tabletype
 	VARS,
 }			t_tabletype;
 
+typedef struct s_exec_params
+{
+	char	**argv;
+	char	**envp;
+}			t_exec_params;
+
+typedef struct s_pipes
+{
+	int		pipe_in;
+	int		pipe_out;
+}			t_pipes;
+
 /* init.c */
 int			init_ctx(t_ctx *ctx, char **envp);
 /* execute.c */
 t_status	execute(t_node *node, t_ctx *ctx);
 t_status	execute_internal(t_node *node, t_ctx *ctx, int pipe_in,
+				int pipe_out);
+
+// <dispatch>
+/* exec_builtin.c */
+t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 				int pipe_out);
 /* exec_connection.c */
 t_status	exec_connection(t_node *node, t_ctx *ctx, int pipe_in,
@@ -46,54 +63,59 @@ t_status	exec_connection(t_node *node, t_ctx *ctx, int pipe_in,
 t_status	exec_complete(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 t_status	exec_andor(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 t_status	exec_pipeline(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
+/* exec_disk.c */
+t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
+				int pipe_out);
+/* exec_null.c */
+t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
+				int pipe_out);
 /* exec_simple.c */
 t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 /* exec_subshell.c */
 t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
-/* exec_null.c */
-t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-				int pipe_out);
-/* exec_builtin.c */
-t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-				int pipe_out);
-/* exec_disk.c */
-t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-				int pipe_out);
 
-/* bitmap.c */
-t_fd_bitmap	*new_fd_bitmap(int size);
-void		close_fd_bitmap(t_fd_bitmap *fd_bitmap);
-void		dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
-
+// <expansion>
 /* assigns.c */
 t_status	apply_assigns(t_hashtable *table, t_assign *assign,
 				t_tabletype type);
-// t_status	apply_assigns_to_vars(t_hashtable *env_table, t_assign *assign);
-// t_status	apply_assigns_to_tmp_env(t_hashtable *tmp_table, t_assign *assign);
+/* expand.c */
 
+// <process>
+/* fd_bitmap.c */
+t_fd_bitmap	*new_fd_bitmap(int size);
+void		close_fd_bitmap(t_fd_bitmap *fd_bitmap);
+void		dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
+/* pipe_utils.c */
+t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out);
+void		close_pipes(int pipe_in, int pipe_out);
+/* register_pid.c */
+t_status	register_pid(t_ctx *ctx, pid_t pid);
+/* wait_children.c */
+t_status	collect_child_result(t_ctx *ctx);
+
+// <redirect>
 /* apply_redirect.c */
 t_status	apply_redirects(t_redirect *redirects);
-
-/* stdio_backup.c */
+/* heredoc_tmpfile.c */
+char		*create_tmp_filename(void);
+/* stdio_guard.c */
 t_status	save_stdio(t_savedfd *saved);
 void		close_savedfd(t_savedfd saved);
 t_status	undo_stdio(t_savedfd saved);
 
-/* pipe_utils.c */
-t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out);
-void		close_pipes(int pipe_in, int pipe_out);
-
-/* register_pid.c */
-t_status	register_pid(t_ctx *ctx, pid_t pid);
-
-/* collect_child.c */
-t_status	collect_child_result(t_ctx *ctx);
-
-/* create_filename.c */
-char		*create_tmp_filename(void);
-
-/* utils */
-/* count_args.c */
+// <utils>
+/* args_utils.c */
 int			count_args(t_word_list *args);
+int			build_exec_params(t_exec_params *exec_params, t_word_list *args,
+				t_hashtable *tmp_table, t_hashtable *env_table);
+void		free_exec_params(char **argv, char **envp);
+/* path_utils.c */
+char		*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table);
+char		*extract_path_entry(char *path_value);
+/* envp_utils.c */
+char		*make_env_entry(char *key, char *value);
+char		**table_to_envp(t_hashtable *table, char **envp);
+char		**tables_to_envp(t_hashtable *tmp_table, t_hashtable *env_table,
+				char **envp);
 
 #endif

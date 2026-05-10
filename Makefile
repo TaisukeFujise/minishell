@@ -6,7 +6,7 @@
 #    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 12:42:52 by tafujise          #+#    #+#              #
-#    Updated: 2026/04/19 19:56:12 by tafujise         ###   ########.fr        #
+#    Updated: 2026/04/19 20:15:30 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,6 +54,9 @@ SRCS:=main.c\
 	  execute/redirect/apply_redirect.c\
 	  execute/redirect/heredoc_tmpfile.c\
 	  execute/redirect/stdio_guard.c\
+	  execute/utils/args_utils.c\
+	  execute/utils/path_utils.c\
+	  execute/utils/envp_utils.c\
 	  hashmap/hashmap_crud.c\
 	  hashmap/hashmap_free.c\
 	  hashmap/hashmap_utils.c

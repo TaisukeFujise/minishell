@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 02:55:49 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/14 13:57:16 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/15 03:38:43 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,14 @@ void	hash_dispose(t_hashtable *table)
 		return ;
 	free(table->bucket_array);
 	free(table);
+}
+
+void	free_item(t_bucket_contents **item)
+{
+	if (item == NULL)
+		return ;
+	free((*item)->data.value);
+	free((*item)->key);
+	free(*item);
+	*item = NULL;
 }
