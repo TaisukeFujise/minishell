@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   test_helpers.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/09 00:22:57 by tafujise          #+#    #+#             */
+/*   Updated: 2026/05/10 00:00:00 by tafujise         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin_test.h"
 
 t_word_list	*make_args(char **strs)
@@ -76,7 +88,10 @@ int	setup_ctx(t_ctx *ctx, char **envp)
 		return (1);
 	ctx->bitmap = new_fd_bitmap(FD_BITMAP_SIZE);
 	if (ctx->bitmap == NULL)
+	{
+		teardown_ctx(ctx);
 		return (1);
+	}
 	return (0);
 }
 
