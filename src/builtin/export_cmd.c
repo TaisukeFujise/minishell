@@ -19,15 +19,22 @@ static void	print_escaped_value(char *s, bool use_ansic_quote)
 {
 	char	*esc;
 
+	while (*s && !use_ansic_quote)
+	{
+		if (ft_strchr("\"\\$`", *s))
+			printf("\\%c", *s);
+		else
+			printf("%c", *s);
+		s++;
+	}
 	while (*s)
 	{
 		esc = ft_strchr(EXPORT_CTRL, *s);
-		if (use_ansic_quote && esc)
+		if (esc)
 			printf("\\%c", EXPORT_ESC[esc - EXPORT_CTRL]);
-		else if (use_ansic_quote && !ft_isprint((unsigned char)*s))
+		else if (!ft_isprint((unsigned char)*s))
 			printf("\\%03o", (unsigned char)*s);
-		else if ((use_ansic_quote && (*s == '\\' || *s == '\''))
-			|| (!use_ansic_quote && ft_strchr("\"\\$`", *s)))
+		else if (*s == '\\' || *s == '\'')
 			printf("\\%c", *s);
 		else
 			printf("%c", *s);
