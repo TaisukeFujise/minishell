@@ -12,13 +12,15 @@
 
 #include "../../include/builtin.h"
 
+void	print_export_value(char *s);
+
 static int	print_export(t_bucket_contents *item)
 {
 	if (!item->data.exported)
 		return (0);
 	printf("declare -x %s", item->key);
 	if (item->data.value)
-		printf("=\"%s\"", item->data.value);
+		print_export_value(item->data.value);
 	printf("\n");
 	return (0);
 }

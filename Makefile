@@ -35,6 +35,7 @@ SRCS:=main.c\
 	  builtin/env_cmd.c\
 	  builtin/exit_cmd.c\
 	  builtin/export_cmd.c\
+	  builtin/export_print.c\
 	  builtin/pwd_cmd.c\
 	  builtin/unset_cmd.c\
 	  execute/execute.c\
