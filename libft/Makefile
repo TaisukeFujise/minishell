@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+         #
+#    By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/12 09:41:21 by fujisetaisu       #+#    #+#              #
-#    Updated: 2026/03/02 23:04:17 by fendo            ###   ########.fr        #
+#    Updated: 2026/04/19 19:56:54 by tafujise         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,6 +41,7 @@ SRCS := ft_isalpha.c\
 		ft_strdup.c\
 		ft_substr.c\
 		ft_strjoin.c\
+		ft_strjoin_free.c\
 		ft_strtrim.c\
 		ft_split.c\
 		ft_itoa.c\
@@ -60,6 +61,7 @@ SRCS := ft_isalpha.c\
 		ft_arena_reset.c\
 		ft_arena_destroy.c\
 		get_next_line.c\
+		ft_atol.c\
 
 HEADERS := libft.h
 

@@ -1,23 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_subshell.c                                    :+:      :+:    :+:   */
+/*   count_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/28 00:09:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 22:38:50 by tafujise         ###   ########.fr       */
+/*   Created: 2026/02/14 17:08:57 by tafujise          #+#    #+#             */
+/*   Updated: 2026/02/14 17:09:24 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
+#include "../../../include/parser.h"
 
-t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
+int	count_args(t_word_list *args)
 {
-	/*
-		Todo
-		- subshell
-	*/
-}
+	int count;
 
+	count = 0;
+	if (args == NULL)
+		return (count);
+	while (args)
+	{
+		count++;
+		args = args->next;
+	}
+	return (count);
+}

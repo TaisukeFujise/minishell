@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:37:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/05 14:37:25 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:04:10 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ static int	_load_envp_to_table(t_hashtable *env_table, char **envp);
 int	init_ctx(t_ctx *ctx, char **envp)
 {
 	ft_bzero(ctx, sizeof(t_ctx));
-
 	/* init env_table by envp */
 	ctx->env_table = hash_create(BUCKET_SIZE);
 	if (ctx->env_table == NULL)
@@ -75,12 +74,12 @@ int	_preprocess_item(t_bucket_contents *item, char *key)
 		free(item->data.value);
 		item->data.value = NULL;
 	}
-	return(SUCCESS);
+	return (SUCCESS);
 }
 
 char	*_extract_key_from_envp(char *entry)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	while (entry[i] != '=' && entry[i] != '\0')
