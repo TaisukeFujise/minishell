@@ -12,22 +12,61 @@
 
 #include "../../include/builtin.h"
 
-void	print_export_value(char *s);
+#define EXPORT_CTRL "\033\a\b\t\n\v\f\r"
+#define EXPORT_ESC "Eabtnvfr"
+
+static void	print_escaped_value(char *s, bool use_ansic_quote)
+{
+	char	*esc;
+
+	while (*s)
+	{
+		esc = ft_strchr(EXPORT_CTRL, *s);
+		if (use_ansic_quote && esc)
+			printf("\\%c", EXPORT_ESC[esc - EXPORT_CTRL]);
+		else if (use_ansic_quote && !ft_isprint((unsigned char)*s))
+			printf("\\%03o", (unsigned char)*s);
+		else if ((use_ansic_quote && (*s == '\\' || *s == '\''))
+			|| (!use_ansic_quote && ft_strchr("\"\\$`", *s)))
+			printf("\\%c", *s);
+		else
+			printf("%c", *s);
+		s++;
+	}
+}
 
 static int	print_export(t_bucket_contents *item)
 {
+	char	*p;
+
 	if (!item->data.exported)
 		return (0);
 	printf("declare -x %s", item->key);
 	if (item->data.value)
-		print_export_value(item->data.value);
+	{
+		p = item->data.value;
+		while (*p && ft_isprint((unsigned char)*p))
+			p++;
+		if (*p)
+		{
+			printf("=$'");
+			print_escaped_value(item->data.value, true);
+			printf("'");
+		}
+		else
+		{
+			printf("=\"");
+			print_escaped_value(item->data.value, false);
+			printf("\"");
+		}
+	}
 	printf("\n");
 	return (0);
 }
 
-static t_status	set_value(t_word *wd, t_bucket_contents *item)
+static t_status	set_export_value(t_word *wd, t_bucket_contents *item)
 {
-	char				*value;
+	char	*value;
 
 	value = ft_strndup(wd->eq_ptr + 1,
 			wd->len - (int)(wd->eq_ptr + 1 - wd->str));
@@ -66,7 +105,7 @@ static t_status	put_export(t_word *wd, t_ctx *ctx)
 		free(key);
 	item->data.exported = true;
 	if (wd->flag & (W_ASSIGN | W_APPEND))
-		return (set_value(wd, item));
+		return (set_export_value(wd, item));
 	return (ST_OK);
 }
 
@@ -83,7 +122,10 @@ t_status	export_cmd(t_word_list *args, t_ctx *ctx)
 	t_status	status;
 
 	if (!args)
-		return (hash_walk(ctx->env_table, print_export), ST_OK);
+	{
+		hash_walk(ctx->env_table, print_export);
+		return (ST_OK);
+	}
 	status = ST_OK;
 	while (args)
 	{
