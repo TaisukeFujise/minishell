@@ -15,30 +15,27 @@
 #define EXPORT_CTRL "\033\a\b\t\n\v\f\r"
 #define EXPORT_ESC "Eabtnvfr"
 
-static void	print_escaped_value(char *s, bool use_ansic_quote)
+static void	print_quoted_value(char *s, char quote)
 {
 	char	*esc;
 
+	printf("%c", quote);
 	while (*s)
 	{
-		if (!use_ansic_quote && ft_strchr("\"\\$`", *s))
+		esc = ft_strchr(EXPORT_CTRL, *s);
+		if (quote == '"' && ft_strchr("\"\\$`", *s))
 			printf("\\%c", *s);
-		else if (!use_ansic_quote)
-			printf("%c", *s);
+		else if (quote == '\'' && esc)
+			printf("\\%c", EXPORT_ESC[esc - EXPORT_CTRL]);
+		else if (quote == '\'' && !ft_isprint((unsigned char)*s))
+			printf("\\%03o", (unsigned char)*s);
+		else if (quote == '\'' && (*s == '\\' || *s == '\''))
+			printf("\\%c", *s);
 		else
-		{
-			esc = ft_strchr(EXPORT_CTRL, *s);
-			if (esc)
-				printf("\\%c", EXPORT_ESC[esc - EXPORT_CTRL]);
-			else if (!ft_isprint((unsigned char)*s))
-				printf("\\%03o", (unsigned char)*s);
-			else if (*s == '\\' || *s == '\'')
-				printf("\\%c", *s);
-			else
-				printf("%c", *s);
-		}
+			printf("%c", *s);
 		s++;
 	}
+	printf("%c", quote);
 }
 
 static int	print_export(t_bucket_contents *item)
@@ -55,15 +52,13 @@ static int	print_export(t_bucket_contents *item)
 			p++;
 		if (*p)
 		{
-			printf("=$'");
-			print_escaped_value(item->data.value, true);
-			printf("'");
+			printf("=$");
+			print_quoted_value(item->data.value, '\'');
 		}
 		else
 		{
-			printf("=\"");
-			print_escaped_value(item->data.value, false);
-			printf("\"");
+			printf("=");
+			print_quoted_value(item->data.value, '"');
 		}
 	}
 	printf("\n");
