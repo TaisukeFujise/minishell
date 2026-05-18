@@ -13,12 +13,11 @@ void	ilist_append(void *headp, void *item, size_t next_off)
 		return ;
 	}
 	cur = (char *)head;
-	while (1)
+	ft_memcpy(&next, cur + next_off, sizeof(void *));
+	while (next)
 	{
-		ft_memcpy(&next, cur + next_off, sizeof(void *));
-		if (!next)
-			break ;
 		cur = (char *)next;
+		ft_memcpy(&next, cur + next_off, sizeof(void *));
 	}
 	ft_memcpy(cur + next_off, &item, sizeof(void *));
 }

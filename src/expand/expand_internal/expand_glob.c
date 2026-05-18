@@ -1,144 +1,74 @@
 #include "expand_internal.h"
 
-bool	pattern_has_glob(const char *s)
+static bool	match_star(const char *pat, const char *name)
 {
-	while (*s)
+	if (*pat == '\0')
+		return (*name == '\0');
+	if (*pat != '*')
+		return (*name == *pat && match_star(pat + 1, name + 1));
+	while (*pat == '*')
+		pat++;
+	if (*pat == '\0')
+		return (true);
+	name = ft_strchr(name, *pat);
+	while (name)
 	{
-		if (*s == '*')
+		if (match_star(pat, name))
 			return (true);
-		s++;
+		name = ft_strchr(name + 1, *pat);
 	}
 	return (false);
 }
 
-static bool	fnmatch_simple(const char *pattern, const char *str)
+static bool	insert_match(t_expand *ex, t_word_list **list, const char *name)
 {
-	while (*pattern && *str)
-	{
-		if (*pattern == '*')
-		{
-			pattern++;
-			if (!*pattern)
-				return (true);
-			while (*str)
-			{
-				if (fnmatch_simple(pattern, str))
-					return (true);
-				str++;
-			}
-			return (false);
-		}
-		if (*pattern != *str)
-			return (false);
-		pattern++;
-		str++;
-	}
-	while (*pattern == '*')
-		pattern++;
-	return (*pattern == '\0' && *str == '\0');
+	t_fields	fields;
+	t_word_list	*node;
+
+	fields.head = NULL;
+	fields.tail = &fields.head;
+	node = fields_add(ex, &fields, name, ft_strlen(name));
+	if (!node)
+		return (false);
+	while (*list && ft_strcmp((*list)->wd->str, node->wd->str) < 0)
+		list = &(*list)->next;
+	node->next = *list;
+	*list = node;
+	return (true);
 }
 
-static void	sort_strings(char **arr, int count)
+static t_word_list	*append_matches(t_fields *fields, t_word_list *list)
 {
-	int		i;
-	int		j;
-	char	*tmp;
-
-	i = 0;
-	while (i < count - 1)
-	{
-		j = i + 1;
-		while (j < count)
-		{
-			if (ft_strcmp(arr[i], arr[j]) > 0)
-			{
-				tmp = arr[i];
-				arr[i] = arr[j];
-				arr[j] = tmp;
-			}
-			j++;
-		}
-		i++;
-	}
+	*fields->tail = list;
+	while (*fields->tail)
+		fields->tail = &(*fields->tail)->next;
+	return (list);
 }
 
-static int	collect_matches(t_expand_ctx *ex, const char *pattern,
-							char ***out_arr)
+t_word_list	*append_glob(t_expand *ex, t_fields *fields, const char *pat)
 {
 	DIR				*dir;
-	struct dirent	*entry;
-	char			**arr;
-	int				count;
-	int				cap;
+	struct dirent	*ent;
+	t_word_list		*list;
 
 	dir = opendir(".");
 	if (!dir)
-		return (0);
-	cap = 16;
-	arr = ft_arena_alloc(ex->tmp, sizeof(char *) * cap);
-	count = 0;
-	entry = readdir(dir);
-	while (entry && arr)
+		return (fields_add(ex, fields, pat, ft_strlen(pat)));
+	list = NULL;
+	ent = readdir(dir);
+	while (ent)
 	{
-		if (entry->d_name[0] == '.' && pattern[0] != '.')
-			;
-		else if (fnmatch_simple(pattern, entry->d_name))
+		if ((pat[0] == '.' || ent->d_name[0] != '.')
+			&& match_star(pat, ent->d_name)
+			&& !insert_match(ex, &list, ent->d_name))
 		{
-			if (count >= cap)
-			{
-				arr = ft_arena_realloc(ex->tmp, arr,
-						sizeof(char *) * cap, sizeof(char *) * cap * 2);
-				cap *= 2;
-			}
-			if (arr)
-				arr[count++] = ft_arena_strdup(ex->tmp, entry->d_name);
+			closedir(dir);
+			return (NULL);
 		}
-		entry = readdir(dir);
+		ent = readdir(dir);
 	}
 	closedir(dir);
-	*out_arr = arr;
-	return (count);
-}
-
-/*
-** Expand glob pattern to matching filenames.
-** Returns array of matched filenames (sorted alphabetically).
-** If no matches, returns array with the original pattern.
-** All strings allocated in ex->ast.
-*/
-char	**expand_glob(t_expand_ctx *ex, const char *pattern, int *count)
-{
-	char	**matches;
-	char	**result;
-	int		nmatches;
-	int		i;
-
-	if (!pattern_has_glob(pattern))
-	{
-		result = ft_arena_alloc(ex->ast, sizeof(char *));
-		if (!result)
-			return (NULL);
-		result[0] = ft_arena_strdup(ex->ast, pattern);
-		*count = 1;
-		return (result);
-	}
-	nmatches = collect_matches(ex, pattern, &matches);
-	if (nmatches == 0)
-	{
-		result = ft_arena_alloc(ex->ast, sizeof(char *));
-		if (!result)
-			return (NULL);
-		result[0] = ft_arena_strdup(ex->ast, pattern);
-		*count = 1;
-		return (result);
-	}
-	sort_strings(matches, nmatches);
-	result = ft_arena_alloc(ex->ast, sizeof(char *) * nmatches);
-	if (!result)
-		return (NULL);
-	i = -1;
-	while (++i < nmatches)
-		result[i] = ft_arena_strdup(ex->ast, matches[i]);
-	*count = nmatches;
-	return (result);
+	if (!list)
+		return (fields_add(ex, fields, pat, ft_strlen(pat)));
+	return (append_matches(fields, list));
 }

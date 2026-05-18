@@ -19,27 +19,47 @@ static char	*append_line(t_arena *arena, char *content, size_t *len, char *line)
 	return (new_content);
 }
 
-static char	*word_join(t_word *word, t_arena *arena)
+static size_t	delim_len(t_word *word, bool *quoted)
 {
-	char	*buf;
 	size_t	len;
 
-	if (!arena)
-		return (NULL);
-	buf = ft_arena_alloc(arena, 1);
 	len = 0;
-	while (buf && word)
+	*quoted = false;
+	while (word)
 	{
-		buf = ft_arena_realloc(arena, buf, len + 1,
-				len + word->len + 1);
-		if (buf)
-			ft_memcpy(buf + len, word->str, word->len);
+		if ((word->flag & (W_SQ | W_DQ)) != 0)
+			*quoted = true;
 		len += (size_t)word->len;
 		word = word->next;
 	}
-	if (buf)
-		buf[len] = '\0';
-	return (buf);
+	return (len);
+}
+
+static bool	join_delim(t_word *word, t_arena *arena)
+{
+	char	*buf;
+	char	*p;
+	bool	quoted;
+	size_t	len;
+	t_word	*cur;
+
+	len = delim_len(word, &quoted);
+	buf = ft_arena_alloc(arena, len + 1);
+	if (!buf)
+		return (false);
+	p = buf;
+	cur = word;
+	while (cur)
+	{
+		p = (char *)ft_memcpy(p, cur->str, cur->len) + cur->len;
+		cur = cur->next;
+	}
+	*p = '\0';
+	word->str = buf;
+	word->len = (int)len;
+	word->flag = W_SQ * quoted;
+	word->next = NULL;
+	return (true);
 }
 
 static char	*read_next_heredoc_line(t_parser_state *ps)
@@ -69,19 +89,19 @@ static char	*read_next_heredoc_line(t_parser_state *ps)
 
 void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)
 {
-	char	*delim;
 	char	*line;
 	char	*content;
 	size_t	len;
 
 	ft_arena_reset(&ps->arenas->tmp);
-	delim = word_join(&redir->target, &ps->arenas->tmp);
+	if (!join_delim(&redir->target, &ps->arenas->ast))
+		return (parser_fail(ps, ST_FATAL, NULL));
 	content = ft_arena_strdup(&ps->arenas->heredoc, "");
-	if (!delim || !content)
+	if (!content)
 		return (parser_fail(ps, ST_FATAL, NULL));
 	len = 0;
 	line = read_next_heredoc_line(ps);
-	while (line && ft_strcmp(line, delim) != 0)
+	while (line && ft_strcmp(line, redir->target.str) != 0)
 	{
 		content = append_line(&ps->arenas->heredoc, content, &len, line);
 		if (!content)
@@ -89,7 +109,7 @@ void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)
 		line = read_next_heredoc_line(ps);
 	}
 	if (!line)
-		return (parser_fail(ps, ST_FAILURE, hd_eof_warn_msg(ps, delim)));
+		ft_putendl_fd(hd_eof_warn_msg(ps, redir->target.str), STDERR_FILENO);
 	redir->hd.raw_str.str = content;
 	redir->hd.raw_str.len = len;
 }

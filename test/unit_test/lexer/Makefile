@@ -46,9 +46,12 @@ $(TEST_OBJDIR)/%.o: %.c
 
 clean:
 	rm -rf $(TEST_OBJDIR)
+	rm -rf $(ROOT_OBJDIR)/lexer
+	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean
 	rm -f $(NAME_LINE) $(NAME_REPL)
+	$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
 

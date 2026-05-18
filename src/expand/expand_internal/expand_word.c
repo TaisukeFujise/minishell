@@ -1,123 +1,95 @@
 #include "expand_internal.h"
 
-static void	process_part(t_expand_ctx *ex, t_word *part, t_expbuf *buf, int opt)
+static t_status	append_split(t_expand *ex, t_fields *fields,
+					char *s, size_t len)
 {
-	bool	globbable;
-
-	if (part->flag & W_SQ)
-		expbuf_append(buf, part->str, part->len, false, false, ex->tmp);
-	else if (part->flag & W_DOLL)
-	{
-		if (opt & EXP_PARAM)
-			expand_param(ex, part, buf);
-		else
-			expbuf_append(buf, part->str, part->len, false, false, ex->tmp);
-	}
-	else if (part->flag & W_WILD)
-	{
-		globbable = (opt & EXP_GLOB) != 0;
-		expbuf_append(buf, part->str, part->len, false, globbable, ex->tmp);
-	}
-	else if (part->flag & W_DQ)
-		expbuf_append(buf, part->str, part->len, false, false, ex->tmp);
-	else
-		expbuf_append(buf, part->str, part->len, false, false, ex->tmp);
-}
-
-static bool	buf_has_glob(t_expbuf *buf)
-{
-	int	i;
+	size_t	i;
+	size_t	start;
 
 	i = 0;
-	while (i < buf->len)
+	while (i < len)
 	{
-		if (buf->gmap[i] && buf->data[i] == '*')
-			return (true);
-		i++;
+		while (i < len && ft_strchr(ex->ifs, s[i]))
+			i++;
+		if (i != 0 && fields->buf.len > 0
+			&& fields_emit(ex, fields) != ST_OK)
+			return (ST_FATAL);
+		start = i;
+		while (i < len && !ft_strchr(ex->ifs, s[i]))
+			i++;
+		if (i == start)
+			continue ;
+		if (!strbuf_add(&fields->buf, s + start, i - start))
+			return (ST_FATAL);
+		if (ft_memchr(s + start, '*', i - start))
+			fields->glob = true;
 	}
-	return (false);
+	return (ST_OK);
 }
 
-static t_word_list	*apply_glob_to_fields(t_expand_ctx *ex, char **fields,
-										int count, bool do_glob)
+static char	*part_value(t_expand *ex, t_word *part, t_param *param)
 {
-	t_word_list	*head;
-	t_word_list	*tail;
-	t_word_list	*nodes;
-	char		**expanded;
-	int			exp_count;
-	int			i;
-
-	head = NULL;
-	tail = NULL;
-	i = 0;
-	while (i < count)
+	if ((part->flag & W_DOLL) == 0 || (part->flag & W_SQ) != 0)
 	{
-		if (do_glob && pattern_has_glob(fields[i]))
-			expanded = expand_glob(ex, fields[i], &exp_count);
-		else
-		{
-			expanded = ft_arena_alloc(ex->ast, sizeof(char *));
-			expanded[0] = ft_arena_strdup(ex->ast, fields[i]);
-			exp_count = 1;
-		}
-		nodes = fields_to_wordlist(ex, expanded, exp_count);
-		if (nodes)
-		{
-			if (!head)
-				head = nodes;
-			else
-				tail->next = nodes;
-			while (nodes->next)
-				nodes = nodes->next;
-			tail = nodes;
-		}
-		i++;
+		param->len = (size_t)part->len;
+		return (part->str);
 	}
-	return (head);
+	param->s = part->str;
+	param->slen = (size_t)part->len;
+	return (expand_param(ex->ctx, &ex->arenas->tmp, param));
 }
 
-/*
-** Expand a single word to a list of words (may be 0, 1, or more).
-** Returns NULL if the word should be deleted (empty after expansion).
-** The opts parameter controls which expansion steps to apply.
-*/
-t_word_list	*expand_word(t_expand_ctx *ex, t_word *wd, int opts)
+static t_status	append_part(t_expand *ex, t_word *part,
+					t_exp_mode mode, t_fields *fields)
 {
-	t_expbuf	buf;
-	t_word		*part;
-	char		**fields;
-	int			count;
-	bool		keep_empty;
-	bool		do_glob;
+	char	*value;
+	t_param	param;
 
-	if (!expbuf_init(&buf, ex->tmp))
+	value = part_value(ex, part, &param);
+	if (!value)
+		return (ST_FATAL);
+	if (mode == EXP_FIELDS && (part->flag & W_DOLL)
+		&& (part->flag & (W_SQ | W_DQ)) == 0)
+		return (append_split(ex, fields, value, param.len));
+	if (!strbuf_add(&fields->buf, value, param.len))
+		return (ST_FATAL);
+	if (mode == EXP_FIELDS && (part->flag & W_WILD) != 0)
+		fields->glob = true;
+	return (ST_OK);
+}
+
+t_status	expand_word(t_expand *ex, t_word *wd, t_exp_mode mode,
+				t_fields *fields)
+{
+	fields->emitted = false;
+	fields->keep_empty = false;
+	fields->glob = false;
+	fields->buf.len = 0;
+	fields->buf.data[0] = '\0';
+	while (wd)
+	{
+		if ((wd->flag & (W_SQ | W_DQ)) != 0)
+			fields->keep_empty = true;
+		if (append_part(ex, wd, mode, fields) != ST_OK)
+			return (ST_FATAL);
+		wd = wd->next;
+	}
+	if (mode == EXP_FIELDS && (fields->buf.len > 0
+			|| (!fields->emitted && fields->keep_empty)))
+		return (fields_emit(ex, fields));
+	return (ST_OK);
+}
+
+char	*expand_word_str(t_expand *ex, t_word *wd)
+{
+	t_fields	fields;
+	char		*str;
+
+	if (!fields_init(&fields, &ex->arenas->tmp))
 		return (NULL);
-	keep_empty = word_has_quote(wd);
-	do_glob = (opts & EXP_GLOB) && buf_has_glob(&buf);
-	part = wd;
-	while (part)
-	{
-		process_part(ex, part, &buf, opts);
-		part = part->next;
-	}
-	do_glob = (opts & EXP_GLOB) && buf_has_glob(&buf);
-	if (opts & EXP_SPLIT)
-		fields = split_fields(ex, &buf, &count);
-	else
-	{
-		fields = ft_arena_alloc(ex->ast, sizeof(char *));
-		fields[0] = expbuf_finish(&buf, ex->ast);
-		count = (buf.len > 0 || keep_empty) ? 1 : 0;
-	}
-	if (count == 0 && !keep_empty)
+	if (expand_word(ex, wd, EXP_JOIN, &fields) != ST_OK)
 		return (NULL);
-	if (count == 0 && keep_empty)
-	{
-		fields = ft_arena_alloc(ex->ast, sizeof(char *));
-		fields[0] = ft_arena_strdup(ex->ast, "");
-		count = 1;
-		return (fields_to_wordlist(ex, fields, count));
-	}
-	return (apply_glob_to_fields(ex, fields, count, do_glob));
+	str = ft_arena_strndup(&ex->arenas->ast,
+			fields.buf.data, fields.buf.len);
+	return (str);
 }

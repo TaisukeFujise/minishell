@@ -21,11 +21,10 @@ SRCS:=main.c\
 	  lexer/lexer_internal/lexer_utils.c\
 	  expand/expand.c\
 	  expand/expand_internal/expand_buf.c\
-	  expand/expand_internal/expand_ctx.c\
+	  expand/expand_internal/expand_cmd.c\
 	  expand/expand_internal/expand_glob.c\
+	  expand/expand_internal/expand_heredoc.c\
 	  expand/expand_internal/expand_param.c\
-	  expand/expand_internal/expand_split.c\
-	  expand/expand_internal/expand_utils.c\
 	  expand/expand_internal/expand_word.c\
 	  execute/apply_redirect.c\
 	  execute/assigns.c\

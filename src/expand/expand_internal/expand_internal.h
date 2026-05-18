@@ -6,70 +6,61 @@
 
 # define IFS_DEFAULT " \t\n"
 # define EXP_BUF_INIT 64
+# define EXPAND_MSG_AMBIG_REDIR "ambiguous redirect"
 
-/*
-** Expansion options (bitflags)
-*/
-typedef enum e_expand_opt
+typedef enum e_exp_mode
 {
-	EXP_PARAM = 1 << 0,
-	EXP_SPLIT = 1 << 1,
-	EXP_GLOB = 1 << 2
-}	t_expand_opt;
+	EXP_JOIN,
+	EXP_FIELDS
+}	t_exp_mode;
 
-# define EXP_ARGV   (EXP_PARAM | EXP_SPLIT | EXP_GLOB)
-# define EXP_REDIR  (EXP_PARAM)
-# define EXP_ASSIGN (EXP_PARAM)
-
-/*
-** Expansion context - passed to all internal functions
-*/
-typedef struct s_expand_ctx
+typedef struct s_expand
 {
-	t_arena			*ast;
-	t_arena			*tmp;
-	t_ctx			*ctx;
-	const char		*ifs;
-}	t_expand_ctx;
+	t_ctx		*ctx;
+	t_arenas	*arenas;
+	const char	*ifs;
+}	t_expand;
 
-/*
-** Dynamic buffer for building expanded strings
-*/
-typedef struct s_expbuf
+typedef struct s_strbuf
 {
-	char	*data;
-	bool	*smap;
-	bool	*gmap;
-	int		len;
-	int		cap;
-}	t_expbuf;
+	t_arena		*arena;
+	char		*data;
+	size_t		len;
+	size_t		cap;
+}	t_strbuf;
 
-/* expand_ctx.c */
-void		init_expand_ctx(t_expand_ctx *ex, t_ctx *ctx, t_arenas *arenas);
+typedef struct s_fields
+{
+	t_strbuf	buf;
+	t_word_list	*head;
+	t_word_list	**tail;
+	bool		glob;
+	bool		emitted;
+	bool		keep_empty;
+}	t_fields;
 
-/* expand_buf.c */
-bool		expbuf_init(t_expbuf *buf, t_arena *arena);
-bool		expbuf_append(t_expbuf *buf, const char *s, int n,
-				bool splittable, bool globbable, t_arena *arena);
-char		*expbuf_finish(t_expbuf *buf, t_arena *arena);
+typedef struct s_param
+{
+	const char	*s;
+	size_t		slen;
+	size_t		len;
+	size_t		used;
+}	t_param;
 
-/* expand_param.c */
-void		expand_param(t_expand_ctx *ex, t_word *part, t_expbuf *buf);
-
-/* expand_word.c */
-t_word_list	*expand_word(t_expand_ctx *ex, t_word *wd, int opts);
-char		*word_to_str(t_expand_ctx *ex, t_word *wd);
-bool		word_has_quote(t_word *wd);
-
-/* expand_split.c */
-char		**split_fields(t_expand_ctx *ex, t_expbuf *buf, int *count);
-
-/* expand_glob.c */
-char		**expand_glob(t_expand_ctx *ex, const char *pattern, int *count);
-bool		pattern_has_glob(const char *s);
-
-/* expand_utils.c */
-t_word_list	*make_word_node(t_expand_ctx *ex, const char *s);
-t_word_list	*fields_to_wordlist(t_expand_ctx *ex, char **fields, int count);
+t_status	expand_args(t_expand *ex, t_simple_cmd *cmd);
+t_status	expand_redirects(t_expand *ex, t_redirect *redir);
+t_status	expand_assigns(t_expand *ex, t_assign *assign);
+t_status	expand_heredoc_body(t_redirect *redir, t_ctx *ctx, t_arena *arena);
+bool		strbuf_init(t_strbuf *buf, t_arena *arena);
+bool		strbuf_add(t_strbuf *buf, const char *s, size_t len);
+bool		fields_init(t_fields *fields, t_arena *arena);
+t_word_list	*fields_add(t_expand *ex, t_fields *fields, const char *s,
+				size_t len);
+t_status	fields_emit(t_expand *ex, t_fields *fields);
+t_status	expand_word(t_expand *ex, t_word *wd, t_exp_mode mode,
+				t_fields *fields);
+char		*expand_word_str(t_expand *ex, t_word *wd);
+char		*expand_param(t_ctx *ctx, t_arena *arena, t_param *param);
+t_word_list	*append_glob(t_expand *ex, t_fields *fields, const char *pat);
 
 #endif
