@@ -1,0 +1,301 @@
+# for parser_dump_line (argv input)
+./test/unit_test/parser/parser_dump_line $'echo a'
+./test/unit_test/parser/parser_dump_line $'echo a\necho b\n'
+./test/unit_test/parser/parser_dump_line $'echo a &&\necho b\n'
+./test/unit_test/parser/parser_dump_line $'a | b | c'
+./test/unit_test/parser/parser_dump_line $'(echo hi) >out'
+./test/unit_test/parser/parser_dump_line $'(echo a\necho b\necho c\n)'
+./test/unit_test/parser/parser_dump_line $'(echo a\necho a )\n'
+./test/unit_test/parser/parser_dump_line $'echo a &&\n\n\necho b\n'
+./test/unit_test/parser/parser_dump_line $'(\necho a &&\necho b\necho c ||\necho d\n)\n'
+./test/unit_test/parser/parser_dump_line $'cat << eof\nx\neof\n'
+./test/unit_test/parser/parser_dump_line $'echo before\n)\necho after\n'
+./test/unit_test/parser/parser_dump_line $'echo a &\necho b\n'
+./test/unit_test/parser/parser_dump_line $'A=1 B+=2 cmd x >out 2>>err <in\n'
+./test/unit_test/parser/parser_dump_line $'(echo a\necho b\n) && (echo c | echo d)\n'
+./test/unit_test/parser/parser_dump_line $'(cat << eof\nx\neof\n) || echo fallback\n'
+./test/unit_test/parser/parser_dump_line $'echo a | echo b && echo c || echo d\n'
+
+# [stress-case generator script]
+# run from project root:
+# ./test/unit_test/parser/manual/gen_stress_case.sh nested_subshell 4000
+# ./test/unit_test/parser/manual/gen_stress_case.sh compound_list 3000
+# ./test/unit_test/parser/manual/gen_stress_case.sh andor_chain 3000
+# ./test/unit_test/parser/manual/gen_stress_case.sh pipeline_chain 1200
+# ./test/unit_test/parser/manual/gen_stress_case.sh heredoc_max_over
+#
+# easy copy/paste options:
+# cat test/unit_test/parser/manual/generated/nested_subshell_4000.txt
+# ./test/unit_test/parser/manual/gen_stress_case.sh nested_subshell 4000 --copy
+
+# for parser_dump_repl
+# run:
+# ./test/unit_test/parser/parser_dump_repl
+#
+# note:
+# - lines starting with '#' are notes (do not paste)
+# - paste one line per prompt
+# - heredoc cases are multi-step: after the first line, answer the "> " prompts
+
+# [basic simple_command]
+echo a
+echo a b c
+echo a""b
+echo ''""
+echo ""
+echo ''
+echo "" ''
+echo "$HOME"
+echo '$HOME'
+echo "$HOME" '$HOME' $HOME $?
+echo $1
+echo $$
+echo $
+echo *
+echo "*" '*'
+echo a\ b
+echo \\
+echo ~
+
+# [assignment detection]
+A=1
+A=1 B=2
+A=1 B+=2
+_A=1
+1A=1
+A+=
+A= cmd
+A=1 cmd x
+A=1 B+=2 cmd x
+cmd A=1 B+=2
+export A=1 B+=2
+A=1 >out
+>out <in
+
+# [lexer boundary without spaces]
+a&&b
+a||b
+a|b
+2>out
+2>>out
+0<in
+
+# [connectors / precedence]
+a && b
+a || b
+a | b
+a | b | c
+a || b && c
+a && b || c
+a | b && c
+a && b | c
+a && b && c
+a || b || c
+a&&b||c&&d
+
+# [redir / io_number]
+2>out
+2 >> out
+2>>out
+2>> out
+0<in
+0< in
+10>>out
+0002>out
+2147483647>out
+2147483648>out
+99999999999999999999>out
+-1>out
+2>out3
+2><out
+2>out 3<in cmd
+cat <in >out
+cat << eof
+x
+eof
+cat << "eof"
+x
+eof
+cat << 'eof'
+x
+eof
+cat << a << b
+X
+a
+Y
+b
+
+# [dollar edge]
+echo $?
+echo $$ $?$? $$$
+echo $_ $A1 $A_1
+echo $- $@ $!
+echo "$$" "$?" "$1"
+echo '$$' '$?' '$1'
+
+# [group / subshell]
+(echo a)
+((echo a))
+((echo a) && (echo b))
+(echo a) >out
+(echo a) 2>err
+(echo a) >out 2>>err
+(A=1 cmd)
+(A=1 B+=2 cmd x)
+
+# [combined normal cases: one-line]
+A=1 B+=2 cmd arg1 arg2 >out 2>>err <in
+A=1 cmd x && echo ok
+A=1 cmd x || echo ng
+A=1 cmd1 | cmd2
+A=1 cmd1 | cmd2 && cmd3
+A=1 cmd1 && cmd2 | cmd3
+echo "a b" '$HOME' $HOME $? * >out
+echo "$HOME:$USER" "$?" '$$' "$1"
+cmd1|cmd2&&cmd3||cmd4
+cmd1&&cmd2||cmd3&&cmd4
+cmd1|cmd2|cmd3&&cmd4
+2>err cmd1 arg | cmd2 arg2 >out
+<in cmd1 | cmd2 >out
+2>>err <in cmd1 arg1 arg2
+((cmd1))
+((cmd1) && (cmd2))
+((cmd1) || (cmd2))
+((cmd1) | (cmd2))
+((cmd1) && (cmd2)) || (cmd3)
+(cmd1 arg1 arg2) >out 2>>err
+(cmd1 | cmd2) && (cmd3 | cmd4)
+(cmd1 && cmd2) || (cmd3 && cmd4)
+(A=1 cmd1 x) && (B+=2 cmd2 y)
+(A=1 cmd1 >out) 2>>err
+(cmd1) | (cmd2)
+(cmd1) | cmd2 && (cmd3)
+A=1
+A=1 && B=2
+A=1 | B=2
+>out cmd1 && <in cmd2
+
+# [combined normal cases: heredoc combos]
+cat << eof | cat
+x
+eof
+cat << eof && echo ok
+x
+eof
+cat << eof || echo ng
+x
+eof
+cat << eof >out
+x
+eof
+cat << eof 2>>err
+x
+eof
+(cat << eof) && echo done
+x
+eof
+(cat << eof) | cat
+x
+eof
+cat << a << b | cat
+X
+a
+Y
+b
+
+# [unsupported syntax observed as WORD in this phase]
+echo a ; echo b
+echo a & echo b
+echo a # comment
+echo '#' ';' '&'
+echo a\;b
+echo a\&b
+
+# [syntax error / recovery behavior by prompt]
+)
+(
+echo a &&
+echo a ||
+echo a |
+|| echo a
+&& echo a
+| echo a
+(echo a
+(echo a))
+2>>
+echo "a
+echo 'a
+((echo a)
+((echo a)))
+
+# [operator mashups]
+|||
+&&&
+>>>
+<<<
+><
+<>
+
+# [HEREDOC_MAX edge: expected ST_FATAL in this implementation]
+cat <<a <<b <<c <<d <<e <<f <<g <<h <<i <<j <<k <<l <<m <<n <<o <<p <<q
+
+# [heredoc EOF warning]
+# input:
+cat << eof
+# then press Ctrl-D at the "> " prompt
+
+# [newline-heavy parsing is better with parser_dump_line]
+# use the parser_dump_line section above for:
+# - multiline && / || / |
+# - subshell compound_list with NEWLINE separators
+
+# [repl recovery sequence: paste in order]
+echo before_recovery
+echo "unclosed
+echo after_unclosed_double
+echo 'unclosed
+echo after_unclosed_single
+)
+echo after_rparen_error
+echo a &&
+echo after_connective_error
+cat << eof
+X
+eof
+echo after_heredoc
+
+# [repl heredoc variants]
+cat << EOF
+$HOME
+EOF
+cat << "EOF"
+$HOME
+EOF
+cat << 'EOF'
+$HOME
+EOF
+cat << a << b
+X
+a
+Y
+b
+(cat << z) && echo done
+Z
+z
+
+# [repl extra combined one-line]
+((cmd1) && (cmd2)) || (cmd3)
+<in (cmd1 | cmd2) >out
+2>>err (cmd1 && cmd2)
+(A=1 B+=2 cmd x) | (cmd2 y)
+(cmd1 && (cmd2 | cmd3)) || (cmd4 && cmd5)
+((cmd1) | (cmd2)) && ((cmd3) | (cmd4))
+((A=1 cmd1 >out) && (B+=2 cmd2 <in)) || (cmd3 2>>err)
+
+# [repl unsupported-token behavior]
+echo a ; echo b
+echo a & echo b
+echo a # comment
+; echo a
+& echo a
+# only comment

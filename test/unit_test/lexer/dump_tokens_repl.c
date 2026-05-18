@@ -4,12 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void	dump_tokens(t_token *head);
+void	dump_tokens(char *line);
 
 int	main(void)
 {
 	char	*line;
-	t_token	*tokens;
 
 	while (1)
 	{
@@ -18,15 +17,7 @@ int	main(void)
 			break ;
 		if (*line != '\0')
 			add_history(line);
-		tokens = tokenize(line);
-		if (!tokens)
-		{
-			fprintf(stderr, "Tokenization failed due to memory allocation error.\n");
-			free(line);
-			return (1);
-		}
-		dump_tokens(tokens);
-		free_tokens(tokens, NULL);
+		dump_tokens(line);
 		free(line);
 	}
 	return (0);
