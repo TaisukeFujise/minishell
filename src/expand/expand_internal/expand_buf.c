@@ -49,14 +49,14 @@ bool	fields_init(t_fields *fields, t_arena *arena)
 	return (true);
 }
 
-t_status	fields_emit(t_expand *ex, t_fields *fields)
+t_status	fields_emit(t_expand *exp, t_fields *fields)
 {
 	t_word_list	*node;
 
 	if (fields->glob)
-		node = append_glob(ex, fields, fields->buf.data);
+		node = append_glob(exp, fields, fields->buf.data);
 	else
-		node = fields_add(ex, fields, fields->buf.data, fields->buf.len);
+		node = fields_add(exp, fields, fields->buf.data, fields->buf.len);
 	if (!node)
 		return (ST_FATAL);
 	fields->buf.len = 0;
@@ -66,18 +66,18 @@ t_status	fields_emit(t_expand *ex, t_fields *fields)
 	return (ST_OK);
 }
 
-t_word_list	*fields_add(t_expand *ex, t_fields *fields, const char *s,
+t_word_list	*fields_add(t_expand *exp, t_fields *fields, const char *s,
 				size_t len)
 {
 	t_word_list	*node;
 
-	node = ft_arena_calloc(&ex->arenas->ast, 1, sizeof(t_word_list));
+	node = ft_arena_calloc(&exp->arenas->ast, 1, sizeof(t_word_list));
 	if (!node)
 		return (NULL);
-	node->wd = ft_arena_calloc(&ex->arenas->ast, 1, sizeof(t_word));
+	node->wd = ft_arena_calloc(&exp->arenas->ast, 1, sizeof(t_word));
 	if (!node->wd)
 		return (NULL);
-	node->wd->str = ft_arena_strndup(&ex->arenas->ast, s, len);
+	node->wd->str = ft_arena_strndup(&exp->arenas->ast, s, len);
 	if (!node->wd->str)
 		return (NULL);
 	node->wd->len = (int)len;

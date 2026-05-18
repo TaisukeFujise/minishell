@@ -1,6 +1,6 @@
 #include "expand_internal.h"
 
-static t_status	append_split(t_expand *ex, t_fields *fields,
+static t_status	append_split(t_expand *exp, t_fields *fields,
 					char *s, size_t len)
 {
 	size_t	i;
@@ -9,13 +9,13 @@ static t_status	append_split(t_expand *ex, t_fields *fields,
 	i = 0;
 	while (i < len)
 	{
-		while (i < len && ft_strchr(ex->ifs, s[i]))
+		while (i < len && ft_strchr(exp->ifs, s[i]))
 			i++;
 		if (i != 0 && fields->buf.len > 0
-			&& fields_emit(ex, fields) != ST_OK)
+			&& fields_emit(exp, fields) != ST_OK)
 			return (ST_FATAL);
 		start = i;
-		while (i < len && !ft_strchr(ex->ifs, s[i]))
+		while (i < len && !ft_strchr(exp->ifs, s[i]))
 			i++;
 		if (i == start)
 			continue ;
@@ -27,7 +27,7 @@ static t_status	append_split(t_expand *ex, t_fields *fields,
 	return (ST_OK);
 }
 
-static char	*part_value(t_expand *ex, t_word *part, t_param *param)
+static char	*part_value(t_expand *exp, t_word *part, t_param *param)
 {
 	if ((part->flag & W_DOLL) == 0 || (part->flag & W_SQ) != 0)
 	{
@@ -36,21 +36,21 @@ static char	*part_value(t_expand *ex, t_word *part, t_param *param)
 	}
 	param->s = part->str;
 	param->slen = (size_t)part->len;
-	return (expand_param(ex->ctx, &ex->arenas->tmp, param));
+	return (expand_param(exp->ctx, &exp->arenas->tmp, param));
 }
 
-static t_status	append_part(t_expand *ex, t_word *part,
+static t_status	append_part(t_expand *exp, t_word *part,
 					t_exp_mode mode, t_fields *fields)
 {
 	char	*value;
 	t_param	param;
 
-	value = part_value(ex, part, &param);
+	value = part_value(exp, part, &param);
 	if (!value)
 		return (ST_FATAL);
 	if (mode == EXP_FIELDS && (part->flag & W_DOLL)
 		&& (part->flag & (W_SQ | W_DQ)) == 0)
-		return (append_split(ex, fields, value, param.len));
+		return (append_split(exp, fields, value, param.len));
 	if (!strbuf_add(&fields->buf, value, param.len))
 		return (ST_FATAL);
 	if (mode == EXP_FIELDS && (part->flag & W_WILD) != 0)
@@ -58,7 +58,7 @@ static t_status	append_part(t_expand *ex, t_word *part,
 	return (ST_OK);
 }
 
-t_status	expand_word(t_expand *ex, t_word *wd, t_exp_mode mode,
+t_status	expand_word(t_expand *exp, t_word *wd, t_exp_mode mode,
 				t_fields *fields)
 {
 	fields->emitted = false;
@@ -70,26 +70,26 @@ t_status	expand_word(t_expand *ex, t_word *wd, t_exp_mode mode,
 	{
 		if ((wd->flag & (W_SQ | W_DQ)) != 0)
 			fields->keep_empty = true;
-		if (append_part(ex, wd, mode, fields) != ST_OK)
+		if (append_part(exp, wd, mode, fields) != ST_OK)
 			return (ST_FATAL);
 		wd = wd->next;
 	}
 	if (mode == EXP_FIELDS && (fields->buf.len > 0
 			|| (!fields->emitted && fields->keep_empty)))
-		return (fields_emit(ex, fields));
+		return (fields_emit(exp, fields));
 	return (ST_OK);
 }
 
-char	*expand_word_str(t_expand *ex, t_word *wd)
+char	*expand_word_str(t_expand *exp, t_word *wd)
 {
 	t_fields	fields;
 	char		*str;
 
-	if (!fields_init(&fields, &ex->arenas->tmp))
+	if (!fields_init(&fields, &exp->arenas->tmp))
 		return (NULL);
-	if (expand_word(ex, wd, EXP_JOIN, &fields) != ST_OK)
+	if (expand_word(exp, wd, EXP_JOIN, &fields) != ST_OK)
 		return (NULL);
-	str = ft_arena_strndup(&ex->arenas->ast,
+	str = ft_arena_strndup(&exp->arenas->ast,
 			fields.buf.data, fields.buf.len);
 	return (str);
 }

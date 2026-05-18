@@ -20,14 +20,14 @@ static bool	match_star(const char *pat, const char *name)
 	return (false);
 }
 
-static bool	insert_match(t_expand *ex, t_word_list **list, const char *name)
+static bool	insert_match(t_expand *exp, t_word_list **list, const char *name)
 {
 	t_fields	fields;
 	t_word_list	*node;
 
 	fields.head = NULL;
 	fields.tail = &fields.head;
-	node = fields_add(ex, &fields, name, ft_strlen(name));
+	node = fields_add(exp, &fields, name, ft_strlen(name));
 	if (!node)
 		return (false);
 	while (*list && ft_strcmp((*list)->wd->str, node->wd->str) < 0)
@@ -45,7 +45,7 @@ static t_word_list	*append_matches(t_fields *fields, t_word_list *list)
 	return (list);
 }
 
-t_word_list	*append_glob(t_expand *ex, t_fields *fields, const char *pat)
+t_word_list	*append_glob(t_expand *exp, t_fields *fields, const char *pat)
 {
 	DIR				*dir;
 	struct dirent	*ent;
@@ -53,14 +53,14 @@ t_word_list	*append_glob(t_expand *ex, t_fields *fields, const char *pat)
 
 	dir = opendir(".");
 	if (!dir)
-		return (fields_add(ex, fields, pat, ft_strlen(pat)));
+		return (fields_add(exp, fields, pat, ft_strlen(pat)));
 	list = NULL;
 	ent = readdir(dir);
 	while (ent)
 	{
 		if ((pat[0] == '.' || ent->d_name[0] != '.')
 			&& match_star(pat, ent->d_name)
-			&& !insert_match(ex, &list, ent->d_name))
+			&& !insert_match(exp, &list, ent->d_name))
 		{
 			closedir(dir);
 			return (NULL);
@@ -69,6 +69,6 @@ t_word_list	*append_glob(t_expand *ex, t_fields *fields, const char *pat)
 	}
 	closedir(dir);
 	if (!list)
-		return (fields_add(ex, fields, pat, ft_strlen(pat)));
+		return (fields_add(exp, fields, pat, ft_strlen(pat)));
 	return (append_matches(fields, list));
 }

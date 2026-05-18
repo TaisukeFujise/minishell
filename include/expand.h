@@ -4,7 +4,6 @@
 # include "lexer.h"
 # include "parser.h"
 
-t_status	expand_command(void *cmd, t_ctx *ctx, t_arenas *arenas,
-				bool is_simple);
+t_status	expand_command(t_node *node, t_ctx *ctx, t_arenas *arenas);
 
 #endif
