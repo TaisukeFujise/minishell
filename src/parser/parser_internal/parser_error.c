@@ -41,19 +41,20 @@ char	*hd_eof_warn_msg(t_parser_state *ps, char *delim)
 {
 	size_t	plen;
 	size_t	dlen;
-	size_t	len;
+	size_t	slen;
 	char	*msg;
 
-	plen = ft_strlen(PARSER_MSG_HD_EOF_PREFIX);
 	dlen = ft_strlen(delim);
-	len = plen + dlen + ft_strlen(PARSER_MSG_HD_EOF_SUFFIX);
-	msg = ft_arena_alloc(&ps->arenas->ast, len + 1);
+	plen = sizeof(PARSER_MSG_HD_EOF_PREFIX) - 1;
+	slen = sizeof(PARSER_MSG_HD_EOF_SUFFIX) - 1;
+	if (dlen > SIZE_MAX - plen - slen)
+		return (PARSER_MSG_FATAL);
+	msg = ft_arena_alloc(&ps->arenas->ast, plen + dlen + slen + 1);
 	if (!msg)
 		return (PARSER_MSG_SYNTAX);
 	ft_memcpy(msg, PARSER_MSG_HD_EOF_PREFIX, plen);
 	ft_memcpy(msg + plen, delim, dlen);
-	ft_strlcpy(msg + plen + dlen, PARSER_MSG_HD_EOF_SUFFIX,
-		len - plen - dlen + 1);
+	ft_strlcpy(msg + plen + dlen, PARSER_MSG_HD_EOF_SUFFIX, slen + 1);
 	return (msg);
 }
 
