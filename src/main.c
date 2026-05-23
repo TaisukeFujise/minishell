@@ -23,7 +23,6 @@ volatile sig_atomic_t g_signum = 0;
 */
 void	handle_command_termination(t_status status, char *user_input, t_node *node, t_ctx *ctx)
 {
-	(void)user_input;
 	(void)node;
 	/*
 		Here free "user_input" and the member of "node and ctx"(not node and ctx itself)
@@ -31,11 +30,13 @@ void	handle_command_termination(t_status status, char *user_input, t_node *node,
 	*/
 	if (status == ST_EXIT)
 	{
+		free(user_input);
 		rl_clear_history();
 		exit(ctx->err.exit_code);
 	}
 	if (status == ST_FATAL)
 	{
+		free(user_input);
 		rl_clear_history();
 		exit(1);
 	}
@@ -111,6 +112,7 @@ int main(int argc, char **argv, char **envp)
 			add_history(user_input);
 		g_signum = 0;
 		parse_and_execute(user_input, &ast, &ctx);
+		free(user_input);
 		/*
 			Here free "user_input" and the member of "node and ctx"(not node and ctx itself)
 			because node and ctx itself are not allocated memory.

@@ -163,7 +163,7 @@ if [ "$COPY_FLAG" = "--copy" ]; then
 	copy_clipboard "$OUT_FILE"
 fi
 
-REL_OUT="${OUT_FILE#$PROJECT_DIR/}"
+REL_OUT="${OUT_FILE#"$PROJECT_DIR"/}"
 echo "Generated: $OUT_FILE"
 echo
 echo "Quick run (from project root):"

@@ -100,17 +100,19 @@ static void	dump_input(char *line)
 			close_heredocs(ast.left);
 			ast.left = NULL;
 		}
-		else
-		{
-			printf(" command=\"");
-			print_escaped_segment(begin, cursor);
-			printf("\" err=\"%s\"\n", ctx.err.err_msg);
-			if (status != ST_FAILURE)
+			else
 			{
-				destroy_arenas(&arenas);
-				break ;
+				if (!ctx.err.err_msg)
+					ctx.err.err_msg = "<no-error-message>";
+				printf(" command=\"");
+				print_escaped_segment(begin, cursor);
+				printf("\" err=\"%s\"\n", ctx.err.err_msg);
+				if (status != ST_FAILURE)
+				{
+					destroy_arenas(&arenas);
+					break ;
+				}
 			}
-		}
 		destroy_arenas(&arenas);
 	}
 }

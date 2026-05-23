@@ -14,6 +14,7 @@ ROOT_SRCS:=parser/parser.c \
 	parser/parser_internal/parse_command.c \
 	parser/parser_internal/parse_connective.c \
 	parser/parser_internal/parser_heredoc.c \
+	parser/parser_internal/parser_redirect.c \
 	lexer/lexer.c \
 	lexer/lexer_internal/lex_ops.c \
 	lexer/lexer_internal/lex_assign_util.c \
@@ -71,6 +72,7 @@ $(TEST_OBJDIR)/parent/%.o: ../%.c
 
 clean:
 	rm -rf $(TEST_OBJDIR)
+	rm -rf $(ROOT_OBJDIR)/parser $(ROOT_OBJDIR)/lexer
 
 fclean: clean
 	rm -f $(NAME_CASES) $(NAME_DUMP) $(NAME_SNAPSHOT)
