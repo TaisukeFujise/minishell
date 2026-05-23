@@ -26,42 +26,47 @@ t_status	expand_args(t_expand *exp, t_simple_cmd *cmd)
 	t_word_list	*cur;
 	t_fields	fields;
 	char		*cmd_name;
+	t_status	status;
 
 	if (!fields_init(&fields, &exp->arenas->tmp))
 		return (ST_FATAL);
+	status = ST_OK;
 	cmd_name = NULL;
 	cur = cmd->args;
-	while (cur)
+	while (cur && status == ST_OK)
 	{
-		if (expand_arg(exp, cur->wd, &cmd_name, &fields) != ST_OK)
-			return (ST_FATAL);
+		status = expand_arg(exp, cur->wd, &cmd_name, &fields);
 		cur = cur->next;
 	}
-	cmd->args = fields.head;
+	if (status == ST_OK)
+		cmd->args = fields.head;
 	ft_arena_reset(&exp->arenas->tmp);
-	return (ST_OK);
+	return (status);
 }
 
 static t_status	expand_redir_target(t_expand *exp, t_redirect *redir)
 {
 	t_fields	fields;
+	t_status	status;
 
 	if (!fields_init(&fields, &exp->arenas->tmp))
 		return (ST_FATAL);
-	if (expand_word(exp, &redir->target, EXP_FIELDS, &fields) != ST_OK)
-		return (ST_FATAL);
-	if (!fields.head || fields.head->next)
+	status = expand_word(exp, &redir->target, EXP_FIELDS, &fields);
+	if (status == ST_OK && (!fields.head || fields.head->next))
 	{
 		exp->ctx->err.exit_code = 1;
 		exp->ctx->err.err_msg = EXPAND_MSG_AMBIG_REDIR;
-		return (ST_FAILURE);
+		status = ST_FAILURE;
 	}
-	redir->target.str = fields.head->wd->str;
-	redir->target.len = fields.head->wd->len;
-	redir->target.flag = W_NONE;
-	redir->target.next = NULL;
+	if (status == ST_OK)
+	{
+		redir->target.str = fields.head->wd->str;
+		redir->target.len = fields.head->wd->len;
+		redir->target.flag = W_NONE;
+		redir->target.next = NULL;
+	}
 	ft_arena_reset(&exp->arenas->tmp);
-	return (ST_OK);
+	return (status);
 }
 
 t_status	expand_redirects(t_expand *exp, t_redirect *redir)
