@@ -66,25 +66,28 @@ static char	*read_next_heredoc_line(t_parser_state *ps)
 {
 	char	*start;
 	char	*end;
-	char	*line;
 
-	if (*(ps->lex.line) == '\0')
+	start = ps->lex.line;
+	if (*start == '\0')
 	{
 		start = readline("> ");
 		if (!start)
 			return (NULL);
-		line = ft_arena_strdup(&ps->arenas->tmp, start);
+		end = ft_arena_strdup(&ps->arenas->tmp, start);
 		free(start);
-		return (line);
+		start = end;
 	}
-	start = ps->lex.line;
-	end = start;
-	while (*end && *end != '\n')
-		end++;
-	ps->lex.line = end;
-	if (*end == '\n')
-		ps->lex.line++;
-	return (ft_arena_strndup(&ps->arenas->tmp, start, end - start));
+	else
+	{
+		end = ft_strchrnul(start, '\n');
+		ps->lex.line = end;
+		if (*end == '\n')
+			ps->lex.line++;
+		start = ft_arena_strndup(&ps->arenas->tmp, start, end - start);
+	}
+	if (!start)
+		parser_fail(ps, ST_FATAL, NULL);
+	return (start);
 }
 
 void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)
@@ -108,7 +111,7 @@ void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)
 			return (parser_fail(ps, ST_FATAL, NULL));
 		line = read_next_heredoc_line(ps);
 	}
-	if (!line)
+	if (!line && ps->status == ST_OK)
 		ft_putendl_fd(hd_eof_warn_msg(ps, redir->target.str), STDERR_FILENO);
 	redir->hd.raw_str.str = content;
 	redir->hd.raw_str.len = len;
