@@ -33,6 +33,7 @@ struct s_arena_chunk
 	t_arena_chunk	*prev;
 	size_t			capacity;
 	size_t			used;
+	max_align_t		align;
 	char			data[];
 };
 
