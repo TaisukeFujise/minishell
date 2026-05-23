@@ -22,39 +22,24 @@ static bool	match_star(const char *pat, const char *name)
 
 static bool	insert_match(t_expand *exp, t_word_list **list, const char *name)
 {
-	t_fields	fields;
 	t_word_list	*node;
 
-	fields.head = NULL;
-	fields.tail = &fields.head;
-	node = fields_add(exp, &fields, name, ft_strlen(name));
-	if (!node)
-		return (false);
-	while (*list && ft_strcmp((*list)->wd->str, node->wd->str) < 0)
+	while (*list && ft_strcmp((*list)->wd->str, name) < 0)
 		list = &(*list)->next;
-	node->next = *list;
-	*list = node;
-	return (true);
+	node = field_insert(exp, list, name, ft_strlen(name));
+	return (node != NULL);
 }
 
-static t_word_list	*append_matches(t_fields *fields, t_word_list *list)
-{
-	*fields->tail = list;
-	while (*fields->tail)
-		fields->tail = &(*fields->tail)->next;
-	return (list);
-}
-
-t_word_list	*append_glob(t_expand *exp, t_fields *fields, const char *pat)
+t_word_list	*expand_glob(t_expand *exp, const char *pat)
 {
 	DIR				*dir;
 	struct dirent	*ent;
 	t_word_list		*list;
 
+	list = NULL;
 	dir = opendir(".");
 	if (!dir)
-		return (fields_add(exp, fields, pat, ft_strlen(pat)));
-	list = NULL;
+		return (field_insert(exp, &list, pat, ft_strlen(pat)));
 	ent = readdir(dir);
 	while (ent)
 	{
@@ -69,6 +54,6 @@ t_word_list	*append_glob(t_expand *exp, t_fields *fields, const char *pat)
 	}
 	closedir(dir);
 	if (!list)
-		return (fields_add(exp, fields, pat, ft_strlen(pat)));
-	return (append_matches(fields, list));
+		return (field_insert(exp, &list, pat, ft_strlen(pat)));
+	return (list);
 }

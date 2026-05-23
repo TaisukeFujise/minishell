@@ -11,8 +11,9 @@ static t_status	expand_arg(t_expand *exp, t_word *wd, char **cmd,
 		str = expand_word_str(exp, wd);
 		if (!str)
 			return (ST_FATAL);
-		if (!fields_add(exp, fields, str, ft_strlen(str)))
+		if (!field_insert(exp, fields->tail, str, ft_strlen(str)))
 			return (ST_FATAL);
+		fields->tail = &(*fields->tail)->next;
 	}
 	else if (expand_word(exp, wd, EXP_FIELDS, fields) != ST_OK)
 		return (ST_FATAL);

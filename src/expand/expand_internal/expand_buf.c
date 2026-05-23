@@ -54,11 +54,16 @@ t_status	fields_emit(t_expand *exp, t_fields *fields)
 	t_word_list	*node;
 
 	if (fields->glob)
-		node = append_glob(exp, fields, fields->buf.data);
+		node = expand_glob(exp, fields->buf.data);
 	else
-		node = fields_add(exp, fields, fields->buf.data, fields->buf.len);
+		node = field_insert(exp, fields->tail, fields->buf.data,
+				fields->buf.len);
 	if (!node)
 		return (ST_FATAL);
+	if (fields->glob)
+		*fields->tail = node;
+	while (*fields->tail)
+		fields->tail = &(*fields->tail)->next;
 	fields->buf.len = 0;
 	fields->buf.data[0] = '\0';
 	fields->glob = false;
@@ -66,8 +71,8 @@ t_status	fields_emit(t_expand *exp, t_fields *fields)
 	return (ST_OK);
 }
 
-t_word_list	*fields_add(t_expand *exp, t_fields *fields, const char *s,
-				size_t len)
+t_word_list	*field_insert(t_expand *exp, t_word_list **link, const char *s,
+					size_t len)
 {
 	t_word_list	*node;
 
@@ -83,7 +88,7 @@ t_word_list	*fields_add(t_expand *exp, t_fields *fields, const char *s,
 	if (!node->wd->str)
 		return (NULL);
 	node->wd->len = (int)len;
-	*fields->tail = node;
-	fields->tail = &node->next;
+	node->next = *link;
+	*link = node;
 	return (node);
 }

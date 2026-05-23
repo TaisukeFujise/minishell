@@ -54,13 +54,13 @@ t_status	expand_heredoc_body(t_redirect *redir, t_ctx *ctx, t_arena *arena);
 bool		strbuf_init(t_strbuf *buf, t_arena *arena);
 bool		strbuf_add(t_strbuf *buf, const char *s, size_t len);
 bool		fields_init(t_fields *fields, t_arena *arena);
-t_word_list	*fields_add(t_expand *exp, t_fields *fields, const char *s,
-				size_t len);
+t_word_list	*field_insert(t_expand *exp, t_word_list **link,
+				const char *s, size_t len);
 t_status	fields_emit(t_expand *exp, t_fields *fields);
 t_status	expand_word(t_expand *exp, t_word *wd, t_exp_mode mode,
 				t_fields *fields);
 char		*expand_word_str(t_expand *exp, t_word *wd);
 char		*expand_param(t_ctx *ctx, t_arena *arena, t_param *param);
-t_word_list	*append_glob(t_expand *exp, t_fields *fields, const char *pat);
+t_word_list	*expand_glob(t_expand *exp, const char *pat);
 
 #endif
