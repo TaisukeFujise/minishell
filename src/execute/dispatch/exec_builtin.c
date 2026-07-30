@@ -148,8 +148,8 @@ t_status	builtin_cmd(t_word_list *args, t_ctx *ctx)
 		return (env_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "exit") == 0)
 		return (exit_cmd(args->next, ctx));
-	// else if (ft_strcmp(args->wd->str, "export") == 0)
-	// 	return (export_cmd(args->next, ctx));
+	else if (ft_strcmp(args->wd->str, "export") == 0)
+		return (export_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "pwd") == 0)
 		return (pwd_cmd(args->next, ctx));
 	else if (ft_strcmp(args->wd->str, "unset") == 0)

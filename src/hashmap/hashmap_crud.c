@@ -84,11 +84,14 @@ t_bucket_contents	*hash_remove(char *string, t_hashtable *table)
 /*
 	Add new key or Overwrite existing key.
 	It returns NULL if the table is not initialized, or
-	memory allocation for item fails
+	memory allocation for item or the key copy fails.
+	The caller keeps ownership of "string" in every case (found,
+	created, or failed) and is responsible for freeing it.
 */
 t_bucket_contents	*hash_insert(char *string, t_hashtable *table)
 {
 	t_bucket_contents	*item;
+	char				*key_copy;
 	unsigned int		hash_value;
 	int					bucket;
 
@@ -97,14 +100,17 @@ t_bucket_contents	*hash_insert(char *string, t_hashtable *table)
 	item = hash_search(string, table);
 	if (item != NULL)
 		return (item);
+	key_copy = ft_strdup(string);
+	if (key_copy == NULL)
+		return (NULL);
 	hash_value = hash_string(string);
 	bucket = hash_bucket(hash_value, table);
 	item = ft_calloc(1, sizeof(t_bucket_contents));
 	if (item == NULL)
-		return (NULL);
+		return (free(key_copy), NULL);
 	item->next = table->bucket_array[bucket];
 	table->bucket_array[bucket] = item;
-	item->key = string;
+	item->key = key_copy;
 	item->khash = hash_value;
 	table->entry_count++;
 	return (item);

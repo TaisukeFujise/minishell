@@ -16,6 +16,13 @@
 
 bool		is_valid_number(char *str);
 
+static void	print_numeric_argument_required(char *arg)
+{
+	ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+	ft_putstr_fd(arg, STDERR_FILENO);
+	ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+}
+
 /*
 	exit [n]
 	"exit" exit the process with the args' number,
@@ -30,24 +37,25 @@ t_status	exit_cmd(t_word_list *args, t_ctx *ctx)
 		ctx->err.exit_code = 0;
 		return (ST_EXIT);
 	}
-	if (count_args(args) > 2)
+	if (count_args(args) > 1)
 	{
-		write(STDERR_FILENO, "exit", 4);
+		ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
 		ctx->err.exit_code = 1;
-		return (ST_FAILURE); // exit: too many arguments
+		return (ST_FAILURE);
 	}
 	if (is_valid_number(args->wd->str) == false)
 	{
-		write(STDERR_FILENO, "exit", 4);
+		print_numeric_argument_required(args->wd->str);
 		ctx->err.exit_code = 2;
 		return (ST_FATAL);
 	}
+	errno = 0;
 	arg_num = ft_atol(args->wd->str);
 	if (errno == ERANGE)
 	{
-		write(STDERR_FILENO, "exit", 4);
+		print_numeric_argument_required(args->wd->str);
 		ctx->err.exit_code = 2;
-		return (ST_FATAL); // exit: (arg->wd->str): numeric argument reguired
+		return (ST_FATAL);
 	}
 	write(STDOUT_FILENO, "exit", 4);
 	ctx->err.exit_code = (((arg_num % 256) + 256) % 256);
@@ -56,16 +64,19 @@ t_status	exit_cmd(t_word_list *args, t_ctx *ctx)
 
 bool	is_valid_number(char *str)
 {
-	int	i;
+	int		i;
+	bool	has_digit;
 
 	i = 0;
+	has_digit = false;
 	if (str[i] == '+' || str[i] == '-')
 		i++;
 	while (str[i])
 	{
 		if (!ft_isdigit(str[i]))
 			return (false);
+		has_digit = true;
 		i++;
 	}
-	return (true);
+	return (has_digit);
 }
