@@ -23,11 +23,13 @@ void		reset_ctx_pid(t_ctx *ctx);
 */
 t_status	collect_child_result(t_ctx *ctx)
 {
-	int	i;
-	int	status;
+	int		i;
+	int		status;
+	bool	interrupted;
 
 	i = 0;
 	status = 0;
+	interrupted = false;
 	if (ctx->pids == NULL || ctx->npid < 1)
 		return (ST_FATAL);
 	while (i < ctx->npid)
@@ -36,12 +38,14 @@ t_status	collect_child_result(t_ctx *ctx)
 		{
 			if (errno != EINTR)
 				return (ST_FATAL);
-			ctx->err.exit_code = 130;
+			interrupted = true;
 			continue ;
 		}
 		i++;
 	}
-	if (ctx->err.exit_code != 130)
+	if (interrupted)
+		ctx->err.exit_code = 130;
+	else
 		ctx->err.exit_code = status_to_exitcode(status);
 	reset_ctx_pid(ctx);
 	return (ST_OK);

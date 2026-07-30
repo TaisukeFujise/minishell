@@ -97,13 +97,9 @@ static t_status	put_export(t_word *wd, t_ctx *ctx)
 	if (!key)
 		return (ST_FATAL);
 	item = hash_insert(key, ctx->env_table);
+	free(key);
 	if (!item)
-	{
-		free(key);
 		return (ST_FATAL);
-	}
-	if (item->key != key)
-		free(key);
 	item->data.exported = true;
 	if (wd->flag & (W_ASSIGN | W_APPEND))
 		return (set_export_value(wd, item));

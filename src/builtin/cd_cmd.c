@@ -41,23 +41,37 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 		{
 			home = hash_search("HOME", ctx->env_table);
 			if (home == NULL)
-				return (ST_FAILURE); // minishell: cd: HOME not set
+			{
+				ft_putendl_fd("minishell: cd: HOME not set", STDERR_FILENO);
+				return (ST_FAILURE);
+			}
 		}
 		if (chdir(home->data.value) < 0)
-			return (ST_FATAL); // perror can express
+		{
+			perror("minishell: cd");
+			return (ST_FAILURE);
+		}
 		path = ft_strdup(home->data.value);
 		if (path == NULL)
 			return (ST_FATAL);
 		return (update_pwd(ctx->tmp_table, ctx->env_table, path));
 	}
-	if (count_args(args) > 2)
-		return (ST_FAILURE); // minishell: cd: too many arguments.
+	if (count_args(args) > 1)
+	{
+		ft_putendl_fd("minishell: cd: too many arguments", STDERR_FILENO);
+		return (ST_FAILURE);
+	}
 	if (chdir(args->wd->str) < 0)
-		return (ST_FATAL);
-	// cd: no such file or directory: <directory name> or cd: permission denied: <directory name>
+	{
+		perror("minishell: cd");
+		return (ST_FAILURE);
+	}
 	path = getcwd(NULL, 0);
 	if (path == NULL)
-		return (ST_FATAL);
+	{
+		perror("minishell: cd");
+		return (ST_FAILURE);
+	}
 	if (update_pwd(ctx->tmp_table, ctx->env_table, path) != ST_OK)
 		return (free(path), ST_FATAL);
 	return (ST_OK);
@@ -80,8 +94,9 @@ t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 	if (oldpwd_key == NULL)
 		return (ST_FATAL);
 	oldpwd = hash_insert(oldpwd_key, env_table);
+	free(oldpwd_key);
 	if (oldpwd == NULL)
-		return (free(oldpwd_key), ST_FATAL);
+		return (ST_FATAL);
 	if (oldpwd->data.value != NULL)
 	{
 		free(oldpwd->data.value);
@@ -89,7 +104,7 @@ t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 	}
 	oldpwd->data.value = ft_strdup(pwd->data.value);
 	if (oldpwd->data.value == NULL)
-		return (free(oldpwd_key), ST_FATAL);
+		return (ST_FATAL);
 	return (ST_OK);
 }
 
@@ -105,15 +120,14 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 	if (pwd_key == NULL)
 		return (ST_FATAL);
 	pwd = hash_insert(pwd_key, env_table);
+	free(pwd_key);
 	if (pwd == NULL)
-		return (free(pwd_key), ST_FATAL);
+		return (ST_FATAL);
 	if (pwd->data.value != NULL)
 	{
 		free(pwd->data.value);
 		pwd->data.value = NULL;
 	}
 	pwd->data.value = path;
-	if (pwd->data.value == NULL)
-		return (free(pwd_key), ST_FATAL);
 	return (ST_OK);
 }

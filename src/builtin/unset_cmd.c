@@ -13,6 +13,29 @@
 #include "../../include/builtin.h"
 #include "../../include/parser.h"
 
+static void	print_invalid_identifier(char *name)
+{
+	ft_putstr_fd("minishell: unset: `", STDERR_FILENO);
+	ft_putstr_fd(name, STDERR_FILENO);
+	ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
+}
+
+static bool	is_valid_identifier(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] == '\0' || ft_isdigit(str[i]))
+		return (false);
+	while (str[i])
+	{
+		if (!(ft_isalnum(str[i]) || str[i] == '_'))
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
 /*
 	unset name...
 	"unset" unset the args from env table, and update the ctx->exit_code.
@@ -20,30 +43,25 @@
 */
 t_status	unset_cmd(t_word_list *args, t_ctx *ctx)
 {
-	int					i;
+	t_word_list			*cursor;
 	t_bucket_contents	*item;
 
-	i = 0;
-	if (args == NULL)
-		return (ST_OK);
-	if (args->wd->len < 1)
-		return (ST_FAILURE);
-	while (args->wd->str[i])
+	cursor = args;
+	while (cursor)
 	{
-		if (!(ft_isalnum(args->wd->str[i]) || args->wd->str[i] == '_'))
-			return (ST_FAILURE);
-		// unset: (args->wd->str): invalid parameter name
-		i++;
+		if (!is_valid_identifier(cursor->wd->str))
+			return (print_invalid_identifier(cursor->wd->str), ST_FAILURE);
+		cursor = cursor->next;
 	}
-	if (ft_isdigit(*(args->wd->str)))
-		return (ST_FAILURE);
 	while (args)
 	{
 		item = hash_remove(args->wd->str, ctx->env_table);
-		free(item->key);
-		free(item->data.value);
-		free(item);
-		item = NULL;
+		if (item != NULL)
+		{
+			free(item->key);
+			free(item->data.value);
+			free(item);
+		}
 		args = args->next;
 	}
 	return (ST_OK);

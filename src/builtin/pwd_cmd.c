@@ -28,7 +28,10 @@ t_status	pwd_cmd(t_word_list *args, t_ctx *ctx)
 		return (ST_FAILURE); // pwd: too many arguments.
 	path = getcwd(NULL, 0);
 	if (path == NULL)
+	{
+		perror("minishell: pwd");
 		return (ST_FAILURE);
+	}
 	printf("%s\n", path);
 	return (ST_OK);
 }
