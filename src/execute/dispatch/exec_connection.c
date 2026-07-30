@@ -6,12 +6,12 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:17 by tafujise          #+#    #+#             */
-/*   Updated: 2026/01/28 01:03:46 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/04/19 22:38:15 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
+#include "../../../include/minishell.h"
+#include "../../../include/parser.h"
 
 t_status	exec_connection(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
@@ -28,20 +28,18 @@ t_status	exec_connection(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 
 t_status	exec_complete(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
+	t_status	result;
 
-	// while (node != NULL)
-	// {
-	// 	result = execute(node->child, executor, ctx);
-	// 	if (result == ST_FATAL)
-	// 		return (ST_FATAL);
-	// 	node = node->next;
-	// }
-	// return (result);
+	result = execute_internal(node->left, ctx, pipe_in, pipe_out);
+	if (result == ST_EXIT || result == ST_FATAL)
+		return (result);
+	if (node->right == NULL)
+		return (result);
+	return (execute_internal(node->right, ctx, pipe_in, pipe_out));
 }
 
 t_status	exec_andor(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
-
 	// while (node != NULL)
 	// {
 	// 	result = execute(node->child, executor, ctx);
@@ -68,8 +66,8 @@ t_status	exec_andor(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 */
 t_status	exec_pipeline(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
-	int			pipe_fd[2];
-	int			prev_read_fd;
+	int	pipe_fd[2];
+	int	prev_read_fd;
 
 	while (node != NULL)
 	{

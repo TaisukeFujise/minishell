@@ -6,13 +6,14 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 00:09:40 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/06 18:32:13 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/11 11:04:17 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
-#include "../../include/parser.h"
-#include "../../include/execute.h"
+#include "../../../include/execute.h"
+#include "../../../include/minishell.h"
+#include "../../../include/parser.h"
+
 /*
 	register_pid stack pid on ctx->pids, and increment ctx->npid
 	- calloc by (npid + 1) size
