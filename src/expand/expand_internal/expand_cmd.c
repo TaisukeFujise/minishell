@@ -94,6 +94,11 @@ t_status	expand_assigns(t_expand *exp, t_assign *assign)
 
 	while (assign)
 	{
+		str = ft_arena_strndup(&exp->arenas->ast, assign->key->str,
+				assign->key->len);
+		if (!str)
+			return (ST_FATAL);
+		assign->key->str = str;
 		if (assign->value)
 		{
 			str = expand_word_str(exp, assign->value);
