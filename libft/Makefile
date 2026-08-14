@@ -56,7 +56,6 @@ SRCS := ft_isalpha.c\
 		ft_arena_init.c\
 		ft_arena_alloc.c\
 		ft_arena_calloc.c\
-		ft_arena_realloc.c\
 		ft_arena_strdup.c\
 		ft_arena_strndup.c\
 		ft_arena_reset.c\

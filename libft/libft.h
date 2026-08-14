@@ -89,8 +89,6 @@ long	ft_atol(char *nptr);
 void	ft_arena_init(t_arena *arena, size_t default_cap);
 void	*ft_arena_alloc(t_arena *arena, size_t size);
 void	*ft_arena_calloc(t_arena *arena, size_t count, size_t size);
-void	*ft_arena_realloc(t_arena *arena, void *ptr,
-			size_t old_size, size_t new_size);
 char	*ft_arena_strdup(t_arena *arena, const char *src);
 char	*ft_arena_strndup(t_arena *arena, const char *src, size_t n);
 void	ft_arena_reset(t_arena *arena);
