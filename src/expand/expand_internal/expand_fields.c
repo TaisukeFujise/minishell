@@ -4,6 +4,7 @@ void	fields_init(t_fields *fields)
 {
 	fields->head = NULL;
 	fields->tail = &fields->head;
+	fields->pending_ws = false;
 }
 
 t_status	fields_emit(t_expand *exp, t_fields *fields)
@@ -22,7 +23,8 @@ t_status	fields_emit(t_expand *exp, t_fields *fields)
 		fields->tail = &(*fields->tail)->next;
 	strbuf_reset(&exp->buf);
 	fields->glob = false;
-	fields->emitted = true;
+	fields->pending_ws = false;
+	fields->keep_empty = false;
 	return (ST_OK);
 }
 

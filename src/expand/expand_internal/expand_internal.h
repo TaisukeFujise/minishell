@@ -28,7 +28,7 @@ typedef struct s_fields
 	t_word_list	*head;
 	t_word_list	**tail;
 	bool		glob;
-	bool		emitted;
+	bool		pending_ws;
 	bool		keep_empty;
 }	t_fields;
 
