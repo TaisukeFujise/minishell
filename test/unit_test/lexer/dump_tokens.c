@@ -137,7 +137,9 @@ static void	print_word_parts(const t_word *head)
 	{
 		printf("  part[%zu]: ", index);
 		print_word_flags(part->flag);
-		printf(" \"%.*s\"\n", part->len, part->str);
+		printf(" \"");
+		fwrite(part->str, 1, part->len, stdout);
+		printf("\"\n");
 		part = part->next;
 		index++;
 	}
@@ -153,7 +155,7 @@ static void	print_word_value(const t_word *head)
 	part = head;
 	while (part)
 	{
-		printf("%.*s", part->len, part->str);
+		fwrite(part->str, 1, part->len, stdout);
 		part = part->next;
 	}
 	printf("\"");
@@ -186,7 +188,7 @@ void	dump_tokens(char *line)
 			if (word && (word->flag & (W_ASSIGN | W_APPEND)))
 			{
 				printf("  position of \'=\' : \"%zu\"\n",
-					word->eq_ptr - word->str);
+					word->eq_pos);
 			}
 		}
 		else

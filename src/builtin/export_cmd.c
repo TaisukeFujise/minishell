@@ -69,8 +69,8 @@ static t_status	set_export_value(t_word *wd, t_bucket_contents *item)
 {
 	char	*value;
 
-	value = ft_strndup(wd->eq_ptr + 1,
-			wd->len - (int)(wd->eq_ptr + 1 - wd->str));
+	value = ft_strndup(wd->str + wd->eq_pos + 1,
+			wd->len - wd->eq_pos - 1);
 	if (!value)
 		return (ST_FATAL);
 	if ((wd->flag & W_APPEND) && item->data.value)
@@ -88,11 +88,11 @@ static t_status	put_export(t_word *wd, t_ctx *ctx)
 {
 	t_bucket_contents	*item;
 	char				*key;
-	int					len;
+	size_t				len;
 
 	len = wd->len;
 	if (wd->flag & (W_ASSIGN | W_APPEND))
-		len = wd->eq_ptr - wd->str - ((wd->flag & W_APPEND) != 0);
+		len = wd->eq_pos - ((wd->flag & W_APPEND) != 0);
 	key = ft_strndup(wd->str, len);
 	if (!key)
 		return (ST_FATAL);

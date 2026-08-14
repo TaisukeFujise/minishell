@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 22:00:38 by fendo             #+#    #+#             */
-/*   Updated: 2026/03/02 23:41:37 by fendo            ###   ########.fr       */
+/*   Updated: 2026/08/15 03:09:13 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 	- part node construction (all states)
 	- len == 0 && !(W_SQ|W_DQ) -> skip (empty unquoted part)
 */
-t_lexer_err	append_part(t_word_builder *wb, char *str, int len, uint8_t flag)
+t_lexer_err	append_part(t_word_builder *wb, char *str, size_t len, uint8_t flag)
 {
 	t_word	*part;
 
@@ -38,9 +38,9 @@ t_lexer_err	append_part(t_word_builder *wb, char *str, int len, uint8_t flag)
 t_lexer_err	commit_part(t_word_builder *wb, char **begin,
 						char *end, uint8_t flag)
 {
-	if (end <= *begin)
+	if (end == *begin)
 		return (LEX_NO_ERR);
-	if (append_part(wb, *begin, end - *begin, flag) != LEX_NO_ERR)
+	if (append_part(wb, *begin, (size_t)(end - *begin), flag) != LEX_NO_ERR)
 		return (LEX_ERR_MEMORY_ALLOCATION);
 	*begin = end;
 	return (LEX_NO_ERR);
