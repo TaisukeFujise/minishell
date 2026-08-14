@@ -29,8 +29,7 @@ t_status	expand_args(t_expand *exp, t_simple_cmd *cmd)
 	char		*cmd_name;
 	t_status	status;
 
-	if (!fields_init(&fields, &exp->arenas->tmp))
-		return (ST_FATAL);
+	fields_init(&fields);
 	status = ST_OK;
 	cmd_name = NULL;
 	cur = cmd->args;
@@ -50,8 +49,7 @@ static t_status	expand_redir_target(t_expand *exp, t_redirect *redir)
 	t_fields	fields;
 	t_status	status;
 
-	if (!fields_init(&fields, &exp->arenas->tmp))
-		return (ST_FATAL);
+	fields_init(&fields);
 	status = expand_word(exp, &redir->target, EXP_FIELDS, &fields);
 	if (status == ST_OK && (!fields.head || fields.head->next))
 	{
@@ -77,8 +75,10 @@ t_status	expand_redirects(t_expand *exp, t_redirect *redir)
 	while (redir)
 	{
 		if (redir->op == REDIR_DLESS)
-			status = expand_heredoc_body(redir, exp->ctx,
-					&exp->arenas->heredoc);
+		{
+			status = expand_heredoc_body(exp, redir);
+			ft_arena_reset(&exp->arenas->tmp);
+		}
 		else
 			status = expand_redir_target(exp, redir);
 		if (status != ST_OK)

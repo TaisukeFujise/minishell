@@ -1,15 +1,12 @@
 #include "expand_internal.h"
 
-bool	fields_init(t_fields *fields, t_arena *arena)
+void	fields_init(t_fields *fields)
 {
-	if (!strbuf_init(&fields->buf, arena))
-		return (false);
 	fields->head = NULL;
 	fields->tail = &fields->head;
 	fields->glob = false;
 	fields->emitted = false;
 	fields->keep_empty = false;
-	return (true);
 }
 
 t_status	fields_emit(t_expand *exp, t_fields *fields)
@@ -17,18 +14,16 @@ t_status	fields_emit(t_expand *exp, t_fields *fields)
 	t_word_list	*node;
 
 	if (fields->glob)
-		node = expand_glob(exp, fields->buf.data);
+		node = expand_glob(exp, exp->buf.data);
 	else
-		node = field_insert(exp, fields->tail, fields->buf.data,
-				fields->buf.len);
+		node = field_insert(exp, fields->tail, exp->buf.data, exp->buf.len);
 	if (!node)
 		return (ST_FATAL);
 	if (fields->glob)
 		*fields->tail = node;
 	while (*fields->tail)
 		fields->tail = &(*fields->tail)->next;
-	fields->buf.len = 0;
-	fields->buf.data[0] = '\0';
+	strbuf_reset(&exp->buf);
 	fields->glob = false;
 	fields->emitted = true;
 	return (ST_OK);

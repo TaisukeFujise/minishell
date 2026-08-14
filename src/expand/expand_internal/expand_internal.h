@@ -14,24 +14,23 @@ typedef enum e_exp_mode
 	EXP_FIELDS
 }	t_exp_mode;
 
-typedef struct s_expand
-{
-	t_ctx		*ctx;
-	t_arenas	*arenas;
-	const char	*ifs;
-}	t_expand;
-
 typedef struct s_strbuf
 {
-	t_arena		*arena;
 	char		*data;
 	size_t		len;
 	size_t		cap;
 }	t_strbuf;
 
+typedef struct s_expand
+{
+	t_ctx		*ctx;
+	t_arenas	*arenas;
+	const char	*ifs;
+	t_strbuf	buf;
+}	t_expand;
+
 typedef struct s_fields
 {
-	t_strbuf	buf;
 	t_word_list	*head;
 	t_word_list	**tail;
 	bool		glob;
@@ -50,10 +49,11 @@ typedef struct s_param
 t_status	expand_args(t_expand *exp, t_simple_cmd *cmd);
 t_status	expand_redirects(t_expand *exp, t_redirect *redir);
 t_status	expand_assigns(t_expand *exp, t_assign *assign);
-t_status	expand_heredoc_body(t_redirect *redir, t_ctx *ctx, t_arena *arena);
-bool		strbuf_init(t_strbuf *buf, t_arena *arena);
+t_status	expand_heredoc_body(t_expand *exp, t_redirect *redir);
+bool		strbuf_init(t_strbuf *buf);
+void		strbuf_reset(t_strbuf *buf);
 bool		strbuf_add(t_strbuf *buf, const char *s, size_t len);
-bool		fields_init(t_fields *fields, t_arena *arena);
+void		fields_init(t_fields *fields);
 t_word_list	*field_insert(t_expand *exp, t_word_list **link,
 				const char *s, size_t len);
 t_status	fields_emit(t_expand *exp, t_fields *fields);

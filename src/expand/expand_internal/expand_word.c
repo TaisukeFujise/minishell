@@ -11,7 +11,7 @@ static t_status	append_split(t_expand *exp, t_fields *fields,
 	{
 		while (i < len && ft_strchr(exp->ifs, s[i]))
 			i++;
-		if (i != 0 && fields->buf.len > 0
+		if (i != 0 && exp->buf.len > 0
 			&& fields_emit(exp, fields) != ST_OK)
 			return (ST_FATAL);
 		start = i;
@@ -19,7 +19,7 @@ static t_status	append_split(t_expand *exp, t_fields *fields,
 			i++;
 		if (i == start)
 			continue ;
-		if (!strbuf_add(&fields->buf, s + start, i - start))
+		if (!strbuf_add(&exp->buf, s + start, i - start))
 			return (ST_FATAL);
 		if (ft_memchr(s + start, '*', i - start))
 			fields->glob = true;
@@ -51,7 +51,7 @@ static t_status	append_part(t_expand *exp, t_word *part,
 	if (mode == EXP_FIELDS && (part->flag & W_DOLL)
 		&& (part->flag & (W_SQ | W_DQ)) == 0)
 		return (append_split(exp, fields, value, param.len));
-	if (!strbuf_add(&fields->buf, value, param.len))
+	if (!strbuf_add(&exp->buf, value, param.len))
 		return (ST_FATAL);
 	if (mode == EXP_FIELDS && (part->flag & W_WILD) != 0)
 		fields->glob = true;
@@ -64,8 +64,7 @@ t_status	expand_word(t_expand *exp, t_word *wd, t_exp_mode mode,
 	fields->emitted = false;
 	fields->keep_empty = false;
 	fields->glob = false;
-	fields->buf.len = 0;
-	fields->buf.data[0] = '\0';
+	strbuf_reset(&exp->buf);
 	while (wd)
 	{
 		if ((wd->flag & (W_SQ | W_DQ)) != 0)
@@ -74,7 +73,7 @@ t_status	expand_word(t_expand *exp, t_word *wd, t_exp_mode mode,
 			return (ST_FATAL);
 		wd = wd->next;
 	}
-	if (mode == EXP_FIELDS && (fields->buf.len > 0
+	if (mode == EXP_FIELDS && (exp->buf.len > 0
 			|| (!fields->emitted && fields->keep_empty)))
 		return (fields_emit(exp, fields));
 	return (ST_OK);
@@ -85,11 +84,10 @@ char	*expand_word_str(t_expand *exp, t_word *wd)
 	t_fields	fields;
 	char		*str;
 
-	if (!fields_init(&fields, &exp->arenas->tmp))
-		return (NULL);
+	fields_init(&fields);
 	if (expand_word(exp, wd, EXP_JOIN, &fields) != ST_OK)
 		return (NULL);
 	str = ft_arena_strndup(&exp->arenas->ast,
-			fields.buf.data, fields.buf.len);
+			exp->buf.data, exp->buf.len);
 	return (str);
 }
