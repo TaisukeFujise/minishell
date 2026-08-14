@@ -34,12 +34,13 @@ struct s_arena_chunk
 	t_arena_chunk	*prev;
 	size_t			capacity;
 	size_t			used;
+	max_align_t		align;
 	char			data[];
 };
 
 typedef struct s_arena
 {
-	t_arena_chunk	*current;
+	t_arena_chunk	*head;
 	size_t			default_cap;
 }	t_arena;
 
