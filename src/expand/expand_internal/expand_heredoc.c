@@ -37,6 +37,8 @@ t_status	expand_heredoc_body(t_expand *exp, t_redirect *redir)
 		if (*body && !add_dollar(exp, &redir->hd.raw_str, &body))
 			return (ST_FATAL);
 	}
+	if (exp->buf.len > INT_MAX)
+		return (ST_FATAL);
 	result = ft_arena_strndup(&exp->arenas->heredoc,
 			exp->buf.data, exp->buf.len);
 	if (!result)

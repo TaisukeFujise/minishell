@@ -6,7 +6,7 @@ static char	*append_line(t_arena *arena, char *content, size_t *len, char *line)
 	size_t	line_len;
 
 	line_len = ft_strlen(line);
-	if (line_len > SIZE_MAX - *len - 2)
+	if (*len >= INT_MAX || line_len >= (size_t)INT_MAX - *len)
 		return (NULL);
 	new_content = ft_arena_realloc(arena, content, *len + 1,
 			*len + line_len + 2);
@@ -114,5 +114,5 @@ void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)
 	if (!line && ps->status == ST_OK)
 		ft_putendl_fd(hd_eof_warn_msg(ps, redir->target.str), STDERR_FILENO);
 	redir->hd.raw_str.str = content;
-	redir->hd.raw_str.len = len;
+	redir->hd.raw_str.len = (int)len;
 }
