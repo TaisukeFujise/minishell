@@ -112,8 +112,8 @@ typedef struct s_word			t_word;
 struct							s_word
 {
 	char						*str;
-	int							len;
-	char						*eq_ptr;
+	size_t						len;
+	size_t						eq_pos;
 	uint8_t						flag;
 	t_word						*next;
 };

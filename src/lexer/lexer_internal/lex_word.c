@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/03/02 23:43:15 by fendo            ###   ########.fr       */
+/*   Updated: 2026/08/15 03:09:23 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,8 @@ t_token_kind	lex_word(char **line, t_token *tk, t_arena *arena)
 	t_lexer_err		err;
 
 	head = NULL;
-	set_assign_info(&as, AS_INIT, NULL, W_NONE);
+	as.pos = 0;
+	set_assign_info(&as, AS_INIT, 0, W_NONE);
 	err = scan_word(line, &head, &as, arena);
 	if (err)
 	{

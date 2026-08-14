@@ -94,7 +94,7 @@ static void	dump_word(t_word *word)
 	printf("\"");
 	while (word)
 	{
-		print_escaped(word->str, (size_t)word->len);
+		print_escaped(word->str, word->len);
 		word = word->next;
 	}
 	printf("\"");
@@ -111,7 +111,7 @@ static void	dump_word_parts(t_word *word)
 		if (i != 0)
 			printf(", ");
 		printf("{%d:\"", i);
-		print_escaped(word->str, (size_t)word->len);
+		print_escaped(word->str, word->len);
 		printf("\" flags=");
 		print_flags(word->flag);
 		printf("}");
@@ -203,7 +203,7 @@ static void	dump_redirects(t_redirect *redir, int depth)
 			printf(" hd=\"");
 			if (redir->hd.raw_str.str)
 				print_escaped(redir->hd.raw_str.str,
-					(size_t)redir->hd.raw_str.len);
+					redir->hd.raw_str.len);
 			printf("\"");
 		}
 		printf("\n");

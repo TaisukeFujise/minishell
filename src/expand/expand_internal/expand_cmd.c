@@ -100,7 +100,7 @@ t_status	expand_assigns(t_expand *exp, t_assign *assign)
 			if (!str)
 				return (ST_FATAL);
 			assign->value->str = str;
-			assign->value->len = (int)exp->buf.len;
+			assign->value->len = exp->buf.len;
 			assign->value->flag = W_NONE;
 			assign->value->next = NULL;
 		}

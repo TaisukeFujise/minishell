@@ -14,7 +14,7 @@ static char	*flatten_word(t_word *word)
 	head = word;
 	while (word)
 	{
-		len += (size_t)word->len;
+		len += word->len;
 		word = word->next;
 	}
 	buf = ft_calloc(len + 1, sizeof(char));
@@ -182,12 +182,12 @@ static int	case_03_assign_and_identifier(void)
 	next_token(&st, &tk, &status);
 	if (status != ST_OK || tk.token_kind != TK_WORD || !word_equals(tk.u_token.wd,
 			"A=1") || !(tk.u_token.wd->flag & W_ASSIGN)
-		|| tk.u_token.wd->eq_ptr != tk.u_token.wd->str + 1)
+		|| tk.u_token.wd->eq_pos != 1)
 		return (ft_arena_destroy(&arena), 0);
 	next_token(&st, &tk, &status);
 	if (status != ST_OK || tk.token_kind != TK_WORD || !word_equals(tk.u_token.wd,
 			"B+=2") || !(tk.u_token.wd->flag & W_APPEND)
-		|| tk.u_token.wd->eq_ptr != tk.u_token.wd->str + 2)
+		|| tk.u_token.wd->eq_pos != 2)
 		return (ft_arena_destroy(&arena), 0);
 	next_token(&st, &tk, &status);
 	if (status != ST_OK || tk.token_kind != TK_WORD || !word_equals(tk.u_token.wd,
@@ -195,7 +195,7 @@ static int	case_03_assign_and_identifier(void)
 		return (ft_arena_destroy(&arena), 0);
 	next_token(&st, &tk, &status);
 	if (status != ST_OK || tk.token_kind != TK_WORD || !word_equals(tk.u_token.wd,
-			"1A=2") || tk.u_token.wd->flag != W_NONE || tk.u_token.wd->eq_ptr)
+			"1A=2") || tk.u_token.wd->flag != W_NONE || tk.u_token.wd->eq_pos)
 		return (ft_arena_destroy(&arena), 0);
 	next_token(&st, &tk, &status);
 	if (status != ST_OK || tk.token_kind != TK_EOF)

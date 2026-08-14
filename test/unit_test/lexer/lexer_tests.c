@@ -7,7 +7,7 @@ typedef struct s_expect_token
 {
 	t_token_kind	kind;
 	const char		*word;
-	int				word_len;
+	size_t			word_len;
 	uint16_t		flag;
 	t_op_connect	op_connect;
 	t_op_group		op_group;
@@ -25,7 +25,7 @@ typedef struct s_test_case
 	int					check;
 } 	t_test_case;
 
-#define EXP_WORD(s, flg) (t_expect_token){TK_WORD, (s), -1, (flg), 0, 0, 0, 0, 0}
+#define EXP_WORD(s, flg) (t_expect_token){TK_WORD, (s), SIZE_MAX, (flg), 0, 0, 0, 0, 0}
 #define EXP_EOF (t_expect_token){TK_EOF, NULL, 0, 0, 0, 0, 0, 0, 0}
 #define EXP_NL (t_expect_token){TK_NEWLINE, NULL, 0, 0, 0, 0, 0, 0, 0}
 #define EXP_ERR(code) (t_expect_token){TK_ERR, NULL, 0, 0, 0, 0, 0, 0, (code)}
@@ -40,20 +40,27 @@ typedef struct s_test_case
 
 static int	match_word(const t_token *tok, const t_expect_token *exp)
 {
-	int	len;
+	size_t	len;
 
 	if (!exp->word)
 		return (0);
 	len = exp->word_len;
-	if (len < 0)
-		len = (int)strlen(exp->word);
+	if (len == SIZE_MAX)
+		len = strlen(exp->word);
 	if (tok->u_token.wd.word.len != len)
 		return (0);
-	if (strncmp(tok->u_token.wd.word.str, exp->word, (size_t)len) != 0)
+	if (strncmp(tok->u_token.wd.word.str, exp->word, len) != 0)
 		return (0);
 	if (tok->u_token.wd.flag != exp->flag)
 		return (0);
 	return (1);
+}
+
+static void	print_word_text(const char *word, size_t len)
+{
+	printf("    word : \"");
+	fwrite(word, 1, len, stdout);
+	printf("\"\n");
 }
 
 static const char	*token_kind_name(t_token_kind kind)
@@ -160,8 +167,8 @@ static void	print_token(const t_token *tok)
 		printf("    flags: ");
 		print_word_flags(tok->u_token.wd.flag);
 		printf("\n");
-		printf("    word : \"%.*s\"\n",
-			tok->u_token.wd.word.len, tok->u_token.wd.word.str);
+		print_word_text(tok->u_token.wd.word.str,
+			tok->u_token.wd.word.len);
 	}
 	else if (tok->token_kind == TK_CONNECT)
 		printf("    op   : %s\n", connect_name(tok->u_token.op_connect));
@@ -177,7 +184,7 @@ static void	print_token(const t_token *tok)
 
 static void	print_expected(const t_expect_token *exp)
 {
-	int	len;
+	size_t	len;
 
 	if (!exp)
 	{
@@ -191,10 +198,10 @@ static void	print_expected(const t_expect_token *exp)
 		print_word_flags(exp->flag);
 		printf("\n");
 		len = exp->word_len;
-		if (len < 0 && exp->word)
-			len = (int)strlen(exp->word);
+		if (len == SIZE_MAX && exp->word)
+			len = strlen(exp->word);
 		if (exp->word)
-			printf("    word : \"%.*s\"\n", len, exp->word);
+			print_word_text(exp->word, len);
 		else
 			printf("    word : (null)\n");
 	}
@@ -225,9 +232,8 @@ static void	dump_tokens(const t_token *head)
 			printf("    flags: ");
 			print_word_flags(curr->u_token.wd.flag);
 			printf("\n");
-			printf("    word : \"%.*s\"\n",
-				curr->u_token.wd.word.len,
-				curr->u_token.wd.word.str);
+			print_word_text(curr->u_token.wd.word.str,
+				curr->u_token.wd.word.len);
 		}
 		else if (curr->token_kind == TK_CONNECT)
 			printf("    op   : %s\n", connect_name(curr->u_token.op_connect));

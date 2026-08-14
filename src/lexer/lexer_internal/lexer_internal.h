@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:40:40 by fendo             #+#    #+#             */
-/*   Updated: 2026/03/02 23:39:09 by fendo            ###   ########.fr       */
+/*   Updated: 2026/08/15 03:09:31 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ typedef enum e_assign_state
 typedef struct s_assign_info
 {
 	t_assign_state	state;
-	char			*eq_ptr;
+	size_t			pos;
+	size_t			eq_pos;
 	uint8_t			flag;
 }	t_assign_info;
 
@@ -50,7 +51,7 @@ void			set_lexer_error(t_token *token, t_lexer_err err);
 
 int				is_tk_bound(char *ch);
 t_lexer_err		append_part(t_word_builder *wb, char *str,
-					int len, uint8_t flag);
+					size_t len, uint8_t flag);
 t_lexer_err		commit_part(t_word_builder *wb, char **begin, char *end,
 					uint8_t flag);
 t_lexer_err		close_quote_part(t_word_builder *wb, char **line, char *begin,
@@ -58,6 +59,6 @@ t_lexer_err		close_quote_part(t_word_builder *wb, char **line, char *begin,
 void			lex_dollar(char **cur_ptr, uint8_t *flag);
 void			apply_assign_info(t_word *head, t_assign_info *as);
 void			set_assign_info(t_assign_info *as, t_assign_state state,
-					char *eq_ptr, uint8_t flag);
+					size_t eq_pos, uint8_t flag);
 
 #endif

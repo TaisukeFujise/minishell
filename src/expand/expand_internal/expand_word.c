@@ -41,11 +41,11 @@ static char	*part_value(t_expand *exp, t_word *part, t_param *param)
 {
 	if ((part->flag & W_DOLL) == 0 || (part->flag & W_SQ) != 0)
 	{
-		param->len = (size_t)part->len;
+		param->len = part->len;
 		return (part->str);
 	}
 	param->s = part->str;
-	param->slen = (size_t)part->len;
+	param->slen = part->len;
 	return (expand_param(exp->ctx, &exp->arenas->tmp, param));
 }
 

@@ -6,7 +6,7 @@ static char	*append_line(t_arena *arena, char *content, size_t *len, char *line)
 	size_t	line_len;
 
 	line_len = ft_strlen(line);
-	if (line_len > SIZE_MAX - *len - 2)
+	if (*len > SIZE_MAX - 2 || line_len > SIZE_MAX - *len - 2)
 		return (NULL);
 	new_content = ft_arena_realloc(arena, content, *len + 1,
 			*len + line_len + 2);
@@ -34,7 +34,7 @@ static char	*word_join(t_word *word, t_arena *arena)
 				len + word->len + 1);
 		if (buf)
 			ft_memcpy(buf + len, word->str, word->len);
-		len += (size_t)word->len;
+		len += word->len;
 		word = word->next;
 	}
 	if (buf)
@@ -64,7 +64,8 @@ static char	*read_next_heredoc_line(t_parser_state *ps)
 	ps->lex.line = end;
 	if (*end == '\n')
 		ps->lex.line++;
-	return (ft_arena_strndup(&ps->arenas->tmp, start, end - start));
+	return (ft_arena_strndup(&ps->arenas->tmp, start,
+			(size_t)(end - start)));
 }
 
 void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)

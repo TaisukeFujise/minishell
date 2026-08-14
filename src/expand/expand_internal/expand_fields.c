@@ -33,8 +33,6 @@ t_word_list	*field_insert(t_expand *exp, t_word_list **link, const char *s,
 {
 	t_word_list	*node;
 
-	if (len > INT_MAX)
-		return (NULL);
 	node = ft_arena_calloc(&exp->arenas->ast, 1, sizeof(t_word_list));
 	if (!node)
 		return (NULL);
@@ -44,7 +42,7 @@ t_word_list	*field_insert(t_expand *exp, t_word_list **link, const char *s,
 	node->wd->str = ft_arena_strndup(&exp->arenas->ast, s, len);
 	if (!node->wd->str)
 		return (NULL);
-	node->wd->len = (int)len;
+	node->wd->len = len;
 	node->next = *link;
 	*link = node;
 	return (node);
