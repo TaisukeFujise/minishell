@@ -4,9 +4,6 @@ void	fields_init(t_fields *fields)
 {
 	fields->head = NULL;
 	fields->tail = &fields->head;
-	fields->glob = false;
-	fields->emitted = false;
-	fields->keep_empty = false;
 }
 
 t_status	fields_emit(t_expand *exp, t_fields *fields)

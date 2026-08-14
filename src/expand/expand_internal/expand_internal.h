@@ -8,12 +8,6 @@
 # define EXP_BUF_INIT 64
 # define EXPAND_MSG_AMBIG_REDIR "ambiguous redirect"
 
-typedef enum e_exp_mode
-{
-	EXP_JOIN,
-	EXP_FIELDS
-}	t_exp_mode;
-
 typedef struct s_strbuf
 {
 	char		*data;
@@ -57,9 +51,7 @@ void		fields_init(t_fields *fields);
 t_word_list	*field_insert(t_expand *exp, t_word_list **link,
 				const char *s, size_t len);
 t_status	fields_emit(t_expand *exp, t_fields *fields);
-t_status	expand_word(t_expand *exp, t_word *wd, t_exp_mode mode,
-				t_fields *fields);
-char		*expand_word_str(t_expand *exp, t_word *wd);
+t_status	expand_word(t_expand *exp, t_word *wd, t_fields *fields);
 char		*expand_param(t_ctx *ctx, t_arena *arena, t_param *param);
 t_word_list	*expand_glob(t_expand *exp, const char *pat);
 

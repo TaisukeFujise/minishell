@@ -3,19 +3,16 @@
 static t_status	expand_arg(t_expand *exp, t_word *wd, char **cmd,
 						t_fields *fields)
 {
-	char	*str;
-
 	if (*cmd && ft_strcmp(*cmd, "export") == 0
 		&& (wd->flag & (W_ASSIGN | W_APPEND)) != 0)
 	{
-		str = expand_word_str(exp, wd);
-		if (!str)
-			return (ST_FATAL);
-		if (!field_insert(exp, fields->tail, str, ft_strlen(str)))
+		if (expand_word(exp, wd, NULL) != ST_OK
+			|| !field_insert(exp, fields->tail,
+				exp->buf.data, exp->buf.len))
 			return (ST_FATAL);
 		fields->tail = &(*fields->tail)->next;
 	}
-	else if (expand_word(exp, wd, EXP_FIELDS, fields) != ST_OK)
+	else if (expand_word(exp, wd, fields) != ST_OK)
 		return (ST_FATAL);
 	if (!*cmd && fields->head)
 		*cmd = fields->head->wd->str;
@@ -50,7 +47,7 @@ static t_status	expand_redir_target(t_expand *exp, t_redirect *redir)
 	t_status	status;
 
 	fields_init(&fields);
-	status = expand_word(exp, &redir->target, EXP_FIELDS, &fields);
+	status = expand_word(exp, &redir->target, &fields);
 	if (status == ST_OK && (!fields.head || fields.head->next))
 	{
 		exp->ctx->err.exit_code = 1;
@@ -101,11 +98,14 @@ t_status	expand_assigns(t_expand *exp, t_assign *assign)
 		assign->key->str = str;
 		if (assign->value)
 		{
-			str = expand_word_str(exp, assign->value);
+			if (expand_word(exp, assign->value, NULL) != ST_OK)
+				return (ST_FATAL);
+			str = ft_arena_strndup(&exp->arenas->ast,
+					exp->buf.data, exp->buf.len);
 			if (!str)
 				return (ST_FATAL);
 			assign->value->str = str;
-			assign->value->len = (int)ft_strlen(str);
+			assign->value->len = (int)exp->buf.len;
 			assign->value->flag = W_NONE;
 			assign->value->next = NULL;
 		}
