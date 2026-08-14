@@ -20,8 +20,9 @@ SRCS:=main.c\
 	  lexer/lexer_internal/lex_word.c\
 	  lexer/lexer_internal/lexer_utils.c\
 	  expand/expand.c\
-	  expand/expand_internal/expand_buf.c\
+	  expand/expand_internal/expand_buffer.c\
 	  expand/expand_internal/expand_cmd.c\
+	  expand/expand_internal/expand_fields.c\
 	  expand/expand_internal/expand_glob.c\
 	  expand/expand_internal/expand_heredoc.c\
 	  expand/expand_internal/expand_param.c\
