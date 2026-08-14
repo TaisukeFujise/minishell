@@ -21,6 +21,14 @@ SRCS:=main.c\
 	  lexer/lexer_internal/lex_word.c\
 	  lexer/lexer_internal/lex_word_util.c\
 	  lexer/lexer_internal/lexer_utils.c\
+	  expand/expand.c\
+	  expand/expand_internal/expand_buffer.c\
+	  expand/expand_internal/expand_cmd.c\
+	  expand/expand_internal/expand_fields.c\
+	  expand/expand_internal/expand_glob.c\
+	  expand/expand_internal/expand_heredoc.c\
+	  expand/expand_internal/expand_param.c\
+	  expand/expand_internal/expand_word.c\
 	  parser/parser_internal/parse_command.c\
 	  parser/parser_internal/parse_connective.c\
 	  parser/parser_internal/parser_assign.c\
@@ -62,6 +70,7 @@ HEADDIR:=include
 HEADERS:=minishell.h\
 		 signal_handle.h\
 		 lexer.h\
+		 expand.h\
 		 execute.h\
 		 parser.h\
 		 hashmap.h
