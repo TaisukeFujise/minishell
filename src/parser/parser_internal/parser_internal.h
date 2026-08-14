@@ -24,6 +24,20 @@ typedef struct s_hd_item
 	struct s_hd_item	*next;
 }	t_hd_item;
 
+typedef struct s_hd_line
+{
+	char				*str;
+	size_t				len;
+	struct s_hd_line	*next;
+}	t_hd_line;
+
+typedef struct s_hd_buf
+{
+	t_hd_line	*head;
+	t_hd_line	**tail;
+	size_t		len;
+}	t_hd_buf;
+
 typedef struct s_parser_state
 {
 	t_lex_state	lex;
@@ -71,6 +85,11 @@ t_assign	*word_to_assign(t_parser_state *ps, t_word *word);
 
 /* parser_heredoc.c */
 void		collect_one_heredoc(t_parser_state *ps, t_redirect *redir);
+
+/* parser_heredoc_buffer.c */
+void		hd_buf_init(t_hd_buf *buf);
+bool		hd_buf_add(t_hd_buf *buf, t_arena *arena, char *line);
+char		*hd_buf_join(t_hd_buf *buf, t_arena *arena);
 
 /* parser_redirect.c */
 void		collect_heredocs(t_parser_state *ps);

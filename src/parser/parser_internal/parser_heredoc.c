@@ -1,24 +1,5 @@
 #include "parser_internal.h"
 
-static char	*append_line(t_arena *arena, char *content, size_t *len, char *line)
-{
-	char	*new_content;
-	size_t	line_len;
-
-	line_len = ft_strlen(line);
-	if (*len > SIZE_MAX - 2 || line_len > SIZE_MAX - *len - 2)
-		return (NULL);
-	new_content = ft_arena_realloc(arena, content, *len + 1,
-			*len + line_len + 2);
-	if (!new_content)
-		return (NULL);
-	ft_memcpy(new_content + *len, line, line_len);
-	*len += line_len;
-	new_content[(*len)++] = '\n';
-	new_content[*len] = '\0';
-	return (new_content);
-}
-
 static bool	word_buf_size(t_word *word, size_t *size)
 {
 	*size = 1;
@@ -82,27 +63,26 @@ static char	*read_next_heredoc_line(t_parser_state *ps)
 
 void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)
 {
-	char	*delim;
-	char	*line;
-	char	*content;
-	size_t	len;
+	char		*delim;
+	char		*line;
+	t_hd_buf	buf;
 
 	ft_arena_reset(&ps->arenas->tmp);
 	delim = word_join(&redir->target, &ps->arenas->tmp);
-	content = ft_arena_strdup(&ps->arenas->heredoc, "");
-	if (!delim || !content)
+	if (!delim)
 		return (parser_fail(ps, ST_FATAL, NULL));
-	len = 0;
+	hd_buf_init(&buf);
 	line = read_next_heredoc_line(ps);
 	while (line && ft_strcmp(line, delim) != 0)
 	{
-		content = append_line(&ps->arenas->heredoc, content, &len, line);
-		if (!content)
+		if (!hd_buf_add(&buf, &ps->arenas->tmp, line))
 			return (parser_fail(ps, ST_FATAL, NULL));
 		line = read_next_heredoc_line(ps);
 	}
 	if (!line)
 		return (parser_fail(ps, ST_FAILURE, hd_eof_warn_msg(ps, delim)));
-	redir->hd.raw_str.str = content;
-	redir->hd.raw_str.len = len;
+	redir->hd.raw_str.str = hd_buf_join(&buf, &ps->arenas->heredoc);
+	if (!redir->hd.raw_str.str)
+		return (parser_fail(ps, ST_FATAL, NULL));
+	redir->hd.raw_str.len = buf.len;
 }

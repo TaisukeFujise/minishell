@@ -14,6 +14,7 @@ ROOT_SRCS:=parser/parser.c \
 	parser/parser_internal/parse_command.c \
 	parser/parser_internal/parse_connective.c \
 	parser/parser_internal/parser_heredoc.c \
+	parser/parser_internal/parser_heredoc_buffer.c \
 	parser/parser_internal/parser_redirect.c \
 	lexer/lexer.c \
 	lexer/lexer_internal/lex_ops.c \

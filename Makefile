@@ -34,6 +34,7 @@ SRCS:=main.c\
 	  parser/parser_internal/parser_assign.c\
 	  parser/parser_internal/parser_error.c\
 	  parser/parser_internal/parser_heredoc.c\
+	  parser/parser_internal/parser_heredoc_buffer.c\
 	  parser/parser_internal/parser_nodes.c\
 	  parser/parser_internal/parser_redirect.c\
 	  parser/parser_internal/parser_stream.c\
