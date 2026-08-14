@@ -18,6 +18,7 @@ t_status	expand_command(t_node *node, t_ctx *ctx, t_arenas *arenas)
 {
 	t_expand	exp;
 	t_status	status;
+
 	exp.ctx = ctx;
 	exp.arenas = arenas;
 	exp.ifs = get_ifs(ctx);

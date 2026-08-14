@@ -14,11 +14,25 @@ static bool	add_dollar(t_expand *exp, t_word *raw, char **body)
 	return (true);
 }
 
+static t_status	store_body(t_expand *exp, t_redirect *redir)
+{
+	char	*result;
+
+	if (exp->buf.len > INT_MAX)
+		return (ST_FATAL);
+	result = ft_arena_strndup(&exp->arenas->heredoc,
+			exp->buf.data, exp->buf.len);
+	if (!result)
+		return (ST_FATAL);
+	redir->hd.raw_str.str = result;
+	redir->hd.raw_str.len = (int)exp->buf.len;
+	return (ST_OK);
+}
+
 t_status	expand_heredoc_body(t_expand *exp, t_redirect *redir)
 {
 	char	*body;
 	char	*next;
-	char	*result;
 
 	if (!exp || !redir || !redir->hd.raw_str.str)
 		return (ST_FATAL);
@@ -37,13 +51,5 @@ t_status	expand_heredoc_body(t_expand *exp, t_redirect *redir)
 		if (*body && !add_dollar(exp, &redir->hd.raw_str, &body))
 			return (ST_FATAL);
 	}
-	if (exp->buf.len > INT_MAX)
-		return (ST_FATAL);
-	result = ft_arena_strndup(&exp->arenas->heredoc,
-			exp->buf.data, exp->buf.len);
-	if (!result)
-		return (ST_FATAL);
-	redir->hd.raw_str.str = result;
-	redir->hd.raw_str.len = (int)exp->buf.len;
-	return (ST_OK);
+	return (store_body(exp, redir));
 }

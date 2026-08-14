@@ -26,6 +26,13 @@ static size_t	name_len(const char *s, size_t len)
 	return (i - 1);
 }
 
+static char	*set_param(t_param *param, size_t len, size_t used, char *value)
+{
+	param->len = len;
+	param->used = used;
+	return (value);
+}
+
 static char	*lookup_var(t_ctx *ctx, t_arena *arena, t_param *param)
 {
 	char				*key;
@@ -51,14 +58,17 @@ char	*expand_param(t_ctx *ctx, t_arena *arena, t_param *param)
 	size_t	namelen;
 
 	if (!param->s)
-		return (param->len = 0, param->used = 0, "");
+		return (set_param(param, 0, 0, ""));
 	if (param->slen < 2)
-		return (param->len = param->slen, param->used = param->slen, "$");
+		return (set_param(param, param->slen, param->slen, "$"));
 	if (param->s[1] == '?')
-		return (param->used = 2, expand_status(ctx, arena, &param->len));
+	{
+		param->used = 2;
+		return (expand_status(ctx, arena, &param->len));
+	}
 	namelen = name_len(param->s, param->slen);
 	if (namelen == 0)
-		return (param->len = 1, param->used = 1, "$");
+		return (set_param(param, 1, 1, "$"));
 	param->used = namelen + 1;
 	return (lookup_var(ctx, arena, param));
 }
