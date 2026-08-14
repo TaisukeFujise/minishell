@@ -13,14 +13,14 @@ ROOT_SRCS:=parser/parser.c \
 	parser/parser_internal/parse_command.c \
 	parser/parser_internal/parse_connective.c \
 	parser/parser_internal/parser_heredoc.c \
-	parser/parser_internal/parser_heredoc_buffer.c \
 	parser/parser_internal/parser_redirect.c \
 	lexer/lexer.c \
 	lexer/lexer_internal/lex_ops.c \
 	lexer/lexer_internal/lex_assign_util.c \
 	lexer/lexer_internal/lex_word.c \
 	lexer/lexer_internal/lex_word_util.c \
-	lexer/lexer_internal/lexer_utils.c
+	lexer/lexer_internal/lexer_utils.c \
+	strutil/strbuf.c
 LOCAL_SRCS:=parser_dump.c
 
 LINE_SRCS:=$(LOCAL_SRCS) parser_dump_line.c
@@ -57,6 +57,7 @@ $(TEST_OBJDIR)/%.o: %.c
 
 clean:
 	rm -rf $(TEST_OBJDIR)
+	rm -rf $(ROOT_OBJDIR)/parser $(ROOT_OBJDIR)/lexer $(ROOT_OBJDIR)/strutil
 	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean

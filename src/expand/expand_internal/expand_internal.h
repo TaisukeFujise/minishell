@@ -2,18 +2,11 @@
 # define EXPAND_INTERNAL_H
 
 # include "expand.h"
+# include "strbuf.h"
 # include <dirent.h>
 
 # define IFS_DEFAULT " \t\n"
-# define EXP_BUF_INIT 64
 # define EXPAND_MSG_AMBIG_REDIR "ambiguous redirect"
-
-typedef struct s_strbuf
-{
-	char		*data;
-	size_t		len;
-	size_t		cap;
-}	t_strbuf;
 
 typedef struct s_expand
 {
@@ -44,9 +37,6 @@ t_status	expand_args(t_expand *exp, t_simple_cmd *cmd);
 t_status	expand_redirects(t_expand *exp, t_redirect *redir);
 t_status	expand_assigns(t_expand *exp, t_assign *assign);
 t_status	expand_heredoc_body(t_expand *exp, t_redirect *redir);
-bool		strbuf_init(t_strbuf *buf);
-void		strbuf_reset(t_strbuf *buf);
-bool		strbuf_add(t_strbuf *buf, const char *s, size_t len);
 void		fields_init(t_fields *fields);
 t_word_list	*field_insert(t_expand *exp, t_word_list **link,
 				const char *s, size_t len);

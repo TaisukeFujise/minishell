@@ -13,7 +13,6 @@ ROOT_SRCS:=parser/parser.c \
 	parser/parser_internal/parse_command.c \
 	parser/parser_internal/parse_connective.c \
 	parser/parser_internal/parser_heredoc.c \
-	parser/parser_internal/parser_heredoc_buffer.c \
 	parser/parser_internal/parser_redirect.c \
 	lexer/lexer.c \
 	lexer/lexer_internal/lex_ops.c \
@@ -21,8 +20,8 @@ ROOT_SRCS:=parser/parser.c \
 	lexer/lexer_internal/lex_word.c \
 	lexer/lexer_internal/lex_word_util.c \
 	lexer/lexer_internal/lexer_utils.c \
+	strutil/strbuf.c \
 	expand/expand.c \
-	expand/expand_internal/expand_buffer.c \
 	expand/expand_internal/expand_cmd.c \
 	expand/expand_internal/expand_fields.c \
 	expand/expand_internal/expand_glob.c \
@@ -69,7 +68,7 @@ $(TEST_OBJDIR)/%.o: %.c
 clean:
 	rm -rf $(TEST_OBJDIR)
 	rm -rf $(ROOT_OBJDIR)/parser $(ROOT_OBJDIR)/lexer \
-		$(ROOT_OBJDIR)/expand $(ROOT_OBJDIR)/hashmap
+		$(ROOT_OBJDIR)/strutil $(ROOT_OBJDIR)/expand $(ROOT_OBJDIR)/hashmap
 	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean

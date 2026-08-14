@@ -1,4 +1,7 @@
-#include "expand_internal.h"
+#include "strbuf.h"
+#include "libft.h"
+
+#define STRBUF_INIT_CAP 64
 
 static bool	strbuf_reserve(t_strbuf *buf, size_t required)
 {
@@ -26,12 +29,12 @@ static bool	strbuf_reserve(t_strbuf *buf, size_t required)
 
 bool	strbuf_init(t_strbuf *buf)
 {
-	buf->data = malloc(EXP_BUF_INIT);
+	buf->data = malloc(STRBUF_INIT_CAP);
 	if (!buf->data)
 		return (false);
 	buf->data[0] = '\0';
 	buf->len = 0;
-	buf->cap = EXP_BUF_INIT;
+	buf->cap = STRBUF_INIT_CAP;
 	return (true);
 }
 
@@ -41,7 +44,7 @@ void	strbuf_reset(t_strbuf *buf)
 	buf->data[0] = '\0';
 }
 
-bool	strbuf_add(t_strbuf *buf, const char *s, size_t len)
+bool	strbuf_append(t_strbuf *buf, const char *str, size_t len)
 {
 	if (len == 0)
 		return (true);
@@ -49,8 +52,16 @@ bool	strbuf_add(t_strbuf *buf, const char *s, size_t len)
 		return (false);
 	if (!strbuf_reserve(buf, buf->len + len + 1))
 		return (false);
-	ft_memcpy(buf->data + buf->len, s, len);
+	ft_memcpy(buf->data + buf->len, str, len);
 	buf->len += len;
 	buf->data[buf->len] = '\0';
 	return (true);
+}
+
+void	strbuf_free(t_strbuf *buf)
+{
+	free(buf->data);
+	buf->data = NULL;
+	buf->len = 0;
+	buf->cap = 0;
 }

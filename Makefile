@@ -21,8 +21,8 @@ SRCS:=main.c\
 	  lexer/lexer_internal/lex_word.c\
 	  lexer/lexer_internal/lex_word_util.c\
 	  lexer/lexer_internal/lexer_utils.c\
+	  strutil/strbuf.c\
 	  expand/expand.c\
-	  expand/expand_internal/expand_buffer.c\
 	  expand/expand_internal/expand_cmd.c\
 	  expand/expand_internal/expand_fields.c\
 	  expand/expand_internal/expand_glob.c\
@@ -34,7 +34,6 @@ SRCS:=main.c\
 	  parser/parser_internal/parser_assign.c\
 	  parser/parser_internal/parser_error.c\
 	  parser/parser_internal/parser_heredoc.c\
-	  parser/parser_internal/parser_heredoc_buffer.c\
 	  parser/parser_internal/parser_nodes.c\
 	  parser/parser_internal/parser_redirect.c\
 	  parser/parser_internal/parser_stream.c\
@@ -74,7 +73,8 @@ HEADERS:=minishell.h\
 		 expand.h\
 		 execute.h\
 		 parser.h\
-		 hashmap.h
+		 hashmap.h\
+		 strbuf.h
 HEADERS:=$(addprefix $(HEADDIR)/, $(HEADERS))
 
 LIBFT_DIR:=libft
