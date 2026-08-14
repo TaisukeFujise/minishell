@@ -19,26 +19,38 @@ static char	*append_line(t_arena *arena, char *content, size_t *len, char *line)
 	return (new_content);
 }
 
+static bool	word_buf_size(t_word *word, size_t *size)
+{
+	*size = 1;
+	while (word)
+	{
+		if (word->len > SIZE_MAX - *size)
+			return (false);
+		*size += word->len;
+		word = word->next;
+	}
+	return (true);
+}
+
 static char	*word_join(t_word *word, t_arena *arena)
 {
 	char	*buf;
-	size_t	len;
+	size_t	size;
+	size_t	offset;
 
-	if (!arena)
+	if (!arena || !word_buf_size(word, &size))
 		return (NULL);
-	buf = ft_arena_alloc(arena, 1);
-	len = 0;
-	while (buf && word)
+	buf = ft_arena_alloc(arena, size);
+	if (!buf)
+		return (NULL);
+	offset = 0;
+	while (word)
 	{
-		buf = ft_arena_realloc(arena, buf, len + 1,
-				len + word->len + 1);
-		if (buf)
-			ft_memcpy(buf + len, word->str, word->len);
-		len += word->len;
+		ft_memcpy(buf + offset, word->str, word->len);
+		offset += word->len;
 		word = word->next;
 	}
-	if (buf)
-		buf[len] = '\0';
+	buf[offset] = '\0';
 	return (buf);
 }
 

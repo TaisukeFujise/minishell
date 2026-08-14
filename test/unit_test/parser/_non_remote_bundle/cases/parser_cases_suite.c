@@ -905,6 +905,30 @@ static int	case_37(void)
 	return (1);
 }
 
+static int	case_38(void)
+{
+	t_ctx		ctx;
+	t_node		ast;
+	t_node		*node;
+	t_redirect	*redir;
+	char		*cursor;
+
+	ft_bzero(&ctx, sizeof(ctx));
+	parser_mock_set_lines(NULL);
+	cursor = "cat << e\"o\"f\nx\neof\n";
+	if (parse(&cursor, &ast, &ctx) != ST_OK)
+		return (0);
+	node = leftmost_exec_node(ast.left);
+	if (!node || node->node_kind != NODE_SIMPLE)
+		return (free_node(ast.left), 0);
+	redir = node->u_node.simple_command.redirects;
+	if (!redir || !redir->hd.raw_str.str
+		|| ft_strcmp(redir->hd.raw_str.str, "x\n") != 0)
+		return (free_node(ast.left), 0);
+	free_node(ast.left);
+	return (1);
+}
+
 int	parser_cases_run(void)
 {
 	int			i;
@@ -915,7 +939,7 @@ int	parser_cases_run(void)
 		case_13, case_14, case_15, case_16, case_17, case_18, case_19,
 		case_20, case_21, case_22, case_23, case_24, case_25, case_26,
 		case_27, case_28, case_29, case_30, case_31, case_32, case_33,
-		case_34, case_35, case_36, case_37};
+		case_34, case_35, case_36, case_37, case_38};
 	total = sizeof(cases) / sizeof(cases[0]);
 	passed = 0;
 	i = 0;
