@@ -37,7 +37,6 @@ t_status	expand_args(t_expand *exp, t_simple_cmd *cmd)
 	}
 	if (status == ST_OK)
 		cmd->args = fields.head;
-	ft_arena_reset(&exp->arenas->tmp);
 	return (status);
 }
 
@@ -61,7 +60,6 @@ static t_status	expand_redir_target(t_expand *exp, t_redirect *redir)
 		redir->target.flag = W_NONE;
 		redir->target.next = NULL;
 	}
-	ft_arena_reset(&exp->arenas->tmp);
 	return (status);
 }
 
@@ -72,10 +70,7 @@ t_status	expand_redirects(t_expand *exp, t_redirect *redir)
 	while (redir)
 	{
 		if (redir->op == REDIR_DLESS)
-		{
 			status = expand_heredoc_body(exp, redir);
-			ft_arena_reset(&exp->arenas->tmp);
-		}
 		else
 			status = expand_redir_target(exp, redir);
 		if (status != ST_OK)
