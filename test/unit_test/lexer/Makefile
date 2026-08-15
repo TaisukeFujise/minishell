@@ -5,7 +5,8 @@ ROOT:=../../..
 LIBFT_DIR:=$(ROOT)/libft
 LIBFT:=$(LIBFT_DIR)/libft.a
 
-ROOT_SRCS:=lexer/lexer.c \
+ROOT_SRCS:=strutil/name.c \
+	lexer/lexer.c \
 	lexer/lexer_internal/lex_ops.c \
 	lexer/lexer_internal/lex_assign_util.c \
 	lexer/lexer_internal/lex_word.c \

@@ -5,7 +5,8 @@ ROOT:=../../..
 LIBFT_DIR:=$(ROOT)/libft
 LIBFT:=$(LIBFT_DIR)/libft.a
 
-ROOT_SRCS:=parser/parser.c \
+ROOT_SRCS:=strutil/name.c \
+	parser/parser.c \
 	parser/parser_internal/parser_error.c \
 	parser/parser_internal/parser_stream.c \
 	parser/parser_internal/parser_nodes.c \
@@ -22,6 +23,7 @@ ROOT_SRCS:=parser/parser.c \
 	lexer/lexer_internal/lexer_utils.c \
 	strutil/strbuf.c \
 	expand/expand.c \
+	expand/expand_internal/expand_buffer.c \
 	expand/expand_internal/expand_cmd.c \
 	expand/expand_internal/expand_fields.c \
 	expand/expand_internal/expand_glob.c \
@@ -81,4 +83,13 @@ line: $(NAME_LINE)
 
 repl: $(NAME_REPL)
 
-.PHONY: all clean fclean re line repl
+glob: $(NAME_LINE)
+	./glob/glob_test.sh
+
+glob-bash: $(NAME_LINE)
+	./glob/glob_test.sh --bash
+
+glob-update: $(NAME_LINE)
+	./glob/glob_test.sh --update
+
+.PHONY: all clean fclean re line repl glob glob-bash glob-update

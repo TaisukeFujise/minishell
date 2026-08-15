@@ -12,7 +12,7 @@ t_status	fields_emit(t_expand *exp, t_fields *fields)
 	t_word_list	*node;
 
 	if (fields->glob)
-		node = expand_glob(exp, exp->buf.data);
+		node = expand_glob(exp);
 	else
 		node = field_insert(exp, fields->tail, exp->buf.data, exp->buf.len);
 	if (!node)
@@ -21,7 +21,7 @@ t_status	fields_emit(t_expand *exp, t_fields *fields)
 		*fields->tail = node;
 	while (*fields->tail)
 		fields->tail = &(*fields->tail)->next;
-	strbuf_reset(&exp->buf);
+	expand_buf_reset(exp);
 	fields->glob = false;
 	fields->pending_ws = false;
 	fields->keep_empty = false;

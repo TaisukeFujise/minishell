@@ -8,7 +8,7 @@ static bool	add_dollar(t_expand *exp, t_word *raw, char **body)
 	param.s = *body;
 	param.slen = raw->len - (size_t)(*body - raw->str);
 	value = expand_param(exp->ctx, &exp->arenas->tmp, &param);
-	if (!value || !strbuf_append(&exp->buf, value, param.len))
+	if (!value || !expand_buf_append(exp, value, param.len, false))
 		return (false);
 	*body += param.used;
 	return (true);
@@ -36,14 +36,14 @@ t_status	expand_heredoc_body(t_expand *exp, t_redirect *redir)
 		return (ST_FATAL);
 	if ((redir->target.flag & (W_SQ | W_DQ)) != 0)
 		return (ST_OK);
-	strbuf_reset(&exp->buf);
+	expand_buf_reset(exp);
 	body = redir->hd.raw_str.str;
 	while (*body)
 	{
 		next = ft_strchr(body, '$');
 		if (!next)
 			next = redir->hd.raw_str.str + redir->hd.raw_str.len;
-		if (!strbuf_append(&exp->buf, body, (size_t)(next - body)))
+		if (!expand_buf_append(exp, body, (size_t)(next - body), false))
 			return (ST_FATAL);
 		body = next;
 		if (*body && !add_dollar(exp, &redir->hd.raw_str, &body))

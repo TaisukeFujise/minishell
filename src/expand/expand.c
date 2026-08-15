@@ -22,7 +22,7 @@ t_status	expand_command(t_node *node, t_ctx *ctx, t_arenas *arenas)
 	exp.ctx = ctx;
 	exp.arenas = arenas;
 	exp.ifs = get_ifs(ctx);
-	if (!strbuf_init(&exp.buf))
+	if (!expand_buf_init(&exp))
 		return (ST_FATAL);
 	status = ST_OK;
 	if (node->node_kind == NODE_SIMPLE)
@@ -37,6 +37,6 @@ t_status	expand_command(t_node *node, t_ctx *ctx, t_arenas *arenas)
 	else if (node->node_kind == NODE_SUBSHELL)
 		status = expand_redirects(&exp, node->u_node.subshell.redirects);
 	ft_arena_reset(&arenas->tmp);
-	strbuf_free(&exp.buf);
+	expand_buf_free(&exp);
 	return (status);
 }

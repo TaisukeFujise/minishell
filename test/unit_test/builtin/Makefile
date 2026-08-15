@@ -33,8 +33,11 @@ BUILTIN_SRCS := cd_cmd.c\
 				echo_cmd.c\
 				env_cmd.c\
 				exit_cmd.c\
+				export_cmd.c\
 				pwd_cmd.c\
-				unset_cmd.c\
+				unset_cmd.c
+
+STRUTIL_SRCS := name.c
 
 EXEC_SRCS := init_ctx.c\
 			exec_builtin.c\
@@ -50,7 +53,7 @@ EXEC_SRCS := init_ctx.c\
 
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
 
-SRCS := $(TEST_SRCS) $(BUILTIN_SRCS) $(HASHMAP_SRCS) $(EXEC_SRCS)
+SRCS := $(TEST_SRCS) $(BUILTIN_SRCS) $(STRUTIL_SRCS) $(HASHMAP_SRCS) $(EXEC_SRCS)
 
 OBJDIR := obj
 OBJS := $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))
@@ -62,6 +65,7 @@ vpath %.c $(ROOT)/src/hashmap \
 	$(ROOT)/src/execute/redirect \
 	$(ROOT)/src/execute/utils \
 	$(ROOT)/src/builtin \
+	$(ROOT)/src/strutil \
 	.
 
 LDLIBS := -lreadline

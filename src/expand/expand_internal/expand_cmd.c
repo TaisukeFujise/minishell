@@ -7,8 +7,7 @@ static t_status	expand_arg(t_expand *exp, t_word *wd, char **cmd,
 		&& (wd->flag & (W_ASSIGN | W_APPEND)) != 0)
 	{
 		if (expand_word(exp, wd, NULL) != ST_OK
-			|| !field_insert(exp, fields->tail,
-				exp->buf.data, exp->buf.len))
+			|| !field_insert(exp, fields->tail, exp->buf.data, exp->buf.len))
 			return (ST_FATAL);
 		fields->tail = &(*fields->tail)->next;
 	}

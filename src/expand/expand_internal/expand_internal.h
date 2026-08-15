@@ -14,6 +14,7 @@ typedef struct s_expand
 	t_arenas	*arenas;
 	const char	*ifs;
 	t_strbuf	buf;
+	t_strbuf	glob_mask;
 }	t_expand;
 
 typedef struct s_fields
@@ -37,12 +38,17 @@ t_status	expand_args(t_expand *exp, t_simple_cmd *cmd);
 t_status	expand_redirects(t_expand *exp, t_redirect *redir);
 t_status	expand_assigns(t_expand *exp, t_assign *assign);
 t_status	expand_heredoc_body(t_expand *exp, t_redirect *redir);
+bool		expand_buf_init(t_expand *exp);
+void		expand_buf_free(t_expand *exp);
+void		expand_buf_reset(t_expand *exp);
+bool		expand_buf_append(t_expand *exp, const char *str, size_t len,
+				bool glob);
 void		fields_init(t_fields *fields);
 t_word_list	*field_insert(t_expand *exp, t_word_list **link,
 				const char *s, size_t len);
 t_status	fields_emit(t_expand *exp, t_fields *fields);
 t_status	expand_word(t_expand *exp, t_word *wd, t_fields *fields);
 char		*expand_param(t_ctx *ctx, t_arena *arena, t_param *param);
-t_word_list	*expand_glob(t_expand *exp, const char *pat);
+t_word_list	*expand_glob(t_expand *exp);
 
 #endif
