@@ -1,5 +1,5 @@
-NAME_LINE:=parser_dump_line
-NAME_REPL:=parser_dump_repl
+NAME_LINE:=expand_dump_line
+NAME_REPL:=expand_dump_repl
 
 ROOT:=../../..
 LIBFT_DIR:=$(ROOT)/libft
@@ -20,11 +20,22 @@ ROOT_SRCS:=strutil/name.c \
 	lexer/lexer_internal/lex_assign_util.c \
 	lexer/lexer_internal/lex_word.c \
 	lexer/lexer_internal/lex_word_util.c \
-	lexer/lexer_internal/lexer_utils.c
-LOCAL_SRCS:=parser_dump.c
+	lexer/lexer_internal/lexer_utils.c \
+	expand/expand.c \
+	expand/expand_internal/expand_buffer.c \
+	expand/expand_internal/expand_cmd.c \
+	expand/expand_internal/expand_fields.c \
+	expand/expand_internal/expand_glob.c \
+	expand/expand_internal/expand_heredoc.c \
+	expand/expand_internal/expand_param.c \
+	expand/expand_internal/expand_word.c \
+	hashmap/hashmap_crud.c \
+	hashmap/hashmap_free.c \
+	hashmap/hashmap_utils.c
+LOCAL_SRCS:=expand_dump.c
 
-LINE_SRCS:=$(LOCAL_SRCS) parser_dump_line.c
-REPL_SRCS:=$(LOCAL_SRCS) parser_dump_repl.c
+LINE_SRCS:=$(LOCAL_SRCS) expand_dump_line.c
+REPL_SRCS:=$(LOCAL_SRCS) expand_dump_repl.c
 
 ROOT_OBJDIR:=$(ROOT)/obj
 TEST_OBJDIR:=obj
@@ -34,7 +45,7 @@ LINE_OBJS:=$(LINE_SRCS:%.c=$(TEST_OBJDIR)/%.o)
 REPL_OBJS:=$(REPL_SRCS:%.c=$(TEST_OBJDIR)/%.o)
 
 CC:=cc
-CFLAGS:=-Wall -Wextra -Werror -I$(ROOT)/include -I$(ROOT)/src/parser -I$(LIBFT_DIR)
+CFLAGS:=-Wall -Wextra -Werror -I$(ROOT)/include -I$(LIBFT_DIR)
 
 all: $(NAME_LINE) $(NAME_REPL)
 
@@ -57,6 +68,8 @@ $(TEST_OBJDIR)/%.o: %.c
 
 clean:
 	rm -rf $(TEST_OBJDIR)
+	rm -rf $(ROOT_OBJDIR)/parser $(ROOT_OBJDIR)/lexer \
+		$(ROOT_OBJDIR)/strutil $(ROOT_OBJDIR)/expand $(ROOT_OBJDIR)/hashmap
 	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean
@@ -69,4 +82,13 @@ line: $(NAME_LINE)
 
 repl: $(NAME_REPL)
 
-.PHONY: all clean fclean re line repl
+glob: $(NAME_LINE)
+	./glob/glob_test.sh
+
+glob-bash: $(NAME_LINE)
+	./glob/glob_test.sh --bash
+
+glob-update: $(NAME_LINE)
+	./glob/glob_test.sh --update
+
+.PHONY: all clean fclean re line repl glob glob-bash glob-update

@@ -103,8 +103,7 @@ typedef enum e_flag
 	W_DOLL = 1u << 2,
 	W_WILD = 1u << 3,
 	W_ASSIGN = 1u << 4,
-	W_APPEND = 1u << 5,
-	W_ID = 1u << 6
+	W_APPEND = 1u << 5
 }								t_flag;
 
 typedef struct s_word			t_word;
@@ -112,8 +111,8 @@ typedef struct s_word			t_word;
 struct							s_word
 {
 	char						*str;
-	int							len;
-	char						*eq_ptr;
+	size_t						len;
+	size_t						eq_pos;
 	uint8_t						flag;
 	t_word						*next;
 };
