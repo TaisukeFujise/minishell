@@ -82,6 +82,15 @@ static int	run_test_case(t_ctx *ctx, char *label, char *arg0)
 	return (1);
 }
 
+/*
+	Executed test cases
+	1. command with slash
+		- /bin/ls
+		- expect: exit_code=0
+	2. command without slash
+		- ls (PATH search)
+		- expect: exit_code=0
+*/
 int	main(int argc, char **argv, char **envp)
 {
 	t_ctx	ctx;
