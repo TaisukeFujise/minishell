@@ -71,14 +71,14 @@ t_word_list	*expand_glob(t_expand *exp)
 	const char		*pat;
 
 	list = NULL;
-	pat = exp->buf.data;
+	pat = exp->buf.text.data;
 	dir = opendir(".");
 	if (!dir)
-		return (field_insert(exp, &list, pat, exp->buf.len));
+		return (field_insert(exp, &list, pat, exp->buf.text.len));
 	ent = readdir(dir);
 	while (ent)
 	{
-		if (glob_keep(pat, exp->glob_mask.data, ent->d_name)
+		if (glob_keep(pat, exp->buf.mask.data, ent->d_name)
 			&& !glob_insert(exp, &list, ent->d_name))
 		{
 			closedir(dir);
@@ -88,6 +88,6 @@ t_word_list	*expand_glob(t_expand *exp)
 	}
 	closedir(dir);
 	if (!list)
-		return (field_insert(exp, &list, pat, exp->buf.len));
+		return (field_insert(exp, &list, pat, exp->buf.text.len));
 	return (list);
 }

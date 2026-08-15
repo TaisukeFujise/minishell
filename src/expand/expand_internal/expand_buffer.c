@@ -1,41 +1,41 @@
 #include "expand_internal.h"
 
-bool	expand_buf_init(t_expand *exp)
+bool	expand_buf_init(t_expand_buf *buf)
 {
-	if (!strbuf_init(&exp->buf))
+	if (!strbuf_init(&buf->text))
 		return (false);
-	if (strbuf_init(&exp->glob_mask))
+	if (strbuf_init(&buf->mask))
 		return (true);
-	strbuf_free(&exp->buf);
+	strbuf_free(&buf->text);
 	return (false);
 }
 
-void	expand_buf_free(t_expand *exp)
+void	expand_buf_free(t_expand_buf *buf)
 {
-	strbuf_free(&exp->buf);
-	strbuf_free(&exp->glob_mask);
+	strbuf_free(&buf->text);
+	strbuf_free(&buf->mask);
 }
 
-void	expand_buf_reset(t_expand *exp)
+void	expand_buf_reset(t_expand_buf *buf)
 {
-	strbuf_reset(&exp->buf);
-	strbuf_reset(&exp->glob_mask);
+	strbuf_reset(&buf->text);
+	strbuf_reset(&buf->mask);
 }
 
-bool	expand_buf_append(t_expand *exp, const char *str, size_t len,
+bool	expand_buf_append(t_expand_buf *buf, const char *str, size_t len,
 					bool glob)
 {
 	size_t	mark;
 
-	mark = exp->buf.len;
-	if (!strbuf_append(&exp->buf, str, len))
+	mark = buf->text.len;
+	if (!strbuf_append(&buf->text, str, len))
 		return (false);
-	if (!strbuf_append(&exp->glob_mask, str, len))
+	if (!strbuf_append(&buf->mask, str, len))
 	{
-		exp->buf.len = mark;
-		exp->buf.data[mark] = '\0';
+		buf->text.len = mark;
+		buf->text.data[mark] = '\0';
 		return (false);
 	}
-	ft_memset(exp->glob_mask.data + mark, glob, len);
+	ft_memset(buf->mask.data + mark, glob, len);
 	return (true);
 }

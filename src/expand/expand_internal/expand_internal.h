@@ -8,13 +8,18 @@
 # define IFS_DEFAULT " \t\n"
 # define EXPAND_MSG_AMBIG_REDIR "ambiguous redirect"
 
+typedef struct s_expand_buf
+{
+	t_strbuf	text;
+	t_strbuf	mask;
+}	t_expand_buf;
+
 typedef struct s_expand
 {
-	t_ctx		*ctx;
-	t_arenas	*arenas;
-	const char	*ifs;
-	t_strbuf	buf;
-	t_strbuf	glob_mask;
+	t_ctx			*ctx;
+	t_arenas		*arenas;
+	const char		*ifs;
+	t_expand_buf	buf;
 }	t_expand;
 
 typedef struct s_fields
@@ -38,10 +43,10 @@ t_status	expand_args(t_expand *exp, t_simple_cmd *cmd);
 t_status	expand_redirects(t_expand *exp, t_redirect *redir);
 t_status	expand_assigns(t_expand *exp, t_assign *assign);
 t_status	expand_heredoc_body(t_expand *exp, t_redirect *redir);
-bool		expand_buf_init(t_expand *exp);
-void		expand_buf_free(t_expand *exp);
-void		expand_buf_reset(t_expand *exp);
-bool		expand_buf_append(t_expand *exp, const char *str, size_t len,
+bool		expand_buf_init(t_expand_buf *buf);
+void		expand_buf_free(t_expand_buf *buf);
+void		expand_buf_reset(t_expand_buf *buf);
+bool		expand_buf_append(t_expand_buf *buf, const char *str, size_t len,
 				bool glob);
 void		fields_init(t_fields *fields);
 t_word_list	*field_insert(t_expand *exp, t_word_list **link,

@@ -7,7 +7,8 @@ static t_status	expand_arg(t_expand *exp, t_word *wd, char **cmd,
 		&& (wd->flag & (W_ASSIGN | W_APPEND)) != 0)
 	{
 		if (expand_word(exp, wd, NULL) != ST_OK
-			|| !field_insert(exp, fields->tail, exp->buf.data, exp->buf.len))
+			|| !field_insert(exp, fields->tail, exp->buf.text.data,
+				exp->buf.text.len))
 			return (ST_FATAL);
 		fields->tail = &(*fields->tail)->next;
 	}
@@ -95,11 +96,11 @@ t_status	expand_assigns(t_expand *exp, t_assign *assign)
 			if (expand_word(exp, assign->value, NULL) != ST_OK)
 				return (ST_FATAL);
 			str = ft_arena_strndup(&exp->arenas->ast,
-					exp->buf.data, exp->buf.len);
+					exp->buf.text.data, exp->buf.text.len);
 			if (!str)
 				return (ST_FATAL);
 			assign->value->str = str;
-			assign->value->len = exp->buf.len;
+			assign->value->len = exp->buf.text.len;
 			assign->value->flag = W_NONE;
 			assign->value->next = NULL;
 		}

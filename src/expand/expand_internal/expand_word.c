@@ -7,7 +7,7 @@ static t_status	split_boundary(t_expand *exp, t_fields *fields, char delim)
 	else if (delim || fields->pending_ws)
 	{
 		fields->pending_ws = false;
-		if (delim || exp->buf.len > 0 || fields->keep_empty)
+		if (delim || exp->buf.text.len > 0 || fields->keep_empty)
 			return (fields_emit(exp, fields));
 	}
 	return (ST_OK);
@@ -27,7 +27,7 @@ static t_status	append_split(t_expand *exp, t_fields *fields,
 			i++;
 		if (i > start && split_boundary(exp, fields, 0) != ST_OK)
 			return (ST_FATAL);
-		if (i > start && !expand_buf_append(exp, s + start,
+		if (i > start && !expand_buf_append(&exp->buf, s + start,
 				i - start, true))
 			return (ST_FATAL);
 		if (i > start && ft_memchr(s + start, '*', i - start))
@@ -65,7 +65,7 @@ static t_status	append_part(t_expand *exp, t_word *part, t_fields *fields)
 		return (ST_FATAL);
 	if (fields && (part->flag & (W_SQ | W_DQ)) != 0)
 		fields->keep_empty = true;
-	if (!expand_buf_append(exp, value, param.len,
+	if (!expand_buf_append(&exp->buf, value, param.len,
 			(part->flag & W_WILD) != 0))
 		return (ST_FATAL);
 	if (fields && (part->flag & W_WILD) != 0)
@@ -75,7 +75,7 @@ static t_status	append_part(t_expand *exp, t_word *part, t_fields *fields)
 
 t_status	expand_word(t_expand *exp, t_word *wd, t_fields *fields)
 {
-	expand_buf_reset(exp);
+	expand_buf_reset(&exp->buf);
 	if (fields)
 	{
 		fields->pending_ws = false;
@@ -90,7 +90,7 @@ t_status	expand_word(t_expand *exp, t_word *wd, t_fields *fields)
 	}
 	if (fields && split_boundary(exp, fields, 0) != ST_OK)
 		return (ST_FATAL);
-	if (fields && (exp->buf.len > 0 || fields->keep_empty))
+	if (fields && (exp->buf.text.len > 0 || fields->keep_empty))
 		return (fields_emit(exp, fields));
 	return (ST_OK);
 }
