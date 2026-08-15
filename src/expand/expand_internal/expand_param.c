@@ -1,4 +1,5 @@
 #include "expand_internal.h"
+#include "strutil.h"
 
 static char	*expand_status(t_ctx *ctx, t_arena *arena, size_t *len)
 {
@@ -12,18 +13,6 @@ static char	*expand_status(t_ctx *ctx, t_arena *arena, size_t *len)
 	copy = ft_arena_strdup(arena, num);
 	free(num);
 	return (copy);
-}
-
-static size_t	name_len(const char *s, size_t len)
-{
-	size_t	i;
-
-	if (len < 2 || (!ft_isalpha(s[1]) && s[1] != '_'))
-		return (0);
-	i = 2;
-	while (i < len && (ft_isalnum(s[i]) || s[i] == '_'))
-		i++;
-	return (i - 1);
 }
 
 static char	*set_param(t_param *param, size_t len, size_t used, char *value)
@@ -66,7 +55,7 @@ char	*expand_param(t_ctx *ctx, t_arena *arena, t_param *param)
 		param->used = 2;
 		return (expand_status(ctx, arena, &param->len));
 	}
-	namelen = name_len(param->s, param->slen);
+	namelen = str_name_len(param->s + 1);
 	if (namelen == 0)
 		return (set_param(param, 1, 1, "$"));
 	param->used = namelen + 1;

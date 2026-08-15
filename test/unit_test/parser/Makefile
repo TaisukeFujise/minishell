@@ -5,7 +5,8 @@ ROOT:=../../..
 LIBFT_DIR:=$(ROOT)/libft
 LIBFT:=$(LIBFT_DIR)/libft.a
 
-ROOT_SRCS:=parser/parser.c \
+ROOT_SRCS:=strutil/name.c \
+	parser/parser.c \
 	parser/parser_internal/parser_error.c \
 	parser/parser_internal/parser_stream.c \
 	parser/parser_internal/parser_nodes.c \

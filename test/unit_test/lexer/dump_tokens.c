@@ -115,13 +115,6 @@ static void	print_word_flags(uint8_t flag)
 		printf("APPEND");
 		first = 0;
 	}
-	if (flag & W_ID)
-	{
-		if (!first)
-			printf("|");
-		printf("IDENT");
-		first = 0;
-	}
 	if (first)
 		printf("NONE");
 }

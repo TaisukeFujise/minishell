@@ -14,22 +14,7 @@
 # define LEXER_INTERNAL_H
 
 # include "../../../include/lexer.h"
-
-typedef enum e_assign_state
-{
-	AS_INIT,
-	AS_VALID,
-	AS_INVALID,
-	AS_DONE
-}	t_assign_state;
-
-typedef struct s_assign_info
-{
-	t_assign_state	state;
-	size_t			pos;
-	size_t			eq_pos;
-	uint8_t			flag;
-}	t_assign_info;
+# include "../../../include/strutil.h"
 
 typedef struct s_word_builder
 {
@@ -46,7 +31,6 @@ t_token_kind	lex_word(char **line, t_token *token, t_arena *arena);
 
 int				str2fd(char **line);
 char			*strchunk(const char *tbl, const char *str, size_t n);
-void			validate_assign(char *cur_ptr, t_assign_info *as);
 void			set_lexer_error(t_token *token, t_lexer_err err);
 
 int				is_tk_bound(char *ch);
@@ -57,8 +41,6 @@ t_lexer_err		commit_part(t_word_builder *wb, char **begin, char *end,
 t_lexer_err		close_quote_part(t_word_builder *wb, char **line, char *begin,
 					uint8_t flag);
 void			lex_dollar(char **cur_ptr, uint8_t *flag);
-void			apply_assign_info(t_word *head, t_assign_info *as);
-void			set_assign_info(t_assign_info *as, t_assign_state state,
-					size_t eq_pos, uint8_t flag);
+void			apply_assign_info(t_word *head, const char *str);
 
 #endif

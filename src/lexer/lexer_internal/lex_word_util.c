@@ -68,6 +68,8 @@ t_lexer_err	close_quote_part(t_word_builder *wb, char **line, char *begin,
 */
 void	lex_dollar(char **cur_ptr, uint8_t *flag)
 {
+	size_t	len;
+
 	(*cur_ptr)++;
 	if (**cur_ptr == '?')
 	{
@@ -75,11 +77,13 @@ void	lex_dollar(char **cur_ptr, uint8_t *flag)
 		*flag = W_DOLL;
 		return ;
 	}
-	else if (ft_isalpha(**cur_ptr) || **cur_ptr == '_')
+	else
 	{
-		(*cur_ptr)++;
-		while (ft_isalnum(**cur_ptr) || **cur_ptr == '_')
-			(*cur_ptr)++;
-		*flag = W_DOLL;
+		len = str_name_len(*cur_ptr);
+		if (len > 0)
+		{
+			*cur_ptr += len;
+			*flag = W_DOLL;
+		}
 	}
 }

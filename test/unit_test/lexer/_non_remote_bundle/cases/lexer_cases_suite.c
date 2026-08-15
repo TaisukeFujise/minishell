@@ -89,12 +89,12 @@ static int	case_01_basic_sequence(void)
 	next_token(&st, &tk, &status);
 	if (status != ST_OK || tk.token_kind != TK_WORD
 		|| !word_equals(tk.u_token.wd, "echo")
-		|| !(tk.u_token.wd->flag & W_ID) || !lexeme_equals(&tk, "echo"))
+		|| tk.u_token.wd->flag != W_NONE || !lexeme_equals(&tk, "echo"))
 		return (ft_arena_destroy(&arena), 0);
 	next_token(&st, &tk, &status);
 	if (status != ST_OK || tk.token_kind != TK_WORD
 		|| !word_equals(tk.u_token.wd, "a")
-		|| !(tk.u_token.wd->flag & W_ID) || !lexeme_equals(&tk, "a"))
+		|| tk.u_token.wd->flag != W_NONE || !lexeme_equals(&tk, "a"))
 		return (ft_arena_destroy(&arena), 0);
 	next_token(&st, &tk, &status);
 	if (status != ST_OK || tk.token_kind != TK_CONNECT
@@ -191,7 +191,7 @@ static int	case_03_assign_and_identifier(void)
 		return (ft_arena_destroy(&arena), 0);
 	next_token(&st, &tk, &status);
 	if (status != ST_OK || tk.token_kind != TK_WORD || !word_equals(tk.u_token.wd,
-			"_ID") || !(tk.u_token.wd->flag & W_ID))
+			"_ID") || tk.u_token.wd->flag != W_NONE)
 		return (ft_arena_destroy(&arena), 0);
 	next_token(&st, &tk, &status);
 	if (status != ST_OK || tk.token_kind != TK_WORD || !word_equals(tk.u_token.wd,

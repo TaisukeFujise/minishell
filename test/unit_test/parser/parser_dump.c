@@ -236,10 +236,6 @@ static int	buf_append_flags(t_buffer *buf, uint8_t flag)
 	if ((flag & W_APPEND) && !buf_append_str(buf, "APPEND"))
 		return (0);
 	first = (flag & W_APPEND) ? 0 : first;
-	if ((flag & W_ID) && !first && !buf_append_char(buf, '|'))
-		return (0);
-	if ((flag & W_ID) && !buf_append_str(buf, "ID"))
-		return (0);
 	return (1);
 }
 

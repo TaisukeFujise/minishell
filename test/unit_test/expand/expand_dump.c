@@ -77,10 +77,6 @@ static void	print_flags(uint8_t flag)
 	if (flag & W_APPEND)
 		printf("APPEND");
 	first = (flag & W_APPEND) ? 0 : first;
-	if ((flag & W_ID) && !first)
-		printf("|");
-	if (flag & W_ID)
-		printf("ID");
 }
 
 static void	print_indent(int depth)

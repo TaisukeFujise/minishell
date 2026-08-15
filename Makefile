@@ -15,6 +15,7 @@ NAME:=minishell
 SRCDIR:=src
 SRCS:=main.c\
 	  signal/signal_handle.c\
+	  strutil/name.c\
 	  lexer/lexer.c\
 	  lexer/lexer_internal/lex_ops.c\
 	  lexer/lexer_internal/lex_assign_util.c\
@@ -68,6 +69,7 @@ SRCS:=main.c\
 
 HEADDIR:=include
 HEADERS:=minishell.h\
+		 strutil.h\
 		 signal_handle.h\
 		 lexer.h\
 		 expand.h\
