@@ -82,4 +82,13 @@ line: $(NAME_LINE)
 
 repl: $(NAME_REPL)
 
-.PHONY: all clean fclean re line repl
+glob: $(NAME_LINE)
+	./glob/glob_test.sh
+
+glob-bash: $(NAME_LINE)
+	./glob/glob_test.sh --bash
+
+glob-update: $(NAME_LINE)
+	./glob/glob_test.sh --update
+
+.PHONY: all clean fclean re line repl glob glob-bash glob-update

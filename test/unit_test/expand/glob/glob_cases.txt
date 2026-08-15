@@ -1,0 +1,96 @@
+# Glob expansion cases.
+#
+# One pattern per line. Blank lines and lines starting with '#' are ignored.
+# Each pattern P is run as `echo P` by expand_dump_line, inside the fixture
+# directory built by glob_test.sh (see build_fixture there for its layout).
+#
+# Patterns without a '*' never reach expand_glob (the lexer only sets the WILD
+# flag on unquoted '*'), so every case here carries at least one.
+
+# Basic wildcards
+*
+*.c
+*.*
+*c
+a*
+a*c
+ab*
+abc*
+*b*
+*X*
+*X*X*
+*.c*
+*d
+
+# Star runs and empty matches
+**
+***.c
+**c
+a**c
+*a*
+*abc*
+*abcd*
+
+# No match: the pattern itself is kept verbatim
+nomatch*
+*nomatch
+no_such_*.minishell
+*.zzz
+
+# Hidden entries: a leading dot must be matched literally
+.*
+.d*
+.dot*
+.h*
+*dot
+.*x*
+
+# '.' and '..' are never produced, not even by '.*'. ../ESCAPED_MARKER exists
+# so that a leak out of the fixture would show up in the expected output.
+..*
+.*.
+.*/*
+
+# Symlinks match by name. Every candidate comes from readdir(), so existence
+# is already known and never re-checked -- a dangling link must still match.
+*.link
+broken*
+*.dir
+link.*
+
+# Pathological '*' runs. These are cheap for a linear matcher and hang an
+# exponential one, which the runner's timeout turns into a failure.
+**********c
+****************c
+*a*a*a*a*a*b
+*a*a*a*a*a*a*a*a*z
+
+# Quoting. The lexer flags each part, and the buffer's parallel mask keeps
+# that per-part information alive across concatenation, so a quoted '*' stays
+# literal even when the same word also carries an unquoted one.
+"*"
+"*"*
+"*"c
+"*"x*
+'*'*
+"*/*"
+"$STAR"
+"$STAR"*
+$STAR
+$STAR*
+x"*"
+*"."c
+
+# Path traversal is out of scope: the subject scopes wildcards to the current
+# working directory, so a pattern containing '/' never matches a dirent name
+# and is left verbatim. Pinned here so the limit stays deliberate rather than
+# accidental; glob_bash_diff.txt records them as intentional divergences.
+# (No root-level pattern such as /etc/*: its bash side is host-dependent.)
+a/*
+a/b/*
+*/*.c
+*/
+.hid/*
+a//*
+*//
+@FIX@/*

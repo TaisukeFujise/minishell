@@ -1,0 +1,61 @@
+*	a aXbXc ab abc abcd broken.link dir.d f.txt f1.c f2.c link.c link.dir xy
+*.c	f1.c f2.c link.c
+*.*	broken.link dir.d f.txt f1.c f2.c link.c link.dir
+*c	aXbXc abc f1.c f2.c link.c
+a*	a aXbXc ab abc abcd
+a*c	aXbXc abc
+ab*	ab abc abcd
+abc*	abc abcd
+*b*	aXbXc ab abc abcd broken.link
+*X*	aXbXc
+*X*X*	aXbXc
+*.c*	f1.c f2.c link.c
+*d	abcd dir.d
+**	a aXbXc ab abc abcd broken.link dir.d f.txt f1.c f2.c link.c link.dir xy
+***.c	f1.c f2.c link.c
+**c	aXbXc abc f1.c f2.c link.c
+a**c	aXbXc abc
+*a*	a aXbXc ab abc abcd
+*abc*	abc abcd
+*abcd*	abcd
+nomatch*	nomatch*
+*nomatch	*nomatch
+no_such_*.minishell	no_such_*.minishell
+*.zzz	*.zzz
+.*	.dot .dotfile .hid
+.d*	.dot .dotfile
+.dot*	.dot .dotfile
+.h*	.hid
+*dot	*dot
+.*x*	.*x*
+..*	..*
+.*.	.*.
+.*/*	.*/*
+*.link	broken.link
+broken*	broken.link
+*.dir	link.dir
+link.*	link.c link.dir
+**********c	aXbXc abc f1.c f2.c link.c
+****************c	aXbXc abc f1.c f2.c link.c
+*a*a*a*a*a*b	*a*a*a*a*a*b
+*a*a*a*a*a*a*a*a*z	*a*a*a*a*a*a*a*a*z
+"*"	*
+"*"*	**
+"*"c	*c
+"*"x*	*x*
+'*'*	**
+"*/*"	*/*
+"$STAR"	*.c
+"$STAR"*	*.c*
+$STAR	f1.c f2.c link.c
+$STAR*	f1.c f2.c link.c
+x"*"	x*
+*"."c	f1.c f2.c link.c
+a/*	a/*
+a/b/*	a/b/*
+*/*.c	*/*.c
+*/	*/
+.hid/*	.hid/*
+a//*	a//*
+*//	*//
+@FIX@/*	@FIX@/*

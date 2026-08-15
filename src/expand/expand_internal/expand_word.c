@@ -27,7 +27,7 @@ static t_status	append_split(t_expand *exp, t_fields *fields,
 			i++;
 		if (i > start && split_boundary(exp, fields, 0) != ST_OK)
 			return (ST_FATAL);
-		if (i > start && !strbuf_add(&exp->buf, s + start, i - start))
+		if (i > start && !strbuf_add(&exp->buf, s + start, i - start, true))
 			return (ST_FATAL);
 		if (i > start && ft_memchr(s + start, '*', i - start))
 			fields->glob = true;
@@ -64,7 +64,8 @@ static t_status	append_part(t_expand *exp, t_word *part, t_fields *fields)
 		return (ST_FATAL);
 	if (fields && (part->flag & (W_SQ | W_DQ)) != 0)
 		fields->keep_empty = true;
-	if (!strbuf_add(&exp->buf, value, param.len))
+	if (!strbuf_add(&exp->buf, value, param.len,
+			(part->flag & W_WILD) != 0))
 		return (ST_FATAL);
 	if (fields && (part->flag & W_WILD) != 0)
 		fields->glob = true;
