@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:51:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:07:39 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/02/16 06:00:14 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	pid_t	pid;
 
 	if (pipe_in != NO_PIPE || pipe_out != NO_PIPE)
-	// command beside pipe in child process
 	{
 		pid = fork();
 		if (pid < 0)
@@ -51,9 +50,9 @@ t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 			close_pipes(pipe_in, pipe_out);
 			return (register_pid(ctx, pid));
 		}
-		return (ST_OK);
+		return (ST_FATAL);
 	}
-	else // single command in parent process
+	else
 		return (exec_null_command_in_parent(cmd, ctx));
 }
 
@@ -64,13 +63,13 @@ t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	- apply_redirects
 	- apply_assigns_to_vars
 */
+/*
+	Todo left
+	- restore_signals ????
+*/
 void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		int pipe_out)
 {
-	/*
-		Todo left
-		- restore_signals ????
-	*/
 	close_fd_bitmap(ctx->bitmap);
 	if (attach_pipe_to_stdio(pipe_in, pipe_out) != ST_OK)
 		exit(EXIT_FAILURE);

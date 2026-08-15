@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:45:59 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/19 15:49:20 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/04/19 20:16:27 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 			close_pipes(pipe_in, pipe_out);
 			return (register_pid(ctx, pid));
 		}
+		return (ST_FATAL);
 	}
 	else
 		return (exec_builtin_in_parent(cmd, ctx));
-	return (ST_FATAL);
 }
 
 /*
@@ -65,13 +65,13 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	- apply_assigns_to_tmp_env
 	- builtin_cmd
 */
+/*
+	Todo left
+	- restore_signals ???
+*/
 void	exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		int pipe_out)
 {
-	/*
-		Todo left
-		- restore_signals ???
-	*/
 	close_fd_bitmap(ctx->bitmap);
 	if (attach_pipe_to_stdio(pipe_in, pipe_out) != ST_OK)
 		exit(EXIT_FAILURE);
@@ -132,12 +132,12 @@ t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 	- env
 	- exit
 */
+/*
+	Todo
+	- builtin_command find builtin cmd and execute it.
+*/
 t_status	builtin_cmd(t_word_list *args, t_ctx *ctx)
 {
-	/*
-		Todo
-		- builtin_command find builtin cmd and execute it.
-	*/
 	if (args == NULL || args->wd == NULL || args->wd->str == NULL)
 		return (ST_FATAL);
 	if (ft_strcmp(args->wd->str, "cd") == 0)

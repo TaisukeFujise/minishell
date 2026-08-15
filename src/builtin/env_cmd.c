@@ -6,12 +6,12 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:39:30 by tafujise          #+#    #+#             */
-/*   Updated: 2026/05/10 18:37:03 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/07/31 01:36:30 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/builtin.h"
-#include "hashmap.h"
+#include "../../include/hashmap.h"
 
 void		print_env_from_envtable(t_hashtable *tmp_table,
 				t_hashtable *env_table);
