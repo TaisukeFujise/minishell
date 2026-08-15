@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:17 by tafujise          #+#    #+#             */
-/*   Updated: 2026/04/19 22:39:59 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/04/19 22:40:23 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ t_status	exec_andor(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 t_status	exec_pipeline(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
 	int			pipe_fd[2];
-	t_fd_bitmap		*fd_bitmap;
+	t_fd_bitmap	*fd_bitmap;
 	t_status	result;
 
 	if (pipe(pipe_fd) < 0)
