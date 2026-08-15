@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 09:09:35 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/21 14:26:53 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/05/10 18:48:24 by fujisetaisuke    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@ char	*create_tmp_filename(void)
 	if (num == NULL)
 		return (NULL);
 	filename = ft_strjoin("tmp_", num);
+	free(num);
 	if (filename == NULL)
-		return (free(num), NULL);
+		return (NULL);
 	i++;
 	return (filename);
 }
