@@ -70,6 +70,7 @@ int		ft_memcmp(const void *s1, const void *s2, size_t n);
 char	*ft_strnstr(const char *big, const char *little, size_t len);
 int		ft_atoi(const char *nptr);
 void	*ft_calloc(size_t nmemb, size_t size);
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 char	*ft_strdup(const char *s);
 char	*ft_strndup(const char *src, size_t word_len);
 char	*ft_substr(char const *s, unsigned int start, size_t len);

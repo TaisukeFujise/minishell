@@ -17,11 +17,9 @@ static bool	strbuf_reserve(t_strbuf *buf, size_t required)
 		if (new_cap < required)
 			new_cap = required;
 	}
-	new_data = malloc(new_cap);
+	new_data = ft_realloc(buf->data, buf->cap, new_cap);
 	if (!new_data)
 		return (false);
-	ft_memcpy(new_data, buf->data, buf->len + 1);
-	free(buf->data);
 	buf->data = new_data;
 	buf->cap = new_cap;
 	return (true);
