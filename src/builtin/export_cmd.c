@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:40:50 by tafujise          #+#    #+#             */
-/*   Updated: 2026/05/10 17:14:08 by fendo            ###   ########.fr       */
+/*   Updated: 2026/08/16 23:35:06 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,19 @@ static void	print_quoted_value(char *str, char quote)
 	printf("%c", quote);
 	while (*str)
 	{
-		esc = ft_strchr(EXPORT_CTRL, *str);
-		if (quote == '"' && ft_strchr("\"\\$`", *str))
-			printf("\\%c", *str);
-		else if (quote == '\'' && esc)
-			printf("\\%c", EXPORT_ESC[esc - EXPORT_CTRL]);
-		else if (quote == '\'' && !ft_isprint((unsigned char)*str))
-			printf("\\%03o", (unsigned char)*str);
-		else if (quote == '\'' && (*str == '\\' || *str == '\''))
+		if (quote == '\'')
+		{
+			esc = ft_strchr(EXPORT_CTRL, *str);
+			if (esc)
+				printf("\\%c", EXPORT_ESC[esc - EXPORT_CTRL]);
+			else if (!ft_isprint((unsigned char)*str))
+				printf("\\%03o", (unsigned char)*str);
+			else if (*str == '\\' || *str == '\'')
+				printf("\\%c", *str);
+			else
+				printf("%c", *str);
+		}
+		else if (ft_strchr("\"\\$`", *str))
 			printf("\\%c", *str);
 		else
 			printf("%c", *str);
