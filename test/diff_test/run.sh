@@ -18,6 +18,9 @@ if [ ! -x "$SHELL_UNDER_TEST" ]; then
 	exit 1
 fi
 BASH_BIN=${BASH_BIN:-/bin/bash}
+# A case that hangs must not hang the run. Not every system has timeout(1).
+TIMEOUT=""
+command -v timeout >/dev/null 2>&1 && TIMEOUT="timeout 10"
 WORK=$(mktemp -d)
 PASS=0
 FAIL=0
@@ -25,11 +28,10 @@ XFAIL=0
 
 # Cases that minishell is not expected to pass yet.
 EXPECTED_FAIL="
-andor_false
-redirect_before_search
-lexical_assign
-prefix_path
 missing_diagnostic
+unset_path
+exit_prints
+heredoc
 "
 
 run_case()
@@ -40,7 +42,7 @@ run_case()
 	mkdir -p "$WORK/$name/ms" "$WORK/$name/bash"
 
 	ms_out=$(cd "$WORK/$name/ms" && printf '%s\nexit\n' "$script" \
-		| "$SHELL_UNDER_TEST" 2>/dev/null)
+		| $TIMEOUT "$SHELL_UNDER_TEST" 2>/dev/null)
 	ms_rc=$?
 	ms_files=$(cd "$WORK/$name/ms" && ls -A | LC_ALL=C sort | tr '\n' ' ')
 
@@ -106,9 +108,21 @@ X=/dev/null > "$X"'
 run_case lexical_assign 'EMPTY=
 $EMPTY X=1'
 
-# Not implemented yet.
 run_case subshell '(echo sub)'
-run_case missing_diagnostic 'nosuchcmd_xyz'
+run_case missing_status 'nosuchcmd_xyz'
+
+# Not implemented yet. This case compares the message, not just the status:
+# both shells name the command they could not run.
+run_case missing_diagnostic 'nosuchcmd_xyz 2>err.txt
+grep -c nosuchcmd_xyz err.txt'
+run_case unset_path 'unset PATH
+ls'
+run_case exit_prints 'exit 7'
+# minishell loops forever on a heredoc that EOF ends: parse() reports the
+# failure without consuming the input and the main loop parses it again.
+run_case heredoc 'cat << EOF
+hello
+EOF'
 
 rm -rf "$WORK"
 printf '\npass %d  fail %d  xfail %d\n' "$PASS" "$FAIL" "$XFAIL"

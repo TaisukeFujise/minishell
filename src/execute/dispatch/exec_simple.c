@@ -31,10 +31,28 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 
 	hash_flush(ctx->tmp_table, NULL);
 	status = expand_command(node, ctx, ctx->arenas);
-	if (status != ST_OK)
-		return (status);
 	cmd = &node->u_node.simple_command;
-	if (cmd->args != NULL && find_builtin(cmd->args->wd->str) == NULL)
-		return (exec_disk_command(cmd, ctx, pipe_in, pipe_out));
-	return (exec_builtin(cmd, ctx, pipe_in, pipe_out));
+	if (status == ST_OK)
+	{
+		if (cmd->args != NULL && find_builtin(cmd->args->wd->str) == NULL)
+			status = exec_disk_command(cmd, ctx, pipe_in, pipe_out);
+		else
+			status = exec_builtin(cmd, ctx, pipe_in, pipe_out);
+	}
+	return (set_exit_code(ctx, status));
+}
+
+/*
+	The numeric status is what the next command tests, so a simple command
+	settles it before it returns. A command that forked gets it from
+	collect_child_result, ST_EXIT and ST_FATAL carry the code the builtin
+	chose.
+*/
+t_status	set_exit_code(t_ctx *ctx, t_status status)
+{
+	if (status == ST_OK)
+		ctx->err.exit_code = 0;
+	else if (status == ST_FAILURE)
+		ctx->err.exit_code = 1;
+	return (status);
 }

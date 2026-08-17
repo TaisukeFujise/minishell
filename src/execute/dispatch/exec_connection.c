@@ -37,23 +37,23 @@ t_status	exec_complete(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	return (execute_internal(node->right, ctx, pipe_in, pipe_out));
 }
 
+/*
+	&& and || look at the status of the left hand command, which is the
+	number it left in ctx->err.exit_code. A t_status only says whether
+	the shell can go on.
+*/
 t_status	exec_andor(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
 	t_status	result;
 
 	result = execute_internal(node->left, ctx, pipe_in, pipe_out);
-	if (node->u_node.and_or.op == CONNECT_AND_IF)
-	{
-		if (result == ST_OK)
-			return (execute_internal(node->right, ctx, pipe_in, pipe_out));
-		return (ST_FAILURE);
-	}
-	else
-	{
-		if (result != ST_OK)
-			return (execute_internal(node->right, ctx, pipe_in, pipe_out));
-		return (ST_FAILURE);
-	}
+	if (result == ST_EXIT || result == ST_FATAL)
+		return (result);
+	if (node->u_node.and_or.op == CONNECT_AND_IF && ctx->err.exit_code != 0)
+		return (result);
+	if (node->u_node.and_or.op == CONNECT_OR_IF && ctx->err.exit_code == 0)
+		return (result);
+	return (execute_internal(node->right, ctx, pipe_in, pipe_out));
 }
 
 /*

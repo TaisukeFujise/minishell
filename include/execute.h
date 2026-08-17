@@ -62,6 +62,7 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 				int pipe_out);
 /* exec_simple.c */
 t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
+t_status	set_exit_code(t_ctx *ctx, t_status status);
 /* exec_subshell.c */
 t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 

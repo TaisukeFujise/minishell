@@ -46,8 +46,7 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	if (pid == 0)
 	{
 		enter_child(cmd, ctx, pipe_in, pipe_out);
-		if (cmd->args != NULL)
-			builtin_cmd(cmd->args, ctx);
+		set_exit_code(ctx, builtin_cmd(cmd->args, ctx));
 		exit(ctx->err.exit_code);
 	}
 	return (adopt_child(ctx, pid, pipe_in, pipe_out));
@@ -66,7 +65,7 @@ static t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 	if (save_stdio(&saved) != ST_OK)
 		return (ST_FAILURE);
 	result = apply_redirects(cmd->redirects);
-	if (result == ST_OK && cmd->args != NULL)
+	if (result == ST_OK)
 		result = builtin_cmd(cmd->args, ctx);
 	if (undo_stdio(saved) == ST_FATAL)
 		result = ST_FATAL;
@@ -81,7 +80,9 @@ t_status	builtin_cmd(t_word_list *args, t_ctx *ctx)
 {
 	t_builtin	fn;
 
-	if (args == NULL || args->wd == NULL || args->wd->str == NULL)
+	if (args == NULL)
+		return (ST_OK);
+	if (args->wd == NULL || args->wd->str == NULL)
 		return (ST_FATAL);
 	fn = find_builtin(args->wd->str);
 	if (fn == NULL)
