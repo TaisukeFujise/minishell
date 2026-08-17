@@ -24,8 +24,8 @@ static t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
 	(It means command is connected by pipe)
 	- in pipe
 		- fork
-		- in child : enter_child then builtin_cmd
-		- in parent: adopt_child
+		- in child : enter_child, apply_redirects then builtin_cmd
+		- in parent: close_pipes and register_pid
 	- single
 		- exec_builtin_in_parent
 */
