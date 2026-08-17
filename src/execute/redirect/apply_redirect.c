@@ -14,8 +14,6 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
-static int	open_tmp_write_fd(char **filename);
-static int	open_heredoc_fd(t_redirect *redirect);
 static int	open_redirect_fd(t_redirect *redirect);
 
 /*
@@ -56,44 +54,4 @@ static int	open_redirect_fd(t_redirect *redirect)
 		return (open_heredoc_fd(redirect));
 	else
 		return (-1);
-}
-
-static int	open_heredoc_fd(t_redirect *redirect)
-{
-	char	*filename;
-	int		write_fd;
-	int		read_fd;
-
-	filename = NULL;
-	write_fd = open_tmp_write_fd(&filename);
-	if (write_fd < 0)
-		return (-1);
-	if (write(write_fd, redirect->hd.raw_str.str, redirect->hd.raw_str.len) < 0)
-		return (free(filename), close(write_fd), -1);
-	close(write_fd);
-	read_fd = open(filename, O_RDONLY);
-	if (read_fd < 0)
-		return (free(filename), -1);
-	if (unlink(filename) < 0)
-		return (free(filename), close(read_fd), -1);
-	redirect->hd.content_fd = read_fd;
-	return (free(filename), read_fd);
-}
-
-static int	open_tmp_write_fd(char **filename)
-{
-	int	fd;
-
-	fd = -1;
-	while (fd < 0)
-	{
-		free(*filename);
-		*filename = create_tmp_filename();
-		if (*filename == NULL)
-			return (-1);
-		fd = open(*filename, O_WRONLY | O_CREAT | O_EXCL, 0644);
-		if (fd < 0 && errno != EEXIST)
-			return (free(*filename), *filename = NULL, -1);
-	}
-	return (fd);
 }

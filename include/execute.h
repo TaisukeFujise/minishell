@@ -92,6 +92,7 @@ t_status	collect_child_result(t_ctx *ctx);
 t_status	apply_redirects(t_redirect *redirects);
 /* heredoc_tmpfile.c */
 char		*create_tmp_filename(void);
+int			open_heredoc_fd(t_redirect *redirect);
 /* stdio_guard.c */
 t_status	save_stdio(t_savedfd *saved);
 void		close_savedfd(t_savedfd saved);
