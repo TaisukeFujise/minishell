@@ -56,7 +56,6 @@ SRCS:=main.c\
 	  execute/dispatch/exec_simple.c\
 	  execute/dispatch/exec_subshell.c\
 	  execute/expansion/assigns.c\
-	  execute/expansion/expand.c\
 	  execute/process/fd_bitmap.c\
 	  execute/process/pipe_utils.c\
 	  execute/process/register_pid.c\

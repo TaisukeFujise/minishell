@@ -57,6 +57,8 @@ typedef struct s_ctx
 	/* Reset following member on every command. */
 	t_hashtable					*tmp_table;
 	// tmp environment variable table.This is set by assignment word in front of cmd.
+	t_arenas					*arenas;
+	// arenas of the current parse iteration. NULL outside of it.
 	t_fd_bitmap					*bitmap;
 	// It's for managing fd,especially pipe read end fd,when using pipe.
 	pid_t						*pids;
