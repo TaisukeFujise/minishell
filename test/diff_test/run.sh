@@ -29,6 +29,7 @@ XFAIL=0
 # Cases that minishell is not expected to pass yet.
 EXPECTED_FAIL="
 builtin_stdio_buffer
+stdin_readahead
 exit_bad_arg
 missing_diagnostic
 unset_path
@@ -86,6 +87,9 @@ run_case param 'echo $HOME'
 run_case redirect_target 'echo done > out.txt
 cat out.txt'
 run_case redirect_keeps_fd 'echo hi 3>f1
+echo second'
+# An io number above the fixed backup base of a shell. dash loses stdout here.
+run_case redirect_high_fd 'echo hi 12>f1
 echo second'
 # pwd writes through stdio, so its output is flushed after the redirect is
 # put back and never reaches the file (review D37-23).
@@ -151,6 +155,10 @@ echo "[$X]"'
 run_case heredoc 'cat << EOF
 hello
 EOF'
+# The shell reads its input a block at a time, so a command that reads the
+# script itself sees nothing left. Same cause as the heredoc case.
+run_case stdin_readahead 'cat
+AFTER'
 
 rm -rf "$WORK"
 printf '\npass %d  fail %d  xfail %d\n' "$PASS" "$FAIL" "$XFAIL"
