@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../../include/execute.h"
+#include "../../../include/signal_handle.h"
 #include "../../../include/expand.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
@@ -39,6 +40,7 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, bool own)
 		return (ctx->err.exit_code = 1, ST_FAILURE);
 	if (pid == 0)
 	{
+		reset_signals();
 		subshell_body(node, ctx);
 		exit(ctx->err.exit_code);
 	}

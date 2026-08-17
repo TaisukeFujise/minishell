@@ -24,6 +24,19 @@ int	handle_readline_signal()
 	return (0);
 }
 
+/*
+	A command runs with the dispositions it would have had if the shell
+	had not touched them: the shell ignores SIGQUIT and catches SIGINT
+	for its prompt, and neither belongs to the command it starts. An
+	ignored signal survives execve, so only the child can undo it.
+	[review D37-08]
+*/
+void	reset_signals(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
+
 static void	signal_handler(int signum)
 {
 	g_signum = signum;

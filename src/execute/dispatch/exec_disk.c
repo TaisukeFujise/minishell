@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../../include/execute.h"
+#include "../../../include/signal_handle.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
@@ -25,10 +26,6 @@ int			run_path_search_command(char *path_value, char **argv, char **envp);
 	(It means whether command is connected by pipe or not doesn't matter.)
 	- own: this process is only for this command, so take it over
 	- otherwise: fork, run it in the child and wait for it
-*/
-/*
-	Todo left
-	- restore signals
 */
 t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, bool own)
 {
@@ -54,6 +51,7 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, bool own)
 */
 void	run_in_place(t_simple_cmd *cmd, t_ctx *ctx, t_exec_params params)
 {
+	reset_signals();
 	if (apply_redirects(cmd->redirects, false) != ST_OK)
 		exit(EXIT_FAILURE);
 	disk_command(params.argv, params.envp, ctx);
