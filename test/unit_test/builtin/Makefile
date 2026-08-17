@@ -44,7 +44,6 @@ EXEC_SRCS := init_ctx.c\
 			pipe_utils.c\
 			procs.c\
 			wait_children.c\
-			fd_bitmap.c\
 			apply_redirect.c\
 			assigns.c\
 			count_args.c\

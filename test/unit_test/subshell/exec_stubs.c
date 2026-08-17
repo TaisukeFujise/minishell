@@ -1,9 +1,12 @@
 #include "subshell_test.h"
 
-t_status	execute_internal(t_node *node, t_ctx *ctx, t_stage st)
+pid_t	g_body_pid = 0;
+
+t_status	execute_internal(t_node *node, t_ctx *ctx, bool own)
 {
 	(void)node;
-	(void)st;
+	(void)own;
+	g_body_pid = getpid();
 	ctx->err.exit_code = 41;
 	return (ST_OK);
 }

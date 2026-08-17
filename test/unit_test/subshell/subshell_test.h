@@ -6,6 +6,8 @@
 # include "../../../include/execute.h"
 
 # include <assert.h>
+
+extern pid_t	g_body_pid;
 # include <errno.h>
 
 #endif

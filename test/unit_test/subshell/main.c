@@ -29,7 +29,7 @@ static int	test_basic_subshell(void)
 
 	ft_bzero(&ctx, sizeof(t_ctx));
 	node = new_subshell_node();
-	status = exec_subshell(&node, &ctx, new_stage(NO_PIPE, NO_PIPE));
+	status = exec_subshell(&node, &ctx, false);
 	if (status != ST_OK)
 		return (printf("[NG] basic subshell: status=%d\n", status), 1);
 	if (ctx.err.exit_code != 41)
@@ -39,34 +39,26 @@ static int	test_basic_subshell(void)
 	return (0);
 }
 
-static int	test_close_pipes_in_parent(void)
+/*
+	own says the process is already dedicated to this node, so the body
+	runs here instead of in a new process.
+*/
+static int	test_own_runs_in_place(void)
 {
-	t_ctx		ctx;
-	t_node		node;
-	t_status	status;
-	int			in_pipe[2];
-	int			out_pipe[2];
-	int			is_ng;
+	t_ctx	ctx;
+	t_node	node;
 
 	ft_bzero(&ctx, sizeof(t_ctx));
 	node = new_subshell_node();
-	is_ng = 0;
-	if (pipe(in_pipe) < 0 || pipe(out_pipe) < 0)
-		return (printf("[NG] close pipes: pipe() failed\n"), 1);
-	status = exec_subshell(&node, &ctx, new_stage(in_pipe[0], out_pipe[1]));
-	if (status != ST_OK)
-		is_ng = 1;
-	if (fcntl(in_pipe[0], F_GETFD) != -1 || errno != EBADF)
-		is_ng = 1;
-	if (fcntl(out_pipe[1], F_GETFD) != -1 || errno != EBADF)
-		is_ng = 1;
-	close(in_pipe[1]);
-	close(out_pipe[0]);
+	g_body_pid = 0;
+	if (exec_subshell(&node, &ctx, true) != ST_OK)
+		return (printf("[NG] own subshell: status\n"), 1);
+	if (g_body_pid != getpid())
+		return (printf("[NG] own subshell: body ran in another process\n"), 1);
 	if (ctx.err.exit_code != 41)
-		is_ng = 1;
-	if (is_ng)
-		return (printf("[NG] close pipes in parent\n"), 1);
-	printf("[OK] close pipes in parent\n");
+		return (printf("[NG] own subshell: exit_code=%d\n",
+				ctx.err.exit_code), 1);
+	printf("[OK] own subshell runs in place\n");
 	return (0);
 }
 
@@ -75,9 +67,9 @@ static int	test_close_pipes_in_parent(void)
 	1. basic subshell
 		- run exec_subshell with NO_PIPE
 		- expect: register child pid and collect exit_code=41
-	2. close pipes in parent
-		- run exec_subshell with explicit pipe_in/pipe_out
-		- expect: parent closes passed fds, collect exit_code=41
+	2. own subshell runs in place
+		- run exec_subshell with own
+		- expect: the body runs in this process, exit_code=41
 */
 int	main(void)
 {
@@ -85,7 +77,7 @@ int	main(void)
 
 	ng_count = 0;
 	ng_count += test_basic_subshell();
-	ng_count += test_close_pipes_in_parent();
+	ng_count += test_own_runs_in_place();
 	if (ng_count == 0)
 		return (0);
 	return (1);

@@ -79,7 +79,7 @@ static int	test_builtin_single(t_ctx *ctx)
 	cmd.args = new_args_2("echo", "single");
 	if (cmd.args == NULL)
 		return (1);
-	if (exec_builtin(&cmd, ctx, new_stage(NO_PIPE, NO_PIPE)) != ST_OK)
+	if (exec_builtin(&cmd, ctx) != ST_OK)
 		return (free_args(cmd.args), 1);
 	free_args(cmd.args);
 	return (0);
@@ -99,7 +99,7 @@ static int	test_builtin_pipe(t_ctx *ctx)
 	cmd.args = new_args_2("echo", "hello");
 	if (cmd.args == NULL)
 		return (close(fds[0]), close(fds[1]), 1);
-	if (exec_builtin(&cmd, ctx, new_stage(NO_PIPE, fds[1])) != ST_OK)
+	if (exec_builtin(&cmd, ctx) != ST_OK)
 		return (close(fds[0]), close(fds[1]), free_args(cmd.args), 1);
 	if (wait_pid_status(ctx, -1) != ST_OK)
 		return (close(fds[0]), free_args(cmd.args), 1);

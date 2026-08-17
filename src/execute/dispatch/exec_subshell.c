@@ -15,25 +15,32 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
-t_status	exec_subshell(t_node *node, t_ctx *ctx, t_stage st)
+/*
+	The body of a subshell runs in a process of its own. When this
+	process is already one, it is taken over instead of forking again,
+	the way dash skips the fork under EV_EXIT.
+*/
+static t_status	subshell_body(t_node *node, t_ctx *ctx)
+{
+	if (expand_command(node, ctx, ctx->arenas) != ST_OK
+		|| apply_redirects(node->u_node.subshell.redirects, false) != ST_OK)
+		exit(EXIT_FAILURE);
+	return (execute_internal(node->left, ctx, false));
+}
+
+t_status	exec_subshell(t_node *node, t_ctx *ctx, bool own)
 {
 	pid_t	pid;
 
+	if (own)
+		return (subshell_body(node, ctx));
 	pid = fork();
 	if (pid < 0)
 		return (ST_FATAL);
 	if (pid == 0)
 	{
-		st.procs = NULL;
-		enter_child(st);
-		if (expand_command(node, ctx, ctx->arenas) != ST_OK
-			|| apply_redirects(node->u_node.subshell.redirects, false) != ST_OK)
-			exit(EXIT_FAILURE);
-		st.pipe_in = NO_PIPE;
-		st.pipe_out = NO_PIPE;
-		execute_internal(node->left, ctx, st);
+		subshell_body(node, ctx);
 		exit(ctx->err.exit_code);
 	}
-	close_pipes(st);
-	return (dispose_pid(ctx, st, pid));
+	return (wait_pid_status(ctx, pid));
 }

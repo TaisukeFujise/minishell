@@ -23,7 +23,6 @@ TEST_SRCS := main.c exec_stubs.c
 EXECUTE_SRCS := \
 	exec_subshell.c \
 	pipe_utils.c \
-	fd_bitmap.c \
 	apply_redirect.c \
 	heredoc_tmpfile.c \
 	procs.c \

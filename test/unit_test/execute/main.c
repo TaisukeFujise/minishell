@@ -178,7 +178,7 @@ int	main(int argc, char **argv, char **envp)
 	cmd6.redirects->target.str = ft_strdup("test_vi.txt");
 	cmd6.redirects->io_number = 0;
 	cmd6.redirects->next = NULL;
-	if (exec_builtin(&cmd6, &ctx, new_stage(NO_PIPE, NO_PIPE)) == ST_FATAL)
+	if (exec_builtin(&cmd6, &ctx) == ST_FATAL)
 		return (1);
 	return (0);
 

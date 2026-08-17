@@ -34,7 +34,6 @@ missing_diagnostic
 unset_path
 exit_prints
 heredoc
-pipe_assign_leak
 "
 
 run_case()

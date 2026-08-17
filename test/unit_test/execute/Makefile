@@ -22,7 +22,6 @@ LIBFT := $(LIBFT_DIR)/libft.a
 TEST_SRCS := main.c
 EXECUTE_SRCS := \
 	init_ctx.c \
-	fd_bitmap.c\
 	pipe_utils.c \
 	procs.c \
 	apply_redirect.c \

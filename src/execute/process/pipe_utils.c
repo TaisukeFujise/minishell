@@ -15,21 +15,6 @@
 #include "../../../include/parser.h"
 
 /*
-	A stage that holds nothing: no pipe, no fd to close in a child.
-	Callers fill in what they own. One place knows the fields.
-*/
-t_stage	new_stage(int pipe_in, int pipe_out)
-{
-	t_stage	st;
-
-	st.pipe_in = pipe_in;
-	st.pipe_out = pipe_out;
-	st.close = NULL;
-	st.procs = NULL;
-	return (st);
-}
-
-/*
 	Put source on target and hand target the open file it names.
 	Nothing to close when they are the same fd: closing would drop it.
 */
@@ -41,30 +26,4 @@ t_status	move_fd(int source, int target)
 		return (ST_FAILURE);
 	close(source);
 	return (ST_OK);
-}
-
-/*
-	enter_child sets up the process boundary of a forked command:
-	close the fds inherited from the pipelines around this command, then
-	connect its own endpoints to stdio. Closing first is what bash does,
-	for the case where an endpoint is itself fd 0 or 1; it is safe because
-	a stage never carries its own input in the set it has to close.
-	What the command itself needs, its redirects, is applied by the caller.
-	The child cannot run anything if the boundary fails, so it exits.
-*/
-void	enter_child(t_stage st)
-{
-	close_fd_bitmap(st.close);
-	if (st.pipe_in != NO_PIPE && move_fd(st.pipe_in, STDIN_FILENO) != ST_OK)
-		exit(EXIT_FAILURE);
-	if (st.pipe_out != NO_PIPE && move_fd(st.pipe_out, STDOUT_FILENO) != ST_OK)
-		exit(EXIT_FAILURE);
-}
-
-void	close_pipes(t_stage st)
-{
-	if (st.pipe_in != NO_PIPE)
-		close(st.pipe_in);
-	if (st.pipe_out != NO_PIPE)
-		close(st.pipe_out);
 }

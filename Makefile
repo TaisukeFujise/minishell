@@ -52,10 +52,10 @@ SRCS:=main.c\
 	  execute/dispatch/exec_builtin.c\
 	  execute/dispatch/exec_connection.c\
 	  execute/dispatch/exec_disk.c\
+	  execute/dispatch/exec_pipeline.c\
 	  execute/dispatch/exec_simple.c\
 	  execute/dispatch/exec_subshell.c\
 	  execute/expansion/assigns.c\
-	  execute/process/fd_bitmap.c\
 	  execute/process/pipe_utils.c\
 	  execute/process/procs.c\
 	  execute/process/wait_children.c\

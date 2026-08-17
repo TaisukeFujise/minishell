@@ -31,12 +31,6 @@
 
 extern volatile sig_atomic_t	g_signum;
 
-typedef struct s_fd_bitmap
-{
-	int							size;
-	char						*bitmap;
-}								t_fd_bitmap;
-
 typedef struct s_arenas
 {
 	t_arena						ast;

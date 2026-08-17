@@ -15,51 +15,13 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
-static t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
-
 /*
-	execute a command the shell runs itself: a builtin, like cd, or a
-	command with no name, which is only redirects and assignments.
-	Fork if pipe_in or pipe_out is not a NO_PIPE.
-	(It means command is connected by pipe)
-	- in pipe
-		- fork
-		- in child : enter_child, apply_redirects then builtin_cmd
-		- in parent: close_pipes and dispose_pid
-	- single
-		- exec_builtin_in_parent
+	Run a builtin, or a command with no name, in this process. The
+	redirects of one command must not outlive it, so they are undone
+	whatever the builtin did. A pipeline stage is already a process of
+	its own, so nothing forks here.
 */
-/*
-	Todo left
-	- restore_signals ???
-*/
-t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, t_stage st)
-{
-	pid_t	pid;
-
-	if (st.pipe_in == NO_PIPE && st.pipe_out == NO_PIPE)
-		return (exec_builtin_in_parent(cmd, ctx));
-	pid = fork();
-	if (pid < 0)
-		return (ST_FAILURE);
-	if (pid == 0)
-	{
-		enter_child(st);
-		if (apply_redirects(cmd->redirects, false) != ST_OK)
-			exit(EXIT_FAILURE);
-		builtin_cmd(cmd->args, ctx);
-		exit(ctx->err.exit_code);
-	}
-	close_pipes(st);
-	return (dispose_pid(ctx, st, pid));
-}
-
-/*
-	The redirects of one command must not outlive it, so the shell
-	process saves its stdio and puts it back whatever the builtin did.
-	A command with no name applies the redirects and runs nothing.
-*/
-static t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
+t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx)
 {
 	t_status	result;
 

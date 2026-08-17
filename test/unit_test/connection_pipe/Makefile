@@ -24,9 +24,9 @@ EXECUTE_SRCS := \
 	init_ctx.c \
 	execute.c \
 	exec_connection.c \
+	exec_pipeline.c \
 	exec_simple.c \
 	exec_disk.c \
-	fd_bitmap.c \
 	pipe_utils.c \
 	procs.c \
 	wait_children.c \

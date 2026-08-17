@@ -14,6 +14,7 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
+void		run_in_place(t_simple_cmd *cmd, t_ctx *ctx, t_exec_params params);
 void		disk_command(char **argv, char **envp, t_ctx *ctx);
 bool		has_slash(char *str);
 int			run_path_search_command(char *path_value, char **argv, char **envp);
@@ -22,15 +23,14 @@ int			run_path_search_command(char *path_value, char **argv, char **envp);
 	execute disk command(external command), like ls.
 	Fork regardless of whether pipe_in or pipe_out are not a NO_PIPE.
 	(It means whether command is connected by pipe or not doesn't matter.)
-	- fork
-	- in child : enter_child then disk_command
-	- in parent: adopt_child
+	- own: this process is only for this command, so take it over
+	- otherwise: fork, run it in the child and wait for it
 */
 /*
 	Todo left
 	- restore signals
 */
-t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, t_stage st)
+t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, bool own)
 {
 	pid_t			pid;
 	t_exec_params	params;
@@ -38,20 +38,26 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, t_stage st)
 	if (build_exec_params(&params, cmd->args, ctx->tmp_table,
 			ctx->env_table) == FAILURE)
 		return (ST_FATAL);
+	if (own)
+		run_in_place(cmd, ctx, params);
 	pid = fork();
 	if (pid < 0)
 		return (free_exec_params(params.argv, params.envp), ST_FAILURE);
 	if (pid == 0)
-	{
-		enter_child(st);
-		if (apply_redirects(cmd->redirects, false) != ST_OK)
-			exit(EXIT_FAILURE);
-		disk_command(params.argv, params.envp, ctx);
-		exit(EXIT_FAILURE);
-	}
+		run_in_place(cmd, ctx, params);
 	free_exec_params(params.argv, params.envp);
-	close_pipes(st);
-	return (dispose_pid(ctx, st, pid));
+	return (wait_pid_status(ctx, pid));
+}
+
+/*
+	Apply the redirects of the command and become it. Never returns.
+*/
+void	run_in_place(t_simple_cmd *cmd, t_ctx *ctx, t_exec_params params)
+{
+	if (apply_redirects(cmd->redirects, false) != ST_OK)
+		exit(EXIT_FAILURE);
+	disk_command(params.argv, params.envp, ctx);
+	exit(EXIT_FAILURE);
 }
 
 /*
