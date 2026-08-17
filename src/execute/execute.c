@@ -22,14 +22,16 @@
 t_status	execute(t_node *root, t_ctx *ctx)
 {
 	t_status	result;
+	t_stage		st;
 
 	if (root == NULL)
 		return (ST_OK);
-	ctx->bitmap = new_fd_bitmap(FD_BITMAP_SIZE);
-	if (ctx->bitmap == NULL)
+	st = new_stage(NO_PIPE, NO_PIPE);
+	st.close = new_fd_bitmap(FD_BITMAP_SIZE);
+	if (st.close == NULL)
 		return (ST_FATAL);
-	result = execute_internal(root, ctx, NO_PIPE, NO_PIPE);
-	dispose_fd_bitmap(ctx->bitmap);
+	result = execute_internal(root, ctx, st);
+	dispose_fd_bitmap(st.close);
 	return (result);
 }
 
@@ -44,23 +46,22 @@ t_status	execute(t_node *root, t_ctx *ctx)
 	A node that forked waits for its children here, unless its output
 	still goes into a pipe: the last stage waits for the whole pipeline.
 */
-t_status	execute_internal(t_node *node, t_ctx *ctx, int pipe_in,
-		int pipe_out)
+t_status	execute_internal(t_node *node, t_ctx *ctx, t_stage st)
 {
 	t_status	result;
 
 	if (node == NULL)
 		return (ST_OK);
 	if (node->node_kind == NODE_SUBSHELL)
-		result = exec_subshell(node, ctx, pipe_in, pipe_out);
+		result = exec_subshell(node, ctx, st);
 	else if (node->node_kind == NODE_SIMPLE)
-		result = exec_simple(node, ctx, pipe_in, pipe_out);
+		result = exec_simple(node, ctx, st);
 	else if (node->node_kind == NODE_COMPLETE || node->node_kind == NODE_ANDOR
 		|| node->node_kind == NODE_PIPE)
-		return (exec_connection(node, ctx, pipe_in, pipe_out));
+		return (exec_connection(node, ctx, st));
 	else
 		return (ST_FATAL);
-	if (result == ST_OK && pipe_out == NO_PIPE && ctx->npid > 0)
+	if (result == ST_OK && st.out == NO_PIPE && ctx->npid > 0)
 		result = collect_child_result(ctx);
 	return (result);
 }

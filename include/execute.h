@@ -29,6 +29,21 @@
 # include <fcntl.h>
 # include <sys/types.h>
 
+/*
+	What one step of the execution holds. It is passed by value, so what
+	a stage sets stays inside the subtree it runs.
+	- in/out: the fds to become stdin and stdout, NO_PIPE when there are
+	  none. The pipeline that made them owns them.
+	- close: the fds a forked child must not keep, the read ends of the
+	  pipelines around it.
+*/
+typedef struct s_stage
+{
+	int			in;
+	int			out;
+	t_fd_bitmap	*close;
+}				t_stage;
+
 typedef enum s_tabletype
 {
 	TMP,
@@ -45,27 +60,23 @@ typedef struct s_exec_params
 int			init_ctx(t_ctx *ctx, char **envp);
 /* execute.c */
 t_status	execute(t_node *node, t_ctx *ctx);
-t_status	execute_internal(t_node *node, t_ctx *ctx, int pipe_in,
-				int pipe_out);
+t_status	execute_internal(t_node *node, t_ctx *ctx, t_stage st);
 
 // <dispatch>
 /* exec_builtin.c */
-t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-				int pipe_out);
+t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, t_stage st);
 /* exec_connection.c */
-t_status	exec_connection(t_node *node, t_ctx *ctx, int pipe_in,
-				int pipe_out);
-t_status	exec_complete(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
-t_status	exec_andor(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
-t_status	exec_pipeline(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
+t_status	exec_connection(t_node *node, t_ctx *ctx, t_stage st);
+t_status	exec_complete(t_node *node, t_ctx *ctx, t_stage st);
+t_status	exec_andor(t_node *node, t_ctx *ctx, t_stage st);
+t_status	exec_pipeline(t_node *node, t_ctx *ctx, t_stage st);
 /* exec_disk.c */
-t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-				int pipe_out);
+t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, t_stage st);
 /* exec_simple.c */
-t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
+t_status	exec_simple(t_node *node, t_ctx *ctx, t_stage st);
 t_status	set_exit_code(t_ctx *ctx, t_status status);
 /* exec_subshell.c */
-t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
+t_status	exec_subshell(t_node *node, t_ctx *ctx, t_stage st);
 
 // <expansion>
 /* assigns.c */
@@ -76,12 +87,14 @@ t_status	apply_assign(t_assign *assign, t_hashtable *table, t_ctx *ctx,
 // <process>
 /* fd_bitmap.c */
 t_fd_bitmap	*new_fd_bitmap(int size);
+t_fd_bitmap	*grow_fd_bitmap(t_fd_bitmap *src, int fd);
 void		close_fd_bitmap(t_fd_bitmap *fd_bitmap);
 void		dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
 /* pipe_utils.c */
+t_stage		new_stage(int in, int out);
 t_status	move_fd(int source, int target);
-void		enter_child(t_ctx *ctx, int pipe_in, int pipe_out);
-void		close_pipes(int pipe_in, int pipe_out);
+void		enter_child(t_stage st);
+void		close_pipes(t_stage st);
 /* register_pid.c */
 t_status	register_pid(t_ctx *ctx, pid_t pid);
 /* wait_children.c */

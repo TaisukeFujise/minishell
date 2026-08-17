@@ -33,25 +33,24 @@ static t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
 	Todo left
 	- restore_signals ???
 */
-t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-		int pipe_out)
+t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, t_stage st)
 {
 	pid_t	pid;
 
-	if (pipe_in == NO_PIPE && pipe_out == NO_PIPE)
+	if (st.in == NO_PIPE && st.out == NO_PIPE)
 		return (exec_builtin_in_parent(cmd, ctx));
 	pid = fork();
 	if (pid < 0)
 		return (ST_FAILURE);
 	if (pid == 0)
 	{
-		enter_child(ctx, pipe_in, pipe_out);
+		enter_child(st);
 		if (apply_redirects(cmd->redirects, false) != ST_OK)
 			exit(EXIT_FAILURE);
 		set_exit_code(ctx, builtin_cmd(cmd->args, ctx));
 		exit(ctx->err.exit_code);
 	}
-	close_pipes(pipe_in, pipe_out);
+	close_pipes(st);
 	return (register_pid(ctx, pid));
 }
 

@@ -24,7 +24,7 @@
 		using executor->input_fd and executor->output_fd.
 	- Update last_pid in ctx in order to waitpid.
 */
-t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	exec_simple(t_node *node, t_ctx *ctx, t_stage st)
 {
 	t_simple_cmd	*cmd;
 	t_status		status;
@@ -35,9 +35,9 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	if (status == ST_OK)
 	{
 		if (cmd->args != NULL && find_builtin(cmd->args->wd->str) == NULL)
-			status = exec_disk_command(cmd, ctx, pipe_in, pipe_out);
+			status = exec_disk_command(cmd, ctx, st);
 		else
-			status = exec_builtin(cmd, ctx, pipe_in, pipe_out);
+			status = exec_builtin(cmd, ctx, st);
 	}
 	return (set_exit_code(ctx, status));
 }

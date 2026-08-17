@@ -30,8 +30,7 @@ int			run_path_search_command(char *path_value, char **argv, char **envp);
 	Todo left
 	- restore signals
 */
-t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-		int pipe_out)
+t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, t_stage st)
 {
 	pid_t			pid;
 	t_exec_params	params;
@@ -44,14 +43,14 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		return (free_exec_params(params.argv, params.envp), ST_FAILURE);
 	if (pid == 0)
 	{
-		enter_child(ctx, pipe_in, pipe_out);
+		enter_child(st);
 		if (apply_redirects(cmd->redirects, false) != ST_OK)
 			exit(EXIT_FAILURE);
 		disk_command(params.argv, params.envp, ctx);
 		exit(EXIT_FAILURE);
 	}
 	free_exec_params(params.argv, params.envp);
-	close_pipes(pipe_in, pipe_out);
+	close_pipes(st);
 	return (register_pid(ctx, pid));
 }
 

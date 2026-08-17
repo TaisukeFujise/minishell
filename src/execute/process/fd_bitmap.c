@@ -26,6 +26,26 @@ t_fd_bitmap	*new_fd_bitmap(int size)
 	return (new);
 }
 
+/*
+	A copy of src that can also hold fd, for the child of one pipeline
+	stage. A copy, not the same bitmap: what a stage adds must not stay
+	behind for the commands that follow it.
+*/
+t_fd_bitmap	*grow_fd_bitmap(t_fd_bitmap *src, int fd)
+{
+	t_fd_bitmap	*copy;
+	int			size;
+
+	size = src->size;
+	if (fd >= size)
+		size = fd + 8;
+	copy = new_fd_bitmap(size);
+	if (copy == NULL)
+		return (NULL);
+	ft_memcpy(copy->bitmap, src->bitmap, src->size);
+	return (copy);
+}
+
 void	close_fd_bitmap(t_fd_bitmap *fd_bitmap)
 {
 	int	i;

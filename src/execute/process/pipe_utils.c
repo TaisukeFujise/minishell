@@ -15,6 +15,20 @@
 #include "../../../include/parser.h"
 
 /*
+	A stage that holds nothing: no pipe, no fd to close in a child.
+	Callers fill in what they own. One place knows the fields.
+*/
+t_stage	new_stage(int in, int out)
+{
+	t_stage	st;
+
+	st.in = in;
+	st.out = out;
+	st.close = NULL;
+	return (st);
+}
+
+/*
 	Put source on target and hand target the open file it names.
 	Nothing to close when they are the same fd: closing would drop it.
 */
@@ -35,19 +49,19 @@ t_status	move_fd(int source, int target)
 	its redirects, is applied by the caller.
 	The child cannot run anything if the boundary fails, so it exits.
 */
-void	enter_child(t_ctx *ctx, int pipe_in, int pipe_out)
+void	enter_child(t_stage st)
 {
-	if (pipe_in != NO_PIPE && move_fd(pipe_in, STDIN_FILENO) != ST_OK)
+	if (st.in != NO_PIPE && move_fd(st.in, STDIN_FILENO) != ST_OK)
 		exit(EXIT_FAILURE);
-	if (pipe_out != NO_PIPE && move_fd(pipe_out, STDOUT_FILENO) != ST_OK)
+	if (st.out != NO_PIPE && move_fd(st.out, STDOUT_FILENO) != ST_OK)
 		exit(EXIT_FAILURE);
-	close_fd_bitmap(ctx->bitmap);
+	close_fd_bitmap(st.close);
 }
 
-void	close_pipes(int pipe_in, int pipe_out)
+void	close_pipes(t_stage st)
 {
-	if (pipe_in != NO_PIPE)
-		close(pipe_in);
-	if (pipe_out != NO_PIPE)
-		close(pipe_out);
+	if (st.in != NO_PIPE)
+		close(st.in);
+	if (st.out != NO_PIPE)
+		close(st.out);
 }

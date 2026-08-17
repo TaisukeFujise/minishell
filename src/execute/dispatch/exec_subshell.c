@@ -15,7 +15,7 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
-t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	exec_subshell(t_node *node, t_ctx *ctx, t_stage st)
 {
 	pid_t	pid;
 
@@ -27,13 +27,15 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 		free(ctx->pids);
 		ctx->pids = NULL;
 		ctx->npid = 0;
-		enter_child(ctx, pipe_in, pipe_out);
+		enter_child(st);
 		if (expand_command(node, ctx, ctx->arenas) != ST_OK
 			|| apply_redirects(node->u_node.subshell.redirects, false) != ST_OK)
 			exit(EXIT_FAILURE);
-		execute_internal(node->left, ctx, NO_PIPE, NO_PIPE);
+		st.in = NO_PIPE;
+		st.out = NO_PIPE;
+		execute_internal(node->left, ctx, st);
 		exit(ctx->err.exit_code);
 	}
-	close_pipes(pipe_in, pipe_out);
+	close_pipes(st);
 	return (register_pid(ctx, pid));
 }

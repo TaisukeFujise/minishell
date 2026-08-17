@@ -29,7 +29,7 @@ static int	test_basic_subshell(void)
 
 	ft_bzero(&ctx, sizeof(t_ctx));
 	node = new_subshell_node();
-	status = exec_subshell(&node, &ctx, NO_PIPE, NO_PIPE);
+	status = exec_subshell(&node, &ctx, new_stage(NO_PIPE, NO_PIPE));
 	if (status != ST_OK)
 		return (printf("[NG] basic subshell: status=%d\n", status), 1);
 	if (ctx.npid != 1)
@@ -59,7 +59,7 @@ static int	test_close_pipes_in_parent(void)
 	is_ng = 0;
 	if (pipe(in_pipe) < 0 || pipe(out_pipe) < 0)
 		return (printf("[NG] close pipes: pipe() failed\n"), 1);
-	status = exec_subshell(&node, &ctx, in_pipe[0], out_pipe[1]);
+	status = exec_subshell(&node, &ctx, new_stage(in_pipe[0], out_pipe[1]));
 	if (status != ST_OK)
 		is_ng = 1;
 	if (fcntl(in_pipe[0], F_GETFD) != -1 || errno != EBADF)

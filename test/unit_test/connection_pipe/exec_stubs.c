@@ -6,21 +6,19 @@ t_builtin	find_builtin(char *name)
 	return (NULL);
 }
 
-t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, t_stage st)
 {
 	(void)cmd;
 	(void)ctx;
-	(void)pipe_in;
-	(void)pipe_out;
+	(void)st;
 	return (ST_FATAL);
 }
 
-t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	exec_subshell(t_node *node, t_ctx *ctx, t_stage st)
 {
 	(void)node;
 	(void)ctx;
-	(void)pipe_in;
-	(void)pipe_out;
+	(void)st;
 	return (ST_FATAL);
 }
 
