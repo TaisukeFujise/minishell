@@ -16,6 +16,14 @@
 # include "minishell.h"
 # include <errno.h>
 
+typedef struct s_export_arg
+{
+	t_word	*word;
+	size_t	key_len;
+	size_t	value_pos;
+	bool	append;
+}	t_export_arg;
+
 t_status	cd_cmd(t_word_list *args, t_ctx *ctx);
 t_status	echo_cmd(t_word_list *args, t_ctx *ctx);
 t_status	env_cmd(t_word_list *args, t_ctx *ctx);

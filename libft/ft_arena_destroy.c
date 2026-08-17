@@ -7,12 +7,12 @@ void	ft_arena_destroy(t_arena *arena)
 
 	if (!arena)
 		return ;
-	chunk = arena->current;
+	chunk = arena->head;
 	while (chunk)
 	{
 		prev = chunk->prev;
 		free(chunk);
 		chunk = prev;
 	}
-	arena->current = NULL;
+	arena->head = NULL;
 }

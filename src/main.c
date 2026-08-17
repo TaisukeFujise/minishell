@@ -52,12 +52,10 @@ static t_status	parse_and_execute(char *user_input, t_node *ast, t_ctx *ctx)
 	{
 		ft_arena_init(&arenas.ast, ARENA_DEFAULT_CHUNK_SIZE);
 		ft_arena_init(&arenas.tmp, ARENA_DEFAULT_CHUNK_SIZE);
-		ft_arena_init(&arenas.heredoc, ARENA_DEFAULT_CHUNK_SIZE);
 		status = parse(&cursor, ast, ctx, &arenas);
 		if (status == ST_FAILURE)
 		{
 			ft_arena_destroy(&arenas.tmp);
-			ft_arena_destroy(&arenas.heredoc);
 			ft_arena_destroy(&arenas.ast);
 			continue ;
 		}
@@ -66,7 +64,6 @@ static t_status	parse_and_execute(char *user_input, t_node *ast, t_ctx *ctx)
 			close_heredocs(ast->left);
 			ast->left = NULL;
 			ft_arena_destroy(&arenas.tmp);
-			ft_arena_destroy(&arenas.heredoc);
 			ft_arena_destroy(&arenas.ast);
 			handle_command_termination(status, user_input, ast, ctx);
 		}
@@ -77,7 +74,6 @@ static t_status	parse_and_execute(char *user_input, t_node *ast, t_ctx *ctx)
 			ast->left = NULL;
 		}
 		ft_arena_destroy(&arenas.tmp);
-		ft_arena_destroy(&arenas.heredoc);
 		ft_arena_destroy(&arenas.ast);
 		if (status == ST_FAILURE)
 			continue ;
