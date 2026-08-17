@@ -14,6 +14,12 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
+void	close_fd(int fd)
+{
+	if (fd != NO_PIPE)
+		close(fd);
+}
+
 /*
 	Put source on target and hand target the open file it names.
 	Nothing to close when they are the same fd: closing would drop it.

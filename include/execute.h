@@ -86,6 +86,7 @@ t_status	apply_assign(t_assign *assign, t_hashtable *table, t_ctx *ctx,
 
 // <process>
 /* pipe_utils.c */
+void		close_fd(int fd);
 t_status	move_fd(int source, int target);
 /* procs.c */
 bool		procs_init(t_procs *procs, int capacity);

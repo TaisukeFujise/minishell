@@ -40,6 +40,20 @@ static void	stage_child(t_node *node, t_ctx *ctx, int prevfd, int *pipefd)
 	pipe it writes into, and it closes the one it does not want by name.
 	Nothing has to track a set of inherited fds. [dash evalpipe()]
 */
+static pid_t	fork_stage(t_node **stages, t_ctx *ctx, int prevfd, int *pipefd)
+{
+	pid_t	pid;
+
+	pipefd[0] = NO_PIPE;
+	pipefd[1] = NO_PIPE;
+	if (stages[1] != NULL && pipe(pipefd) < 0)
+		return (-1);
+	pid = fork();
+	if (pid == 0)
+		stage_child(*stages, ctx, prevfd, pipefd);
+	return (pid);
+}
+
 static t_status	start_stages(t_node **stages, t_ctx *ctx, t_procs *procs)
 {
 	int		pipefd[2];
@@ -49,20 +63,14 @@ static t_status	start_stages(t_node **stages, t_ctx *ctx, t_procs *procs)
 	prevfd = NO_PIPE;
 	while (*stages != NULL)
 	{
-		pipefd[0] = NO_PIPE;
-		pipefd[1] = NO_PIPE;
-		if (stages[1] != NULL && pipe(pipefd) < 0)
-			return (ctx->err.exit_code = 1, ST_FAILURE);
-		pid = fork();
-		if (pid == 0)
-			stage_child(*stages, ctx, prevfd, pipefd);
-		if (prevfd != NO_PIPE)
-			close(prevfd);
-		if (pipefd[1] != NO_PIPE)
-			close(pipefd[1]);
+		pid = fork_stage(stages, ctx, prevfd, pipefd);
+		close_fd(prevfd);
+		close_fd(pipefd[1]);
 		prevfd = pipefd[0];
-		if (pid < 0 || procs_add(procs, pid) != ST_OK)
-			return (close(prevfd), ST_FATAL);
+		if (pid < 0)
+			return (close_fd(prevfd), ctx->err.exit_code = 1, ST_FAILURE);
+		if (procs_add(procs, pid) != ST_OK)
+			return (close_fd(prevfd), ST_FATAL);
 		stages++;
 	}
 	return (ST_OK);
@@ -78,11 +86,13 @@ t_status	exec_pipeline(t_node *node, t_ctx *ctx)
 	t_node		**stages;
 	t_procs		procs;
 	t_status	result;
+	int			count;
 
-	stages = ft_calloc(count_stages(node) + 1, sizeof(t_node *));
+	count = count_stages(node);
+	stages = ft_calloc(count + 1, sizeof(t_node *));
 	if (stages == NULL)
 		return (ST_FATAL);
-	if (!procs_init(&procs, count_stages(node)))
+	if (!procs_init(&procs, count))
 		return (free(stages), ST_FATAL);
 	collect_stages(node, stages);
 	result = start_stages(stages, ctx, &procs);

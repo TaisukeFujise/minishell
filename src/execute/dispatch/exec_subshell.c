@@ -36,7 +36,7 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, bool own)
 		return (subshell_body(node, ctx));
 	pid = fork();
 	if (pid < 0)
-		return (ST_FATAL);
+		return (ctx->err.exit_code = 1, ST_FAILURE);
 	if (pid == 0)
 	{
 		subshell_body(node, ctx);
