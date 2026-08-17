@@ -16,7 +16,7 @@
 
 void		exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx,
 				int pipe_in, int pipe_out);
-t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
+t_status	exec_null_command_in_parent(t_simple_cmd *cmd);
 
 /*
 	execute null command, meaning no args command.
@@ -53,7 +53,7 @@ t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		return (ST_FATAL);
 	}
 	else
-		return (exec_null_command_in_parent(cmd, ctx));
+		return (exec_null_command_in_parent(cmd));
 }
 
 /*
@@ -82,8 +82,6 @@ void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	pipe_out = NO_PIPE;
 	if (apply_redirects(cmd->redirects) != ST_OK)
 		exit(EXIT_FAILURE);
-	if (apply_assigns(ctx->env_table, cmd->assigns, VARS) != ST_OK)
-		exit(EXIT_FAILURE);
 	exit(EXIT_SUCCESS);
 }
 
@@ -94,7 +92,7 @@ void	exec_null_command_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	- apply_assigns_to_vars
 	- undo_stdio
 */
-t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
+t_status	exec_null_command_in_parent(t_simple_cmd *cmd)
 {
 	t_status	result;
 	t_savedfd	saved;
@@ -102,12 +100,6 @@ t_status	exec_null_command_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 	if (save_stdio(&saved) != ST_OK)
 		return (ST_FAILURE);
 	if (apply_redirects(cmd->redirects) != ST_OK)
-	{
-		result = undo_stdio(saved);
-		close_savedfd(saved);
-		return (result);
-	}
-	if (apply_assigns(ctx->env_table, cmd->assigns, VARS) != ST_OK)
 	{
 		result = undo_stdio(saved);
 		close_savedfd(saved);

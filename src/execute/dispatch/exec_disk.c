@@ -40,8 +40,6 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 
 	pipes.pipe_in = pipe_in;
 	pipes.pipe_out = pipe_out;
-	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) != ST_OK)
-		return (ST_FATAL);
 	if (build_exec_params(&exec_params, cmd->args, ctx->tmp_table,
 			ctx->env_table) == FAILURE)
 		return (ST_FATAL);

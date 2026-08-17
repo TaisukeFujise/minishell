@@ -13,6 +13,31 @@ static const char	*get_ifs(t_ctx *ctx)
 	return (value);
 }
 
+/*
+	Without a command name the assignments update the shell itself, and the
+	redirections see them. With a command name they only make the environment
+	of that command, so the arguments and the redirections are expanded first.
+	[ bash manual, Simple Command Expansion ]
+*/
+static t_status	expand_simple(t_expand *exp, t_simple_cmd *cmd)
+{
+	t_status	status;
+
+	if (cmd->args == NULL)
+	{
+		status = expand_assigns(exp, cmd->assigns, exp->ctx->env_table, VARS);
+		if (status == ST_OK)
+			status = expand_redirects(exp, cmd->redirects);
+		return (status);
+	}
+	status = expand_args(exp, cmd);
+	if (status == ST_OK)
+		status = expand_redirects(exp, cmd->redirects);
+	if (status == ST_OK)
+		status = expand_assigns(exp, cmd->assigns, exp->ctx->tmp_table, TMP);
+	return (status);
+}
+
 t_status	expand_command(t_node *node, t_ctx *ctx, t_arenas *arenas)
 {
 	t_expand	exp;
@@ -25,14 +50,7 @@ t_status	expand_command(t_node *node, t_ctx *ctx, t_arenas *arenas)
 		return (ST_FATAL);
 	status = ST_OK;
 	if (node->node_kind == NODE_SIMPLE)
-	{
-		status = expand_assigns(&exp, node->u_node.simple_command.assigns);
-		if (status == ST_OK)
-			status = expand_args(&exp, &node->u_node.simple_command);
-		if (status == ST_OK)
-			status = expand_redirects(&exp,
-					node->u_node.simple_command.redirects);
-	}
+		status = expand_simple(&exp, &node->u_node.simple_command);
 	else if (node->node_kind == NODE_SUBSHELL)
 		status = expand_redirects(&exp, node->u_node.subshell.redirects);
 	ft_arena_reset(&arenas->tmp);

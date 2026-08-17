@@ -28,10 +28,7 @@ EXPECTED_FAIL="
 andor_false
 redirect_before_search
 lexical_assign
-assign_left_to_right
-assign_no_split
 prefix_path
-no_command_redirect
 subshell
 missing_diagnostic
 "
@@ -93,10 +90,10 @@ run_case pipe 'echo x | cat'
 run_case assign_prefix_arg 'X=old
 X=new printf %s "$X"'
 run_case assign_left_to_right 'unset A B
-A=one B=$A env'
+A=one B=$A env | grep -E "^(A|B)="'
 run_case assign_no_split 'IFS=:
 V=a::b
-X=$V env'
+X=$V env | grep "^X="'
 run_case prefix_path 'PATH=/missing ls'
 run_case redirect_before_search 'definitely_missing_xyz > made.txt'
 run_case no_command_redirect 'X=old

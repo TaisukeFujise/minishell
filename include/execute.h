@@ -76,7 +76,7 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 
 // <expansion>
 /* assigns.c */
-t_status	apply_assigns(t_hashtable *table, t_assign *assign,
+t_status	apply_assign(t_assign *assign, t_hashtable *table, t_ctx *ctx,
 				t_tabletype type);
 /* expand.c */
 

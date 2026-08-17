@@ -1,3 +1,4 @@
+#include "../../../include/execute.h"
 #include "expand_internal.h"
 
 static t_status	expand_arg(t_expand *exp, t_word *wd, char **cmd,
@@ -80,30 +81,29 @@ t_status	expand_redirects(t_expand *exp, t_redirect *redir)
 	return (ST_OK);
 }
 
-t_status	expand_assigns(t_expand *exp, t_assign *assign)
+t_status	expand_assigns(t_expand *exp, t_assign *assign, t_hashtable *table,
+		t_tabletype type)
 {
-	char	*str;
-
 	while (assign)
 	{
-		str = ft_arena_strndup(&exp->arenas->ast, assign->key->str,
-				assign->key->len);
-		if (!str)
+		assign->key->str = ft_arena_strndup(&exp->arenas->ast,
+				assign->key->str, assign->key->len);
+		if (!assign->key->str)
 			return (ST_FATAL);
-		assign->key->str = str;
 		if (assign->value)
 		{
 			if (expand_word(exp, assign->value, NULL) != ST_OK)
 				return (ST_FATAL);
-			str = ft_arena_strndup(&exp->arenas->ast,
+			assign->value->str = ft_arena_strndup(&exp->arenas->ast,
 					exp->buf.text.data, exp->buf.text.len);
-			if (!str)
+			if (!assign->value->str)
 				return (ST_FATAL);
-			assign->value->str = str;
 			assign->value->len = exp->buf.text.len;
 			assign->value->flag = W_NONE;
 			assign->value->next = NULL;
 		}
+		if (apply_assign(assign, table, exp->ctx, type) != ST_OK)
+			return (ST_FATAL);
 		assign = assign->next;
 	}
 	return (ST_OK);

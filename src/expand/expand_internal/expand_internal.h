@@ -1,6 +1,7 @@
 #ifndef EXPAND_INTERNAL_H
 # define EXPAND_INTERNAL_H
 
+# include "execute.h"
 # include "expand.h"
 # include "strbuf.h"
 # include <dirent.h>
@@ -41,7 +42,8 @@ typedef struct s_param
 
 t_status	expand_args(t_expand *exp, t_simple_cmd *cmd);
 t_status	expand_redirects(t_expand *exp, t_redirect *redir);
-t_status	expand_assigns(t_expand *exp, t_assign *assign);
+t_status	expand_assigns(t_expand *exp, t_assign *assign,
+				t_hashtable *table, t_tabletype type);
 t_status	expand_heredoc_body(t_expand *exp, t_redirect *redir);
 bool		expand_buf_init(t_expand_buf *buf);
 void		expand_buf_free(t_expand_buf *buf);

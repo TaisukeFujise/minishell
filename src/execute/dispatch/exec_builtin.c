@@ -80,8 +80,6 @@ void	exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	pipe_out = NO_PIPE;
 	if (apply_redirects(cmd->redirects) != ST_OK)
 		exit(EXIT_FAILURE);
-	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) != ST_OK)
-		exit(EXIT_FAILURE);
 	builtin_cmd(cmd->args, ctx);
 	exit(ctx->err.exit_code);
 }
@@ -102,11 +100,6 @@ t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 	if (save_stdio(&saved) != ST_OK)
 		return (ST_FAILURE);
 	if (apply_redirects(cmd->redirects) != ST_OK)
-	{
-		result = undo_stdio(saved);
-		return (close_savedfd(saved), result);
-	}
-	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) == ST_FATAL)
 	{
 		result = undo_stdio(saved);
 		return (close_savedfd(saved), result);
