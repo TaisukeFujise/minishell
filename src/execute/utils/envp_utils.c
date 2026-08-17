@@ -76,7 +76,7 @@ static char	**walk_table(t_hashtable *table, t_hashtable *skip, char **envp)
 		item = hash_items(i, table);
 		while (item != NULL)
 		{
-			if (item->data.exported
+			if (item->data.exported && item->data.value != NULL
 				&& (skip == NULL || hash_search(item->key, skip) == NULL))
 			{
 				*envp = make_env_entry(item->key, item->data.value);

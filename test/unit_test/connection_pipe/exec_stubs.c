@@ -18,9 +18,10 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	return (ST_FATAL);
 }
 
-t_status	expand_words(t_simple_cmd *cmd, t_ctx *ctx)
+t_status	expand_command(t_node *node, t_ctx *ctx, t_arenas *arenas)
 {
-	(void)cmd;
+	(void)node;
 	(void)ctx;
+	(void)arenas;
 	return (ST_OK);
 }
