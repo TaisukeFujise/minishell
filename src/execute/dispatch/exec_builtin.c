@@ -97,18 +97,20 @@ t_status	builtin_cmd(t_word_list *args, t_ctx *ctx)
 */
 t_builtin	find_builtin(char *name)
 {
-	static const char		*names[] = {"cd", "echo", "env", "exit", "export",
-		"pwd", "unset"};
-	static const t_builtin	fns[] = {cd_cmd, echo_cmd, env_cmd, exit_cmd,
-		export_cmd, pwd_cmd, unset_cmd};
-	size_t					i;
-
-	i = 0;
-	while (i < sizeof(fns) / sizeof(fns[0]))
-	{
-		if (ft_strcmp(name, names[i]) == 0)
-			return (fns[i]);
-		i++;
-	}
-	return (NULL);
+	if (ft_strcmp(name, "cd") == 0)
+		return (cd_cmd);
+	else if (ft_strcmp(name, "echo") == 0)
+		return (echo_cmd);
+	else if (ft_strcmp(name, "env") == 0)
+		return (env_cmd);
+	else if (ft_strcmp(name, "exit") == 0)
+		return (exit_cmd);
+	else if (ft_strcmp(name, "export") == 0)
+		return (export_cmd);
+	else if (ft_strcmp(name, "pwd") == 0)
+		return (pwd_cmd);
+	else if (ft_strcmp(name, "unset") == 0)
+		return (unset_cmd);
+	else
+		return (NULL);
 }
