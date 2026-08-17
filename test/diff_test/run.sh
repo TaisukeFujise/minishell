@@ -32,6 +32,7 @@ missing_diagnostic
 unset_path
 exit_prints
 heredoc
+pipe_assign_leak
 "
 
 run_case()
@@ -118,6 +119,11 @@ grep -c nosuchcmd_xyz err.txt'
 run_case unset_path 'unset PATH
 ls'
 run_case exit_prints 'exit 7'
+# A pipeline stage runs in a child, so what it assigns cannot reach the
+# shell. bash forks before it expands the words for this reason.
+run_case pipe_assign_leak 'unset X
+echo a | X=5
+echo "[$X]"'
 # minishell loops forever on a heredoc that EOF ends: parse() reports the
 # failure without consuming the input and the main loop parses it again.
 run_case heredoc 'cat << EOF
