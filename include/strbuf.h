@@ -12,8 +12,8 @@ typedef struct s_strbuf
 }	t_strbuf;
 
 bool	strbuf_init(t_strbuf *buf);
-void	strbuf_reset(t_strbuf *buf);
 bool	strbuf_append(t_strbuf *buf, const char *str, size_t len);
+char	*strbuf_detach(t_strbuf *buf, size_t *len);
 void	strbuf_free(t_strbuf *buf);
 
 #endif

@@ -99,10 +99,5 @@ void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)
 		strbuf_free(&buf);
 		return ;
 	}
-	redir->hd.raw_str.str = ft_arena_strndup(&ps->arenas->heredoc,
-			buf.data, buf.len);
-	redir->hd.raw_str.len = buf.len;
-	strbuf_free(&buf);
-	if (!redir->hd.raw_str.str)
-		return (parser_fail(ps, ST_FATAL, NULL));
+	redir->hd.raw_str.str = strbuf_detach(&buf, &redir->hd.raw_str.len);
 }

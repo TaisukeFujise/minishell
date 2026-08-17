@@ -16,14 +16,14 @@ static bool	add_dollar(t_expand *exp, t_word *raw, char **body)
 
 static t_status	store_body(t_expand *exp, t_redirect *redir)
 {
-	char	*result;
+	char	*old;
 
-	result = ft_arena_strndup(&exp->arenas->heredoc,
-			exp->buf.text.data, exp->buf.text.len);
-	if (!result)
+	old = redir->hd.raw_str.str;
+	redir->hd.raw_str.str = strbuf_detach(&exp->buf.text,
+			&redir->hd.raw_str.len);
+	free(old);
+	if (!strbuf_init(&exp->buf.text))
 		return (ST_FATAL);
-	redir->hd.raw_str.str = result;
-	redir->hd.raw_str.len = exp->buf.text.len;
 	return (ST_OK);
 }
 

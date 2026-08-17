@@ -36,12 +36,6 @@ bool	strbuf_init(t_strbuf *buf)
 	return (true);
 }
 
-void	strbuf_reset(t_strbuf *buf)
-{
-	buf->len = 0;
-	buf->data[0] = '\0';
-}
-
 bool	strbuf_append(t_strbuf *buf, const char *str, size_t len)
 {
 	if (len == 0)
@@ -54,6 +48,19 @@ bool	strbuf_append(t_strbuf *buf, const char *str, size_t len)
 	buf->len += len;
 	buf->data[buf->len] = '\0';
 	return (true);
+}
+
+char	*strbuf_detach(t_strbuf *buf, size_t *len)
+{
+	char	*data;
+
+	data = buf->data;
+	if (len)
+		*len = buf->len;
+	buf->data = NULL;
+	buf->len = 0;
+	buf->cap = 0;
+	return (data);
 }
 
 void	strbuf_free(t_strbuf *buf)

@@ -269,13 +269,11 @@ static void	init_arenas(t_arenas *arenas)
 {
 	ft_arena_init(&arenas->ast, ARENA_DEFAULT_CHUNK_SIZE);
 	ft_arena_init(&arenas->tmp, ARENA_DEFAULT_CHUNK_SIZE);
-	ft_arena_init(&arenas->heredoc, ARENA_DEFAULT_CHUNK_SIZE);
 }
 
 static void	destroy_arenas(t_arenas *arenas)
 {
 	ft_arena_destroy(&arenas->tmp);
-	ft_arena_destroy(&arenas->heredoc);
 	ft_arena_destroy(&arenas->ast);
 }
 

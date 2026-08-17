@@ -18,8 +18,10 @@ void	expand_buf_free(t_expand_buf *buf)
 
 void	expand_buf_reset(t_expand_buf *buf)
 {
-	strbuf_reset(&buf->text);
-	strbuf_reset(&buf->mask);
+	buf->text.len = 0;
+	buf->text.data[0] = '\0';
+	buf->mask.len = 0;
+	buf->mask.data[0] = '\0';
 }
 
 bool	expand_buf_append(t_expand_buf *buf, const char *str, size_t len,

@@ -10,12 +10,10 @@ void	parser_mock_set_lines(const char **lines)
 	if (g_arena_ready)
 	{
 		ft_arena_destroy(&g_parser_arenas.tmp);
-		ft_arena_destroy(&g_parser_arenas.heredoc);
 		ft_arena_destroy(&g_parser_arenas.ast);
 	}
 	ft_arena_init(&g_parser_arenas.ast, ARENA_DEFAULT_CHUNK_SIZE);
 	ft_arena_init(&g_parser_arenas.tmp, ARENA_DEFAULT_CHUNK_SIZE);
-	ft_arena_init(&g_parser_arenas.heredoc, ARENA_DEFAULT_CHUNK_SIZE);
 	g_arena_ready = 1;
 	g_mock_lines = lines;
 	g_mock_idx = 0;
@@ -38,7 +36,6 @@ t_status	parser_test_parse(char **cursor, t_node *ast, t_ctx *ctx)
 	{
 		ft_arena_init(&g_parser_arenas.ast, ARENA_DEFAULT_CHUNK_SIZE);
 		ft_arena_init(&g_parser_arenas.tmp, ARENA_DEFAULT_CHUNK_SIZE);
-		ft_arena_init(&g_parser_arenas.heredoc, ARENA_DEFAULT_CHUNK_SIZE);
 		g_arena_ready = 1;
 	}
 	return (parse(cursor, ast, ctx, &g_parser_arenas));
@@ -50,7 +47,6 @@ void	parser_test_free(t_node *node)
 	if (g_arena_ready)
 	{
 		ft_arena_destroy(&g_parser_arenas.tmp);
-		ft_arena_destroy(&g_parser_arenas.heredoc);
 		ft_arena_destroy(&g_parser_arenas.ast);
 	}
 	g_arena_ready = 0;
