@@ -58,7 +58,10 @@ t_status	exec_andor(t_node *node, t_ctx *ctx, t_stage st)
 
 /*
 	- make pipe
-	- copy the fd bitmap for the stages, with the read end added
+	- copy the fd bitmap for the left hand, with the read end added: the
+	  left hand must not keep the end the right hand reads from. The
+	  right hand reads from it, so it keeps the bitmap it was given.
+	  A stage never carries its own input in the set it has to close.
 	- run the left hand into the write end, the right hand out of the
 	  read end, and close this pipe on the way out
 	The endpoints belong here: no stage closes them for us. A setup
@@ -81,14 +84,14 @@ static t_status	run_stages(t_node *node, t_ctx *ctx, t_stage st)
 	side.pipe_out = pipe_fd[1];
 	result = execute_internal(node->left, ctx, side);
 	close(pipe_fd[1]);
+	dispose_fd_bitmap(side.close);
 	if (result == ST_OK)
 	{
+		side = st;
 		side.pipe_in = pipe_fd[0];
-		side.pipe_out = st.pipe_out;
 		result = execute_internal(node->right, ctx, side);
 	}
 	close(pipe_fd[0]);
-	dispose_fd_bitmap(side.close);
 	return (result);
 }
 

@@ -45,18 +45,20 @@ t_status	move_fd(int source, int target)
 
 /*
 	enter_child sets up the process boundary of a forked command:
-	connect the pipe endpoints to stdio and close the fds inherited from
-	the pipelines around this command. What the command itself needs,
-	its redirects, is applied by the caller.
+	close the fds inherited from the pipelines around this command, then
+	connect its own endpoints to stdio. Closing first is what bash does,
+	for the case where an endpoint is itself fd 0 or 1; it is safe because
+	a stage never carries its own input in the set it has to close.
+	What the command itself needs, its redirects, is applied by the caller.
 	The child cannot run anything if the boundary fails, so it exits.
 */
 void	enter_child(t_stage st)
 {
+	close_fd_bitmap(st.close);
 	if (st.pipe_in != NO_PIPE && move_fd(st.pipe_in, STDIN_FILENO) != ST_OK)
 		exit(EXIT_FAILURE);
 	if (st.pipe_out != NO_PIPE && move_fd(st.pipe_out, STDOUT_FILENO) != ST_OK)
 		exit(EXIT_FAILURE);
-	close_fd_bitmap(st.close);
 }
 
 void	close_pipes(t_stage st)
