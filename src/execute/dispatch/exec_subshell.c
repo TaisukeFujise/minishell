@@ -23,8 +23,11 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 		return (ST_FATAL);
 	if (pid == 0)
 	{
+		free(ctx->pids);
+		ctx->pids = NULL;
+		ctx->npid = 0;
 		execute_internal(node->left, ctx, pipe_in, pipe_out);
-		_exit(ctx->err.exit_code);
+		exit(ctx->err.exit_code);
 	}
 	close_pipes(pipe_in, pipe_out);
 	return (register_pid(ctx, pid));

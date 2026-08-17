@@ -110,6 +110,10 @@ run_case lexical_assign 'EMPTY=
 $EMPTY X=1'
 
 run_case subshell '(echo sub)'
+# The status of a subshell that is the right hand side of a pipe. It is lost
+# if the child waits for the pids it inherited from the shell (review S43-05).
+run_case subshell_status 'echo a | (nosuchcmd_xyz)
+echo "rc=$?"'
 run_case missing_status 'nosuchcmd_xyz'
 
 # Not implemented yet. This case compares the message, not just the status:
