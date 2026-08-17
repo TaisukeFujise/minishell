@@ -17,6 +17,25 @@
 static int	open_redirect_fd(t_redirect *redirect);
 
 /*
+	Copy fd to a number at or above floor. dup() hands out the lowest free
+	fd, which a later redirect of the same command would overwrite, so the
+	low copies are held until a high one comes out. Returns -1 if fd is
+	not open. bash moves backups the same way with fcntl(F_DUPFD).
+*/
+static int	dup_above(int fd, int floor)
+{
+	int	low;
+	int	high;
+
+	low = dup(fd);
+	if (low < 0 || low >= floor)
+		return (low);
+	high = dup_above(fd, floor);
+	close(low);
+	return (high);
+}
+
+/*
 	The backup of an io number must sit above every io number this command
 	redirects, or one of them overwrites it.
 */
@@ -46,43 +65,27 @@ static int	backup_floor(t_redirect *redirects)
 */
 t_status	apply_redirects(t_redirect *redirects, bool undoable)
 {
-	t_redirect	*redir;
-	int			floor;
-	int			fd;
+	int	floor;
+	int	fd;
 
-	floor = backup_floor(redirects);
-	redir = redirects;
-	while (redir)
+	floor = 0;
+	if (undoable)
+		floor = backup_floor(redirects);
+	while (redirects)
 	{
 		if (undoable)
 		{
-			redir->saved = dup_above(redir->io_number, floor);
-			if (redir->saved < 0)
-				redir->saved = FD_WAS_CLOSED;
+			redirects->saved = dup_above(redirects->io_number, floor);
+			if (redirects->saved < 0)
+				redirects->saved = FD_WAS_CLOSED;
 		}
-		fd = open_redirect_fd(redir);
+		fd = open_redirect_fd(redirects);
 		if (fd < 0)
 			return (ST_FAILURE);
-		if (move_fd(fd, redir->io_number) != ST_OK)
+		if (move_fd(fd, redirects->io_number) != ST_OK)
 			return (close(fd), ST_FAILURE);
-		redir = redir->next;
+		redirects = redirects->next;
 	}
-	return (ST_OK);
-}
-
-static t_status	undo_one(t_redirect *redir)
-{
-	int	saved;
-
-	saved = redir->saved;
-	redir->saved = 0;
-	if (saved == FD_WAS_CLOSED)
-		return (close(redir->io_number), ST_OK);
-	if (saved <= 0)
-		return (ST_OK);
-	if (dup2(saved, redir->io_number) < 0)
-		return (close(saved), ST_FATAL);
-	close(saved);
 	return (ST_OK);
 }
 
@@ -93,12 +96,17 @@ static t_status	undo_one(t_redirect *redir)
 t_status	undo_redirects(t_redirect *redirects)
 {
 	t_status	status;
+	int			saved;
 
 	if (redirects == NULL)
 		return (ST_OK);
 	status = undo_redirects(redirects->next);
-	if (undo_one(redirects) != ST_OK)
-		return (ST_FATAL);
+	saved = redirects->saved;
+	redirects->saved = 0;
+	if (saved == FD_WAS_CLOSED)
+		close(redirects->io_number);
+	else if (saved > 0 && move_fd(saved, redirects->io_number) != ST_OK)
+		return (close(saved), ST_FATAL);
 	return (status);
 }
 

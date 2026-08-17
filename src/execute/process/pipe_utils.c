@@ -16,8 +16,7 @@
 
 /*
 	Put source on target and hand target the open file it names.
-	Nothing to move and nothing to close when they are the same fd:
-	closing would drop the fd the caller asked to keep.
+	Nothing to close when they are the same fd: closing would drop it.
 */
 t_status	move_fd(int source, int target)
 {
@@ -30,35 +29,6 @@ t_status	move_fd(int source, int target)
 }
 
 /*
-	Copy fd to a number at or above floor. dup() hands out the lowest free
-	fd, which a later redirect of the same command would overwrite, so the
-	low copies are held until a high one comes out. bash moves backups the
-	same way with fcntl(F_DUPFD), which the subject does not allow.
-	Returns -1 when fd is not open.
-*/
-int	dup_above(int fd, int floor)
-{
-	int	low;
-	int	high;
-
-	low = dup(fd);
-	if (low < 0 || low >= floor)
-		return (low);
-	high = dup_above(fd, floor);
-	close(low);
-	return (high);
-}
-
-t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out)
-{
-	if (pipe_in != NO_PIPE && move_fd(pipe_in, STDIN_FILENO) != ST_OK)
-		return (ST_FAILURE);
-	if (pipe_out != NO_PIPE && move_fd(pipe_out, STDOUT_FILENO) != ST_OK)
-		return (ST_FAILURE);
-	return (ST_OK);
-}
-
-/*
 	enter_child sets up the process boundary of a forked command:
 	connect the pipe endpoints to stdio and close the fds inherited from
 	the pipelines around this command. What the command itself needs,
@@ -67,7 +37,9 @@ t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out)
 */
 void	enter_child(t_ctx *ctx, int pipe_in, int pipe_out)
 {
-	if (attach_pipe_to_stdio(pipe_in, pipe_out) != ST_OK)
+	if (pipe_in != NO_PIPE && move_fd(pipe_in, STDIN_FILENO) != ST_OK)
+		exit(EXIT_FAILURE);
+	if (pipe_out != NO_PIPE && move_fd(pipe_out, STDOUT_FILENO) != ST_OK)
 		exit(EXIT_FAILURE);
 	close_fd_bitmap(ctx->bitmap);
 }
