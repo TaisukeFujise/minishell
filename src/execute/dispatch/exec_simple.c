@@ -46,13 +46,16 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	The numeric status is what the next command tests, so a simple command
 	settles it before it returns. A command that forked gets it from
 	collect_child_result, ST_EXIT and ST_FATAL carry the code the builtin
-	chose.
+	chose. An internal failure that chose no code is a plain failure: a
+	child must not exit 0 because it ran out of memory. [review D37-12]
 */
 t_status	set_exit_code(t_ctx *ctx, t_status status)
 {
 	if (status == ST_OK)
 		ctx->err.exit_code = 0;
 	else if (status == ST_FAILURE)
+		ctx->err.exit_code = 1;
+	else if (status == ST_FATAL && ctx->err.exit_code == 0)
 		ctx->err.exit_code = 1;
 	return (status);
 }

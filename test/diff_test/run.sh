@@ -29,6 +29,7 @@ XFAIL=0
 # Cases that minishell is not expected to pass yet.
 EXPECTED_FAIL="
 builtin_stdio_buffer
+exit_bad_arg
 missing_diagnostic
 unset_path
 exit_prints
@@ -139,6 +140,8 @@ grep -c nosuchcmd_xyz err.txt'
 run_case unset_path 'unset PATH
 ls'
 run_case exit_prints 'exit 7'
+# The shell exits 1 on ST_FATAL whatever status the builtin chose (main.c).
+run_case exit_bad_arg 'exit abc'
 # A pipeline stage runs in a child, so what it assigns cannot reach the
 # shell. bash forks before it expands the words for this reason.
 run_case pipe_assign_leak 'unset X
