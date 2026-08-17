@@ -101,7 +101,7 @@ static int	test_builtin_pipe(t_ctx *ctx)
 		return (close(fds[0]), close(fds[1]), 1);
 	if (exec_builtin(&cmd, ctx, new_stage(NO_PIPE, fds[1])) != ST_OK)
 		return (close(fds[0]), close(fds[1]), free_args(cmd.args), 1);
-	if (collect_child_result(ctx) != ST_OK)
+	if (wait_pid_status(ctx, -1) != ST_OK)
 		return (close(fds[0]), free_args(cmd.args), 1);
 	nread = read(fds[0], buf, sizeof(buf) - 1);
 	if (nread < 0)

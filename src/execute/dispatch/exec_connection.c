@@ -58,33 +58,57 @@ t_status	exec_andor(t_node *node, t_ctx *ctx, t_stage st)
 
 /*
 	- make pipe
-	- recreate fd_bitmap and register pipe_fd[0] to fd_bitmap.
-
-	- set pipe_in and pipe_fd[1] to left hand (register pipe_fd[0] to fd_bitmap)
-	- set pipe_fd[0] and pipe_out to right hand.
+	- copy the fd bitmap for the stages, with the read end added
+	- run the left hand into the write end, the right hand out of the
+	  read end, and close this pipe on the way out
+	The endpoints belong here: no stage closes them for us. A setup
+	failure stops the pipeline instead of being hidden by the right hand.
+	[review P41-05, P41-07, P41-10]
 */
-t_status	exec_pipeline(t_node *node, t_ctx *ctx, t_stage st)
+static t_status	run_stages(t_node *node, t_ctx *ctx, t_stage st)
 {
 	int			pipe_fd[2];
-	t_fd_bitmap	*inner;
 	t_stage		side;
 	t_status	result;
 
 	if (pipe(pipe_fd) < 0)
-		return (ST_FAILURE);
-	inner = grow_fd_bitmap(st.close, pipe_fd[0]);
-	if (inner == NULL)
-		return (close(pipe_fd[0]), close(pipe_fd[1]), ST_FAILURE);
-	inner->bitmap[pipe_fd[0]] = 1;
+		return (ctx->err.exit_code = 1, ST_FAILURE);
 	side = st;
-	side.close = inner;
+	side.close = grow_fd_bitmap(st.close, pipe_fd[0]);
+	if (side.close == NULL)
+		return (close(pipe_fd[0]), close(pipe_fd[1]), ST_FATAL);
+	side.close->bitmap[pipe_fd[0]] = 1;
 	side.pipe_out = pipe_fd[1];
-	execute_internal(node->left, ctx, side);
+	result = execute_internal(node->left, ctx, side);
 	close(pipe_fd[1]);
-	side.pipe_out = st.pipe_out;
-	side.pipe_in = pipe_fd[0];
-	result = execute_internal(node->right, ctx, side);
+	if (result == ST_OK)
+	{
+		side.pipe_in = pipe_fd[0];
+		side.pipe_out = st.pipe_out;
+		result = execute_internal(node->right, ctx, side);
+	}
 	close(pipe_fd[0]);
-	dispose_fd_bitmap(inner);
+	dispose_fd_bitmap(side.close);
 	return (result);
+}
+
+/*
+	The outermost pipeline node owns the process set of the whole
+	pipeline: the stages of "a | b | c" are two nested nodes but one set,
+	and they must all be started before any of them is waited for.
+*/
+t_status	exec_pipeline(t_node *node, t_ctx *ctx, t_stage st)
+{
+	t_procs		procs;
+	t_status	result;
+
+	if (st.procs != NULL)
+		return (run_stages(node, ctx, st));
+	if (!procs_init(&procs, count_stages(node)))
+		return (ST_FATAL);
+	st.procs = &procs;
+	result = run_stages(node, ctx, st);
+	if (result == ST_OK)
+		return (procs_wait(&procs, ctx));
+	return (procs_wait(&procs, ctx), result);
 }

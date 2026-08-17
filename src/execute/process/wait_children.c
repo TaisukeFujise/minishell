@@ -10,48 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../../include/execute.h"
 #include "../../../include/minishell.h"
 
-int			status_to_exitcode(int status);
-void		reset_ctx_pid(t_ctx *ctx);
-
-/*
-	Todo
-	- Wait the arrays of pids
-	- Convert last pid's status to exit code and store in ctx->exit_code
-	- Clean-up ctx's the arrays of pids.
-*/
-t_status	collect_child_result(t_ctx *ctx)
-{
-	int		i;
-	int		status;
-	bool	interrupted;
-
-	i = 0;
-	status = 0;
-	interrupted = false;
-	if (ctx->pids == NULL || ctx->npid < 1)
-		return (ST_FATAL);
-	while (i < ctx->npid)
-	{
-		if (waitpid(ctx->pids[i], &status, 0) < 0)
-		{
-			if (errno != EINTR)
-				return (ST_FATAL);
-			interrupted = true;
-			continue ;
-		}
-		i++;
-	}
-	if (interrupted)
-		ctx->err.exit_code = 130;
-	else
-		ctx->err.exit_code = status_to_exitcode(status);
-	reset_ctx_pid(ctx);
-	return (ST_OK);
-}
-
-int	status_to_exitcode(int status)
+static int	status_to_exitcode(int status)
 {
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
@@ -60,9 +22,45 @@ int	status_to_exitcode(int status)
 	return (1);
 }
 
-void	reset_ctx_pid(t_ctx *ctx)
+/*
+	Wait for one child and make its status the status of the shell.
+	A signal can interrupt the wait; retry the same pid instead of moving
+	on and leaving the child unreaped. [review D37-19]
+*/
+t_status	wait_pid_status(t_ctx *ctx, pid_t pid)
 {
-	free(ctx->pids);
-	ctx->pids = NULL;
-	ctx->npid = 0;
+	int	status;
+	int	waited;
+
+	waited = waitpid(pid, &status, 0);
+	while (waited < 0 && errno == EINTR)
+		waited = waitpid(pid, &status, 0);
+	if (waited < 0)
+		return (ST_FATAL);
+	ctx->err.exit_code = status_to_exitcode(status);
+	return (ST_OK);
+}
+
+/*
+	Wait for every stage of a pipeline. They are recorded in the order
+	they were started, so the last status left in ctx is the status of
+	the last stage, which is the status of the pipeline.
+*/
+t_status	procs_wait(t_procs *procs, t_ctx *ctx)
+{
+	t_status	result;
+	t_status	status;
+	int			i;
+
+	result = ST_OK;
+	i = 0;
+	while (i < procs->count)
+	{
+		status = wait_pid_status(ctx, procs->pids[i]);
+		if (status != ST_OK)
+			result = status;
+		i++;
+	}
+	procs_free(procs);
+	return (result);
 }

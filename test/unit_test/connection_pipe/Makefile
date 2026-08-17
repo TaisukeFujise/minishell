@@ -28,7 +28,7 @@ EXECUTE_SRCS := \
 	exec_disk.c \
 	fd_bitmap.c \
 	pipe_utils.c \
-	register_pid.c \
+	procs.c \
 	wait_children.c \
 	apply_redirect.c \
 	assigns.c \

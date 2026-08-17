@@ -39,15 +39,18 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, t_stage st)
 		else
 			status = exec_builtin(cmd, ctx, st);
 	}
+	if (status == ST_OK)
+		return (ST_OK);
 	return (set_exit_code(ctx, status));
 }
 
 /*
-	The numeric status is what the next command tests, so a simple command
-	settles it before it returns. A command that forked gets it from
-	collect_child_result, ST_EXIT and ST_FATAL carry the code the builtin
-	chose. An internal failure that chose no code is a plain failure: a
-	child must not exit 0 because it ran out of memory. [review D37-12]
+	The numeric status of a command comes from the command: from the
+	builtin that ran, or from waiting for the child. This settles the
+	status of what happens around it instead: an expansion, a fork or a
+	redirect the shell could not carry out is a plain failure, and an
+	internal failure that chose no code must not read as success.
+	[review D37-12, D37-17]
 */
 t_status	set_exit_code(t_ctx *ctx, t_status status)
 {

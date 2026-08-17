@@ -25,6 +25,7 @@ t_stage	new_stage(int pipe_in, int pipe_out)
 	st.pipe_in = pipe_in;
 	st.pipe_out = pipe_out;
 	st.close = NULL;
+	st.procs = NULL;
 	return (st);
 }
 

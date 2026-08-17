@@ -51,7 +51,7 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, t_stage st)
 	}
 	free_exec_params(params.argv, params.envp);
 	close_pipes(st);
-	return (register_pid(ctx, pid));
+	return (dispose_pid(ctx, st, pid));
 }
 
 /*

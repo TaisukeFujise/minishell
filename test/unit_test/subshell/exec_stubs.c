@@ -1,10 +1,9 @@
 #include "subshell_test.h"
 
-t_status	execute_internal(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	execute_internal(t_node *node, t_ctx *ctx, t_stage st)
 {
 	(void)node;
-	(void)pipe_in;
-	(void)pipe_out;
+	(void)st;
 	ctx->err.exit_code = 41;
 	return (ST_OK);
 }

@@ -59,8 +59,6 @@ typedef struct s_ctx
 	// tmp environment variable table.This is set by assignment word in front of cmd.
 	t_arenas					*arenas;
 	// arenas of the current parse iteration. NULL outside of it.
-	pid_t						*pids;
-	int							npid;
 }								t_ctx;
 
 typedef enum e_status

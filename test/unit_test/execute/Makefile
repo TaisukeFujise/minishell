@@ -24,7 +24,7 @@ EXECUTE_SRCS := \
 	init_ctx.c \
 	fd_bitmap.c\
 	pipe_utils.c \
-	register_pid.c \
+	procs.c \
 	apply_redirect.c \
 	assigns.c\
 	heredoc_tmpfile.c\

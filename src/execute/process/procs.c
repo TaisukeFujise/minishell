@@ -14,24 +14,44 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
-/*
-	register_pid stack pid on ctx->pids, and increment ctx->npid
-	- calloc by (npid + 1) size
-	- memcpy pids to new_pids
-	- set new_pids to ctx->pids
-	- increment ctx->npid
-*/
-t_status	register_pid(t_ctx *ctx, pid_t pid)
+bool	procs_init(t_procs *procs, int capacity)
 {
-	pid_t	*new_pids;
+	procs->pids = ft_calloc(capacity, sizeof(pid_t));
+	if (procs->pids == NULL)
+		return (false);
+	procs->count = 0;
+	procs->capacity = capacity;
+	return (true);
+}
 
-	new_pids = ft_calloc(ctx->npid + 1, sizeof(pid_t));
-	if (new_pids == NULL)
+void	procs_free(t_procs *procs)
+{
+	free(procs->pids);
+	procs->pids = NULL;
+	procs->count = 0;
+	procs->capacity = 0;
+}
+
+/*
+	The room was taken before the first fork, so a child always has a
+	place here. [review D37-18, PROC-01]
+*/
+static t_status	procs_add(t_procs *procs, pid_t pid)
+{
+	if (procs->count >= procs->capacity)
 		return (ST_FATAL);
-	ft_memcpy(new_pids, ctx->pids, sizeof(pid_t) * ctx->npid);
-	new_pids[ctx->npid] = pid;
-	free(ctx->pids);
-	ctx->pids = new_pids;
-	ctx->npid++;
+	procs->pids[procs->count] = pid;
+	procs->count++;
 	return (ST_OK);
+}
+
+/*
+	What the parent does with the child it has just forked: hand it to the
+	pipeline that waits for all of its stages, or wait for it right here.
+*/
+t_status	dispose_pid(t_ctx *ctx, t_stage st, pid_t pid)
+{
+	if (st.procs != NULL)
+		return (procs_add(st.procs, pid));
+	return (wait_pid_status(ctx, pid));
 }

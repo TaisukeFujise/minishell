@@ -42,7 +42,7 @@ STRUTIL_SRCS := name.c
 EXEC_SRCS := init_ctx.c\
 			exec_builtin.c\
 			pipe_utils.c\
-			register_pid.c\
+			procs.c\
 			wait_children.c\
 			fd_bitmap.c\
 			apply_redirect.c\

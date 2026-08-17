@@ -24,9 +24,7 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, t_stage st)
 		return (ST_FATAL);
 	if (pid == 0)
 	{
-		free(ctx->pids);
-		ctx->pids = NULL;
-		ctx->npid = 0;
+		st.procs = NULL;
 		enter_child(st);
 		if (expand_command(node, ctx, ctx->arenas) != ST_OK
 			|| apply_redirects(node->u_node.subshell.redirects, false) != ST_OK)
@@ -37,5 +35,5 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, t_stage st)
 		exit(ctx->err.exit_code);
 	}
 	close_pipes(st);
-	return (register_pid(ctx, pid));
+	return (dispose_pid(ctx, st, pid));
 }

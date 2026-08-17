@@ -25,7 +25,7 @@ static t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
 	- in pipe
 		- fork
 		- in child : enter_child, apply_redirects then builtin_cmd
-		- in parent: close_pipes and register_pid
+		- in parent: close_pipes and dispose_pid
 	- single
 		- exec_builtin_in_parent
 */
@@ -47,11 +47,11 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, t_stage st)
 		enter_child(st);
 		if (apply_redirects(cmd->redirects, false) != ST_OK)
 			exit(EXIT_FAILURE);
-		set_exit_code(ctx, builtin_cmd(cmd->args, ctx));
+		builtin_cmd(cmd->args, ctx);
 		exit(ctx->err.exit_code);
 	}
 	close_pipes(st);
-	return (register_pid(ctx, pid));
+	return (dispose_pid(ctx, st, pid));
 }
 
 /*
@@ -79,13 +79,13 @@ t_status	builtin_cmd(t_word_list *args, t_ctx *ctx)
 	t_builtin	fn;
 
 	if (args == NULL)
-		return (ST_OK);
+		return (set_exit_code(ctx, ST_OK));
 	if (args->wd == NULL || args->wd->str == NULL)
 		return (ST_FATAL);
 	fn = find_builtin(args->wd->str);
 	if (fn == NULL)
 		return (ST_FATAL);
-	return (fn(args->next, ctx));
+	return (set_exit_code(ctx, fn(args->next, ctx)));
 }
 
 /*

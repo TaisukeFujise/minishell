@@ -30,18 +30,34 @@
 # include <sys/types.h>
 
 /*
+	The processes one operation started. A pipeline owns one set for all
+	its stages and waits for them together; a command outside a pipeline
+	has none and waits for its own child. Capacity is taken before the
+	first fork, so a child always has a place to be recorded.
+*/
+typedef struct s_procs
+{
+	pid_t	*pids;
+	int		count;
+	int		capacity;
+}			t_procs;
+
+/*
 	What one step of the execution holds. It is passed by value, so what
 	a stage sets stays inside the subtree it runs.
 	- pipe_in/pipe_out: the fds to become stdin and stdout, NO_PIPE when
 	  there are none. The pipeline that made them owns them.
 	- close: the fds a forked child must not keep, the read ends of the
 	  pipelines around it.
+	- procs: the set that will wait for the children of this stage,
+	  NULL outside a pipeline.
 */
 typedef struct s_stage
 {
 	int			pipe_in;
 	int			pipe_out;
 	t_fd_bitmap	*close;
+	t_procs		*procs;
 }				t_stage;
 
 typedef enum s_tabletype
@@ -61,6 +77,7 @@ int			init_ctx(t_ctx *ctx, char **envp);
 /* execute.c */
 t_status	execute(t_node *node, t_ctx *ctx);
 t_status	execute_internal(t_node *node, t_ctx *ctx, t_stage st);
+int			count_stages(t_node *node);
 
 // <dispatch>
 /* exec_builtin.c */
@@ -95,10 +112,13 @@ t_stage		new_stage(int pipe_in, int pipe_out);
 t_status	move_fd(int source, int target);
 void		enter_child(t_stage st);
 void		close_pipes(t_stage st);
-/* register_pid.c */
-t_status	register_pid(t_ctx *ctx, pid_t pid);
+/* procs.c */
+bool		procs_init(t_procs *procs, int capacity);
+void		procs_free(t_procs *procs);
+t_status	dispose_pid(t_ctx *ctx, t_stage st, pid_t pid);
 /* wait_children.c */
-t_status	collect_child_result(t_ctx *ctx);
+t_status	wait_pid_status(t_ctx *ctx, pid_t pid);
+t_status	procs_wait(t_procs *procs, t_ctx *ctx);
 
 // <redirect>
 /* apply_redirect.c */

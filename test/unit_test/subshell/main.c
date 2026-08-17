@@ -32,15 +32,9 @@ static int	test_basic_subshell(void)
 	status = exec_subshell(&node, &ctx, new_stage(NO_PIPE, NO_PIPE));
 	if (status != ST_OK)
 		return (printf("[NG] basic subshell: status=%d\n", status), 1);
-	if (ctx.npid != 1)
-		return (printf("[NG] basic subshell: npid=%d\n", ctx.npid), 1);
-	if (collect_child_result(&ctx) != ST_OK)
-		return (printf("[NG] basic subshell: collect failed\n"), 1);
 	if (ctx.err.exit_code != 41)
 		return (printf("[NG] basic subshell: exit_code=%d expected=41\n",
 				ctx.err.exit_code), 1);
-	if (ctx.pids != NULL || ctx.npid != 0)
-		return (printf("[NG] basic subshell: pid reset failed\n"), 1);
 	printf("[OK] basic subshell\n");
 	return (0);
 }
@@ -68,8 +62,6 @@ static int	test_close_pipes_in_parent(void)
 		is_ng = 1;
 	close(in_pipe[1]);
 	close(out_pipe[0]);
-	if (collect_child_result(&ctx) != ST_OK)
-		is_ng = 1;
 	if (ctx.err.exit_code != 41)
 		is_ng = 1;
 	if (is_ng)

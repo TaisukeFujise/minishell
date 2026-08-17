@@ -57,7 +57,7 @@ SRCS:=main.c\
 	  execute/expansion/assigns.c\
 	  execute/process/fd_bitmap.c\
 	  execute/process/pipe_utils.c\
-	  execute/process/register_pid.c\
+	  execute/process/procs.c\
 	  execute/process/wait_children.c\
 	  execute/redirect/apply_redirect.c\
 	  execute/redirect/heredoc_tmpfile.c\

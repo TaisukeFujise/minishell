@@ -43,25 +43,31 @@ t_status	execute(t_node *root, t_ctx *ctx)
 	- exec_simple
 	- exec_connection
 
-	A node that forked waits for its children here, unless its output
-	still goes into a pipe: the last stage waits for the whole pipeline.
+	Whoever starts a process arranges for it to be waited for: a pipeline
+	stage goes into the process set of the pipeline, any other command is
+	waited for by the code that forked it.
 */
 t_status	execute_internal(t_node *node, t_ctx *ctx, t_stage st)
 {
-	t_status	result;
-
 	if (node == NULL)
 		return (ST_OK);
 	if (node->node_kind == NODE_SUBSHELL)
-		result = exec_subshell(node, ctx, st);
-	else if (node->node_kind == NODE_SIMPLE)
-		result = exec_simple(node, ctx, st);
-	else if (node->node_kind == NODE_COMPLETE || node->node_kind == NODE_ANDOR
+		return (exec_subshell(node, ctx, st));
+	if (node->node_kind == NODE_SIMPLE)
+		return (exec_simple(node, ctx, st));
+	if (node->node_kind == NODE_COMPLETE || node->node_kind == NODE_ANDOR
 		|| node->node_kind == NODE_PIPE)
 		return (exec_connection(node, ctx, st));
-	else
-		return (ST_FATAL);
-	if (result == ST_OK && st.pipe_out == NO_PIPE && ctx->npid > 0)
-		result = collect_child_result(ctx);
-	return (result);
+	return (ST_FATAL);
+}
+
+/*
+	How many processes a pipeline can start, counted before the first
+	fork so that the process set is allocated once. [review PROC-01]
+*/
+int	count_stages(t_node *node)
+{
+	if (node != NULL && node->node_kind == NODE_PIPE)
+		return (count_stages(node->left) + count_stages(node->right));
+	return (1);
 }

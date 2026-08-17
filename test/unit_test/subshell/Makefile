@@ -26,7 +26,7 @@ EXECUTE_SRCS := \
 	fd_bitmap.c \
 	apply_redirect.c \
 	heredoc_tmpfile.c \
-	register_pid.c \
+	procs.c \
 	wait_children.c
 
 SRCS := $(TEST_SRCS) $(EXECUTE_SRCS)
