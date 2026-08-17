@@ -1,5 +1,11 @@
 #include "connection_pipe_test.h"
 
+t_builtin	find_builtin(char *name)
+{
+	(void)name;
+	return (NULL);
+}
+
 t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in, int pipe_out)
 {
 	(void)cmd;

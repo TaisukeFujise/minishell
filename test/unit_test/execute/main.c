@@ -55,7 +55,6 @@ void	print_ctx(t_ctx ctx)
 	// print_bitmap(ctx.bitmap);
 	// print_pids(ctx.pids);
 	printf("npid: %d\n", ctx.npid);
-	printf("already_forked: %d\n", ctx.already_forked);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -96,7 +95,7 @@ int	main(int argc, char **argv, char **envp)
 	cmd1.assigns->key->str = ft_strdup("temp");
 	cmd1.assigns->value->str = ft_strdup("42");
 	cmd1.assigns->next = NULL;
-	// if (exec_null_command(&cmd1, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+	// if (exec_builtin(&cmd1, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
 	// 	return (1);
 
 	// print_table(ctx.env_table);
@@ -129,7 +128,7 @@ int	main(int argc, char **argv, char **envp)
 	assign_C.next = NULL;
 
 
-	// if (exec_null_command(&cmd2, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+	// if (exec_builtin(&cmd2, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
 	// 	return (1);
 	// print_table(ctx.env_table);
 	// return (0);
@@ -151,7 +150,7 @@ int	main(int argc, char **argv, char **envp)
 	cmd4.redirects->target.str = ft_strdup("test_iv.txt");
 	cmd4.redirects->io_number = 1;
 	cmd4.redirects->next = NULL;
-	// if (exec_null_command(&cmd4, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+	// if (exec_builtin(&cmd4, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
 	// 	return (1);
 	// return (0);
 
@@ -165,7 +164,7 @@ int	main(int argc, char **argv, char **envp)
 	cmd5.redirects->target.str = ft_strdup("test_v.txt");
 	cmd5.redirects->io_number = 1;
 	cmd5.redirects->next = NULL;
-	// if (exec_null_command(&cmd5, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+	// if (exec_builtin(&cmd5, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
 	// 	return (1);
 	// return (0);
 
@@ -179,7 +178,7 @@ int	main(int argc, char **argv, char **envp)
 	cmd6.redirects->target.str = ft_strdup("test_vi.txt");
 	cmd6.redirects->io_number = 0;
 	cmd6.redirects->next = NULL;
-	if (exec_null_command(&cmd6, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+	if (exec_builtin(&cmd6, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
 		return (1);
 	return (0);
 
@@ -193,7 +192,7 @@ int	main(int argc, char **argv, char **envp)
 	cmd7.redirects->target.str = ft_strdup("test_vii.txt");
 	cmd7.redirects->io_number = 0;
 	cmd7.redirects->next = NULL;
-	// if (exec_null_command(&cmd4, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
+	// if (exec_builtin(&cmd4, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
 	// 	return (1);
 	// return (0);
 

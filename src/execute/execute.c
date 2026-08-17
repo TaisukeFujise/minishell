@@ -40,6 +40,9 @@ t_status	execute(t_node *root, t_ctx *ctx)
 	- exec_subshell
 	- exec_simple
 	- exec_connection
+
+	A node that forked waits for its children here, unless its output
+	still goes into a pipe: the last stage waits for the whole pipeline.
 */
 t_status	execute_internal(t_node *node, t_ctx *ctx, int pipe_in,
 		int pipe_out)
@@ -49,21 +52,15 @@ t_status	execute_internal(t_node *node, t_ctx *ctx, int pipe_in,
 	if (node == NULL)
 		return (ST_OK);
 	if (node->node_kind == NODE_SUBSHELL)
-	{
 		result = exec_subshell(node, ctx, pipe_in, pipe_out);
-		if (pipe_in != NO_PIPE && pipe_out != NO_PIPE)
-			result = collect_child_result(ctx);
-	}
 	else if (node->node_kind == NODE_SIMPLE)
-	{
 		result = exec_simple(node, ctx, pipe_in, pipe_out);
-		if (ctx->already_forked && pipe_out == NO_PIPE)
-			result = collect_child_result(ctx);
-	}
 	else if (node->node_kind == NODE_COMPLETE || node->node_kind == NODE_ANDOR
 		|| node->node_kind == NODE_PIPE)
-		result = exec_connection(node, ctx, pipe_in, pipe_out);
+		return (exec_connection(node, ctx, pipe_in, pipe_out));
 	else
-		result = ST_FATAL;
+		return (ST_FATAL);
+	if (result == ST_OK && pipe_out == NO_PIPE && ctx->npid > 0)
+		result = collect_child_result(ctx);
 	return (result);
 }

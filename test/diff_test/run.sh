@@ -29,7 +29,6 @@ andor_false
 redirect_before_search
 lexical_assign
 prefix_path
-subshell
 missing_diagnostic
 "
 

@@ -3,6 +3,7 @@
 
 # include "../../../include/minishell.h"
 # include "../../../include/parser.h"
+# include "../../../include/builtin.h"
 # include "../../../include/execute.h"
 
 # include <assert.h>

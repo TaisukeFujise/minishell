@@ -52,7 +52,6 @@ SRCS:=main.c\
 	  execute/dispatch/exec_builtin.c\
 	  execute/dispatch/exec_connection.c\
 	  execute/dispatch/exec_disk.c\
-	  execute/dispatch/exec_null.c\
 	  execute/dispatch/exec_simple.c\
 	  execute/dispatch/exec_subshell.c\
 	  execute/expansion/assigns.c\

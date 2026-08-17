@@ -23,7 +23,6 @@ TEST_SRCS := main.c
 EXECUTE_SRCS := \
 	init_ctx.c \
 	fd_bitmap.c\
-	exec_null.c \
 	pipe_utils.c \
 	register_pid.c \
 	wait_children.c \

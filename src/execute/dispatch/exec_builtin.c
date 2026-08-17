@@ -15,103 +15,63 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
-void		exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-				int pipe_out);
-t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
+static t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
 
 /*
-	execute builtin command, like cd.
+	execute a command the shell runs itself: a builtin, like cd, or a
+	command with no name, which is only redirects and assignments.
 	Fork if pipe_in or pipe_out is not a NO_PIPE.
 	(It means command is connected by pipe)
 	- in pipe
 		- fork
-		- in child : exec_builtin_command_in_pipe
-		- in parent:
-			- set ctx->already_forked flag
-			- close_pipes(pipe_in, pipe_out)
-			- register_pid(ctx, pid)
+		- in child : enter_child then builtin_cmd
+		- in parent: adopt_child
 	- single
 		- exec_builtin_in_parent
+*/
+/*
+	Todo left
+	- restore_signals ???
 */
 t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		int pipe_out)
 {
 	pid_t	pid;
 
-	if (pipe_in != NO_PIPE || pipe_out != NO_PIPE)
-	{
-		pid = fork();
-		if (pid < 0)
-			return (ST_FAILURE);
-		else if (pid == 0)
-			exec_builtin_in_pipe(cmd, ctx, pipe_in, pipe_out);
-		else
-		{
-			ctx->already_forked = 1;
-			close_pipes(pipe_in, pipe_out);
-			return (register_pid(ctx, pid));
-		}
-		return (ST_FATAL);
-	}
-	else
+	if (pipe_in == NO_PIPE && pipe_out == NO_PIPE)
 		return (exec_builtin_in_parent(cmd, ctx));
+	pid = fork();
+	if (pid < 0)
+		return (ST_FAILURE);
+	if (pid == 0)
+	{
+		enter_child(cmd, ctx, pipe_in, pipe_out);
+		if (cmd->args != NULL)
+			builtin_cmd(cmd->args, ctx);
+		exit(ctx->err.exit_code);
+	}
+	return (adopt_child(ctx, pid, pipe_in, pipe_out));
 }
 
 /*
-	exec_builtin_in_pipe is called in pipe
-	- close_fd_bitmap
-	- apply_redirects
-	- apply_assigns_to_tmp_env
-	- builtin_cmd
+	The redirects of one command must not outlive it, so the shell
+	process saves its stdio and puts it back whatever the builtin did.
+	A command with no name applies the redirects and runs nothing.
 */
-/*
-	Todo left
-	- restore_signals ???
-*/
-void	exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-		int pipe_out)
-{
-	close_fd_bitmap(ctx->bitmap);
-	if (attach_pipe_to_stdio(pipe_in, pipe_out) != ST_OK)
-		exit(EXIT_FAILURE);
-	close_fd_bitmap(ctx->bitmap);
-	pipe_in = NO_PIPE;
-	pipe_out = NO_PIPE;
-	if (apply_redirects(cmd->redirects) != ST_OK)
-		exit(EXIT_FAILURE);
-	builtin_cmd(cmd->args, ctx);
-	exit(ctx->err.exit_code);
-}
-
-/*
-	exec_builtin_in_parent
-	- save_stdio
-	- apply_redirects
-	- apply_assigns_to_tmp_env
-	- builtin_cmd
-	- undo_stdio
-*/
-t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
+static t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 {
 	t_status	result;
 	t_savedfd	saved;
 
 	if (save_stdio(&saved) != ST_OK)
 		return (ST_FAILURE);
-	if (apply_redirects(cmd->redirects) != ST_OK)
-	{
-		result = undo_stdio(saved);
-		return (close_savedfd(saved), result);
-	}
-	result = builtin_cmd(cmd->args, ctx);
-	if (result != ST_OK)
-	{
-		if (undo_stdio(saved) == ST_FATAL)
-			return (close_savedfd(saved), ST_FATAL);
-		return (close_savedfd(saved), result);
-	}
-	result = undo_stdio(saved);
-	return (close_savedfd(saved), result);
+	result = apply_redirects(cmd->redirects);
+	if (result == ST_OK && cmd->args != NULL)
+		result = builtin_cmd(cmd->args, ctx);
+	if (undo_stdio(saved) == ST_FATAL)
+		result = ST_FATAL;
+	close_savedfd(saved);
+	return (result);
 }
 
 /*

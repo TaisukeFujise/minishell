@@ -23,6 +23,9 @@ TEST_SRCS := main.c exec_stubs.c
 EXECUTE_SRCS := \
 	exec_subshell.c \
 	pipe_utils.c \
+	fd_bitmap.c \
+	apply_redirect.c \
+	heredoc_tmpfile.c \
 	register_pid.c \
 	wait_children.c
 
@@ -33,6 +36,7 @@ OBJS := $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))
 vpath %.c $(ROOT)/src/execute \
 	$(ROOT)/src/execute/dispatch \
 	$(ROOT)/src/execute/process \
+	$(ROOT)/src/execute/redirect \
 	.
 
 LDLIBS := -lreadline

@@ -63,8 +63,6 @@ typedef struct s_ctx
 	// It's for managing fd,especially pipe read end fd,when using pipe.
 	pid_t						*pids;
 	int							npid;
-	int							already_forked;
-	int							subshell_level;
 }								t_ctx;
 
 typedef enum e_status

@@ -26,19 +26,15 @@
 */
 t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
-	t_status	status;
+	t_simple_cmd	*cmd;
+	t_status		status;
 
-	ctx->already_forked = 0;
 	hash_flush(ctx->tmp_table, NULL);
 	status = expand_command(node, ctx, ctx->arenas);
 	if (status != ST_OK)
 		return (status);
-	if (node->u_node.simple_command.args == 0)
-		return (exec_null_command(&node->u_node.simple_command, ctx, pipe_in,
-				pipe_out));
-	if (find_builtin(node->u_node.simple_command.args->wd->str) != NULL)
-		return (exec_builtin(&node->u_node.simple_command, ctx, pipe_in,
-				pipe_out));
-	return (exec_disk_command(&node->u_node.simple_command, ctx, pipe_in,
-			pipe_out));
+	cmd = &node->u_node.simple_command;
+	if (cmd->args != NULL && find_builtin(cmd->args->wd->str) == NULL)
+		return (exec_disk_command(cmd, ctx, pipe_in, pipe_out));
+	return (exec_builtin(cmd, ctx, pipe_in, pipe_out));
 }

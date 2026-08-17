@@ -26,7 +26,6 @@ EXECUTE_SRCS := \
 	exec_connection.c \
 	exec_simple.c \
 	exec_disk.c \
-	exec_null.c \
 	fd_bitmap.c \
 	pipe_utils.c \
 	register_pid.c \

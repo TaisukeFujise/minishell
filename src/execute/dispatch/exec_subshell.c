@@ -21,16 +21,10 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	pid = fork();
 	if (pid < 0)
 		return (ST_FATAL);
-	else if (pid == 0)
+	if (pid == 0)
 	{
-		ctx->subshell_level++;
-		_exit(execute_internal(node, ctx, pipe_in, pipe_out));
+		execute_internal(node->left, ctx, pipe_in, pipe_out);
+		_exit(ctx->err.exit_code);
 	}
-	else
-	{
-		ctx->already_forked = 1;
-		close_pipes(pipe_in, pipe_out);
-		return (register_pid(ctx, pid));
-	}
-	return (ST_FATAL);
+	return (adopt_child(ctx, pid, pipe_in, pipe_out));
 }

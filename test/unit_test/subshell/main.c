@@ -32,9 +32,8 @@ static int	test_basic_subshell(void)
 	status = exec_subshell(&node, &ctx, NO_PIPE, NO_PIPE);
 	if (status != ST_OK)
 		return (printf("[NG] basic subshell: status=%d\n", status), 1);
-	if (ctx.already_forked != 1 || ctx.npid != 1)
-		return (printf("[NG] basic subshell: already_forked=%d npid=%d\n",
-				ctx.already_forked, ctx.npid), 1);
+	if (ctx.npid != 1)
+		return (printf("[NG] basic subshell: npid=%d\n", ctx.npid), 1);
 	if (collect_child_result(&ctx) != ST_OK)
 		return (printf("[NG] basic subshell: collect failed\n"), 1);
 	if (ctx.err.exit_code != 41)
