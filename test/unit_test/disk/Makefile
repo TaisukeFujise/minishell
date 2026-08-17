@@ -26,7 +26,6 @@ EXECUTE_SRCS := \
 	pipe_utils.c \
 	register_pid.c \
 	wait_children.c \
-	stdio_guard.c \
 	apply_redirect.c \
 	assigns.c\
 	heredoc_tmpfile.c\

@@ -29,6 +29,26 @@ t_status	move_fd(int source, int target)
 	return (ST_OK);
 }
 
+/*
+	Copy fd to a number at or above floor. dup() hands out the lowest free
+	fd, which a later redirect of the same command would overwrite, so the
+	low copies are held until a high one comes out. bash moves backups the
+	same way with fcntl(F_DUPFD), which the subject does not allow.
+	Returns -1 when fd is not open.
+*/
+int	dup_above(int fd, int floor)
+{
+	int	low;
+	int	high;
+
+	low = dup(fd);
+	if (low < 0 || low >= floor)
+		return (low);
+	high = dup_above(fd, floor);
+	close(low);
+	return (high);
+}
+
 t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out)
 {
 	if (pipe_in != NO_PIPE && move_fd(pipe_in, STDIN_FILENO) != ST_OK)

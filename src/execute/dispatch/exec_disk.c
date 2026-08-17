@@ -45,7 +45,7 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	if (pid == 0)
 	{
 		enter_child(ctx, pipe_in, pipe_out);
-		if (apply_redirects(cmd->redirects) != ST_OK)
+		if (apply_redirects(cmd->redirects, false) != ST_OK)
 			exit(EXIT_FAILURE);
 		disk_command(params.argv, params.envp, ctx);
 		exit(EXIT_FAILURE);

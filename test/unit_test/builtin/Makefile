@@ -45,7 +45,6 @@ EXEC_SRCS := init_ctx.c\
 			register_pid.c\
 			wait_children.c\
 			fd_bitmap.c\
-			stdio_guard.c\
 			apply_redirect.c\
 			assigns.c\
 			count_args.c\

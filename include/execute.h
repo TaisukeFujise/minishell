@@ -14,6 +14,13 @@
 # define EXECUTE_H
 
 # define FD_BITMAP_SIZE 32
+/*
+	t_redirect.saved holds the backup of its io number while the redirect
+	is applied: 0 when there is none, FD_WAS_CLOSED when the io number was
+	closed before. A backup never lands on fd 0, it is above every io
+	number of the command, so the zeroed AST node means "none".
+*/
+# define FD_WAS_CLOSED -2
 
 # include "./hashmap.h"
 # include "./minishell.h"
@@ -21,12 +28,6 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <sys/types.h>
-
-typedef struct s_savedfd
-{
-	int		stdin;
-	int		stdout;
-}			t_savedfd;
 
 typedef enum s_tabletype
 {
@@ -79,6 +80,7 @@ void		close_fd_bitmap(t_fd_bitmap *fd_bitmap);
 void		dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
 /* pipe_utils.c */
 t_status	move_fd(int source, int target);
+int			dup_above(int fd, int floor);
 t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out);
 void		enter_child(t_ctx *ctx, int pipe_in, int pipe_out);
 void		close_pipes(int pipe_in, int pipe_out);
@@ -89,14 +91,11 @@ t_status	collect_child_result(t_ctx *ctx);
 
 // <redirect>
 /* apply_redirect.c */
-t_status	apply_redirects(t_redirect *redirects);
+t_status	apply_redirects(t_redirect *redirects, bool undoable);
+t_status	undo_redirects(t_redirect *redirects);
 /* heredoc_tmpfile.c */
 char		*create_tmp_filename(void);
 int			open_heredoc_fd(t_redirect *redirect);
-/* stdio_guard.c */
-t_status	save_stdio(t_savedfd *saved);
-void		close_savedfd(t_savedfd saved);
-t_status	undo_stdio(t_savedfd saved);
 
 // <utils>
 /* args_utils.c */

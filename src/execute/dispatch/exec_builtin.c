@@ -46,7 +46,7 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 	if (pid == 0)
 	{
 		enter_child(ctx, pipe_in, pipe_out);
-		if (apply_redirects(cmd->redirects) != ST_OK)
+		if (apply_redirects(cmd->redirects, false) != ST_OK)
 			exit(EXIT_FAILURE);
 		set_exit_code(ctx, builtin_cmd(cmd->args, ctx));
 		exit(ctx->err.exit_code);
@@ -63,16 +63,12 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 static t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 {
 	t_status	result;
-	t_savedfd	saved;
 
-	if (save_stdio(&saved) != ST_OK)
-		return (ST_FAILURE);
-	result = apply_redirects(cmd->redirects);
+	result = apply_redirects(cmd->redirects, true);
 	if (result == ST_OK)
 		result = builtin_cmd(cmd->args, ctx);
-	if (undo_stdio(saved) == ST_FATAL)
-		result = ST_FATAL;
-	close_savedfd(saved);
+	if (undo_redirects(cmd->redirects) != ST_OK)
+		return (ST_FATAL);
 	return (result);
 }
 

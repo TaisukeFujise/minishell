@@ -17,27 +17,88 @@
 static int	open_redirect_fd(t_redirect *redirect);
 
 /*
+	The backup of an io number must sit above every io number this command
+	redirects, or one of them overwrites it.
+*/
+static int	backup_floor(t_redirect *redirects)
+{
+	int	floor;
+
+	floor = 0;
+	while (redirects)
+	{
+		if (redirects->io_number >= floor)
+			floor = redirects->io_number + 1;
+		redirects = redirects->next;
+	}
+	return (floor);
+}
+
+/*
 	apply_redirects call redirect func depending on redirect->op.
 	- apply_redir_great
 	- apply_redir_less
 	- apply_redir_dgreat
 	- apply_redir_dless
+	A shell process that keeps running asks for undoable, so that the
+	redirects of one command do not outlive it. A process that only runs
+	this command does not: it exits or execs.
 */
-t_status	apply_redirects(t_redirect *redirects)
+t_status	apply_redirects(t_redirect *redirects, bool undoable)
 {
-	t_status	status;
+	t_redirect	*redir;
+	int			floor;
 	int			fd;
 
-	status = ST_OK;
-	while (redirects)
+	floor = backup_floor(redirects);
+	redir = redirects;
+	while (redir)
 	{
-		fd = open_redirect_fd(redirects);
+		if (undoable)
+		{
+			redir->saved = dup_above(redir->io_number, floor);
+			if (redir->saved < 0)
+				redir->saved = FD_WAS_CLOSED;
+		}
+		fd = open_redirect_fd(redir);
 		if (fd < 0)
 			return (ST_FAILURE);
-		if (move_fd(fd, redirects->io_number) != ST_OK)
+		if (move_fd(fd, redir->io_number) != ST_OK)
 			return (close(fd), ST_FAILURE);
-		redirects = redirects->next;
+		redir = redir->next;
 	}
+	return (ST_OK);
+}
+
+static t_status	undo_one(t_redirect *redir)
+{
+	int	saved;
+
+	saved = redir->saved;
+	redir->saved = 0;
+	if (saved == FD_WAS_CLOSED)
+		return (close(redir->io_number), ST_OK);
+	if (saved <= 0)
+		return (ST_OK);
+	if (dup2(saved, redir->io_number) < 0)
+		return (close(saved), ST_FATAL);
+	close(saved);
+	return (ST_OK);
+}
+
+/*
+	Put back what this command replaced, last redirect first, so that
+	several redirects of one io number unwind to the state it started in.
+*/
+t_status	undo_redirects(t_redirect *redirects)
+{
+	t_status	status;
+
+	if (redirects == NULL)
+		return (ST_OK);
+	status = undo_redirects(redirects->next);
+	if (undo_one(redirects) != ST_OK)
+		return (ST_FATAL);
 	return (status);
 }
 

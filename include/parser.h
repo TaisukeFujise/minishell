@@ -53,6 +53,7 @@ struct s_redirect
 	t_op_redir	op;
 	t_word		target; // filename or delimiter
 	int			io_number;
+	int			saved; // fd holding what io_number had, while applied. 0: none
 	t_heredoc	hd;
 	t_redirect	*next;
 };

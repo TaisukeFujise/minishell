@@ -25,7 +25,6 @@ EXECUTE_SRCS := \
 	fd_bitmap.c\
 	pipe_utils.c \
 	register_pid.c \
-	stdio_guard.c \
 	apply_redirect.c \
 	assigns.c\
 	heredoc_tmpfile.c\

@@ -28,6 +28,7 @@ XFAIL=0
 
 # Cases that minishell is not expected to pass yet.
 EXPECTED_FAIL="
+builtin_stdio_buffer
 missing_diagnostic
 unset_path
 exit_prints
@@ -84,6 +85,12 @@ echo $ZZ'
 run_case param 'echo $HOME'
 run_case redirect_target 'echo done > out.txt
 cat out.txt'
+run_case redirect_keeps_fd 'echo hi 3>f1
+echo second'
+# pwd writes through stdio, so its output is flushed after the redirect is
+# put back and never reaches the file (review D37-23).
+run_case builtin_stdio_buffer 'pwd > out.txt
+grep -c / out.txt'
 run_case andor_true 'echo a && echo b'
 run_case andor_false 'nosuchcmd_xyz || echo yes'
 run_case pipe 'echo x | cat'

@@ -61,7 +61,6 @@ SRCS:=main.c\
 	  execute/process/wait_children.c\
 	  execute/redirect/apply_redirect.c\
 	  execute/redirect/heredoc_tmpfile.c\
-	  execute/redirect/stdio_guard.c\
 	  execute/utils/args_utils.c\
 	  execute/utils/path_utils.c\
 	  execute/utils/envp_utils.c\
