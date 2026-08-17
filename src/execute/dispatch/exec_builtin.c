@@ -18,7 +18,6 @@
 void		exec_builtin_in_pipe(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 				int pipe_out);
 t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx);
-t_status	builtin_cmd(t_word_list *args, t_ctx *ctx);
 
 /*
 	execute builtin command, like cd.
@@ -116,38 +115,39 @@ t_status	exec_builtin_in_parent(t_simple_cmd *cmd, t_ctx *ctx)
 }
 
 /*
-	builtin_cmd dispatch builtin command
-	by comparing args->wd->str[0] with some builtin cmd strings.
-	- echo
-	- cd
-	- pwd
-	- export
-	- unset
-	- env
-	- exit
-*/
-/*
-	Todo
-	- builtin_command find builtin cmd and execute it.
+	builtin_cmd dispatch builtin command by the first word of args.
 */
 t_status	builtin_cmd(t_word_list *args, t_ctx *ctx)
 {
+	t_builtin	fn;
+
 	if (args == NULL || args->wd == NULL || args->wd->str == NULL)
 		return (ST_FATAL);
-	if (ft_strcmp(args->wd->str, "cd") == 0)
-		return (cd_cmd(args->next, ctx));
-	else if (ft_strcmp(args->wd->str, "echo") == 0)
-		return (echo_cmd(args->next, ctx));
-	else if (ft_strcmp(args->wd->str, "env") == 0)
-		return (env_cmd(args->next, ctx));
-	else if (ft_strcmp(args->wd->str, "exit") == 0)
-		return (exit_cmd(args->next, ctx));
-	else if (ft_strcmp(args->wd->str, "export") == 0)
-		return (export_cmd(args->next, ctx));
-	else if (ft_strcmp(args->wd->str, "pwd") == 0)
-		return (pwd_cmd(args->next, ctx));
-	else if (ft_strcmp(args->wd->str, "unset") == 0)
-		return (unset_cmd(args->next, ctx));
-	else
+	fn = find_builtin(args->wd->str);
+	if (fn == NULL)
 		return (ST_FATAL);
+	return (fn(args->next, ctx));
+}
+
+/*
+	find_builtin returns the function of a builtin name,
+	and NULL when the name is not a builtin.
+	exec_simple uses it to choose the execution path.
+*/
+t_builtin	find_builtin(char *name)
+{
+	static const char		*names[] = {"cd", "echo", "env", "exit", "export",
+		"pwd", "unset"};
+	static const t_builtin	fns[] = {cd_cmd, echo_cmd, env_cmd, exit_cmd,
+		export_cmd, pwd_cmd, unset_cmd};
+	size_t					i;
+
+	i = 0;
+	while (i < sizeof(fns) / sizeof(fns[0]))
+	{
+		if (ft_strcmp(name, names[i]) == 0)
+			return (fns[i]);
+		i++;
+	}
+	return (NULL);
 }

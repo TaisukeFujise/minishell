@@ -10,12 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../../include/builtin.h"
 #include "../../../include/execute.h"
 #include "../../../include/expand.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
-
-bool		find_builtin(char *str);
 
 /*
 	Todo
@@ -37,19 +36,9 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	if (node->u_node.simple_command.args == 0)
 		return (exec_null_command(&node->u_node.simple_command, ctx, pipe_in,
 				pipe_out));
-	if (find_builtin(node->u_node.simple_command.args->wd->str))
+	if (find_builtin(node->u_node.simple_command.args->wd->str) != NULL)
 		return (exec_builtin(&node->u_node.simple_command, ctx, pipe_in,
 				pipe_out));
 	return (exec_disk_command(&node->u_node.simple_command, ctx, pipe_in,
 			pipe_out));
-}
-
-bool	find_builtin(char *str)
-{
-	if ((ft_strcmp(str, "echo") == 0) || (ft_strcmp(str, "cd") == 0)
-		|| (ft_strcmp(str, "pwd") == 0) || (ft_strcmp(str, "export") == 0)
-		|| (ft_strcmp(str, "export") == 0) || (ft_strcmp(str, "unset") == 0)
-		|| (ft_strcmp(str, "env") == 0) || (ft_strcmp(str, "exit") == 0))
-		return (true);
-	return (false);
 }

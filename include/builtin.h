@@ -24,6 +24,11 @@ typedef struct s_export_arg
 	bool	append;
 }	t_export_arg;
 
+typedef t_status	(*t_builtin)(t_word_list *args, t_ctx *ctx);
+
+t_builtin	find_builtin(char *name);
+t_status	builtin_cmd(t_word_list *args, t_ctx *ctx);
+
 t_status	cd_cmd(t_word_list *args, t_ctx *ctx);
 t_status	echo_cmd(t_word_list *args, t_ctx *ctx);
 t_status	env_cmd(t_word_list *args, t_ctx *ctx);
