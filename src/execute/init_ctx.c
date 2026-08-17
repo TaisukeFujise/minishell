@@ -23,10 +23,13 @@ int	init_ctx(t_ctx *ctx, char **envp)
 	ctx->env_table = hash_create(BUCKET_SIZE);
 	if (ctx->env_table == NULL)
 		return (FAILURE);
-	if (_load_envp_to_table(ctx->env_table, envp) == FAILURE)
+	ctx->tmp_table = hash_create(BUCKET_SIZE);
+	if (ctx->tmp_table == NULL || _load_envp_to_table(ctx->env_table,
+			envp) == FAILURE)
 	{
 		hash_flush(ctx->env_table, NULL);
 		hash_dispose(ctx->env_table);
+		hash_dispose(ctx->tmp_table);
 		return (FAILURE);
 	}
 	return (SUCCESS);

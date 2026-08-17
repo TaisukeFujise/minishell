@@ -25,8 +25,6 @@ t_status	apply_assigns(t_hashtable *table, t_assign *assign,
 	t_bucket_contents	*item;
 	bool				ok;
 
-	if (type == TMP)
-		hash_flush(table, NULL);
 	while (assign)
 	{
 		item = hash_insert(assign->key->str, table);

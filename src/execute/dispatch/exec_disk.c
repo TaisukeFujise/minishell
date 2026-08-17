@@ -40,6 +40,8 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 
 	pipes.pipe_in = pipe_in;
 	pipes.pipe_out = pipe_out;
+	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) != ST_OK)
+		return (ST_FATAL);
 	if (build_exec_params(&exec_params, cmd->args, ctx->tmp_table,
 			ctx->env_table) == FAILURE)
 		return (ST_FATAL);
@@ -72,8 +74,6 @@ void	exec_disk_in_child(t_simple_cmd *cmd, t_ctx *ctx,
 	pipes.pipe_in = NO_PIPE;
 	pipes.pipe_out = NO_PIPE;
 	if (apply_redirects(cmd->redirects) != ST_OK)
-		exit(EXIT_FAILURE);
-	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) != ST_OK)
 		exit(EXIT_FAILURE);
 	disk_command(exec_params.argv, exec_params.envp, ctx);
 	_exit(EXIT_FAILURE);

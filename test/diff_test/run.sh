@@ -28,7 +28,6 @@ EXPECTED_FAIL="
 andor_false
 redirect_before_search
 lexical_assign
-assign_prefix_arg
 assign_left_to_right
 assign_no_split
 prefix_path

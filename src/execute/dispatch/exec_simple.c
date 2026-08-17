@@ -30,6 +30,7 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	t_status	status;
 
 	ctx->already_forked = 0;
+	hash_flush(ctx->tmp_table, NULL);
 	status = expand_command(node, ctx, ctx->arenas);
 	if (status != ST_OK)
 		return (status);
