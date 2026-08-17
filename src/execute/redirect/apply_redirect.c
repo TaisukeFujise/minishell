@@ -36,9 +36,8 @@ t_status	apply_redirects(t_redirect *redirects)
 		fd = open_redirect_fd(redirects);
 		if (fd < 0)
 			return (ST_FAILURE);
-		if (dup2(fd, redirects->io_number) < 0)
+		if (move_fd(fd, redirects->io_number) != ST_OK)
 			return (close(fd), ST_FAILURE);
-		close(fd);
 		redirects = redirects->next;
 	}
 	return (status);

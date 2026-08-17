@@ -14,20 +14,27 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
+/*
+	Put source on target and hand target the open file it names.
+	Nothing to move and nothing to close when they are the same fd:
+	closing would drop the fd the caller asked to keep.
+*/
+t_status	move_fd(int source, int target)
+{
+	if (source == target)
+		return (ST_OK);
+	if (dup2(source, target) < 0)
+		return (ST_FAILURE);
+	close(source);
+	return (ST_OK);
+}
+
 t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out)
 {
-	if (pipe_in != NO_PIPE)
-	{
-		if (dup2(pipe_in, STDIN_FILENO) < 0)
-			return (ST_FAILURE);
-		close(pipe_in);
-	}
-	if (pipe_out != NO_PIPE)
-	{
-		if (dup2(pipe_out, STDOUT_FILENO) < 0)
-			return (ST_FAILURE);
-		close(pipe_out);
-	}
+	if (pipe_in != NO_PIPE && move_fd(pipe_in, STDIN_FILENO) != ST_OK)
+		return (ST_FAILURE);
+	if (pipe_out != NO_PIPE && move_fd(pipe_out, STDOUT_FILENO) != ST_OK)
+		return (ST_FAILURE);
 	return (ST_OK);
 }
 

@@ -78,6 +78,7 @@ t_fd_bitmap	*new_fd_bitmap(int size);
 void		close_fd_bitmap(t_fd_bitmap *fd_bitmap);
 void		dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
 /* pipe_utils.c */
+t_status	move_fd(int source, int target);
 t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out);
 void		enter_child(t_ctx *ctx, int pipe_in, int pipe_out);
 void		close_pipes(int pipe_in, int pipe_out);
