@@ -1,3 +1,4 @@
+#include "../../../include/execute.h"
 #include "expand_internal.h"
 #include "strutil.h"
 
@@ -24,22 +25,22 @@ static char	*set_param(t_param *param, size_t len, size_t used, char *value)
 
 static char	*lookup_var(t_ctx *ctx, t_arena *arena, t_param *param)
 {
-	char				*key;
-	t_bucket_contents	*entry;
+	char	*key;
+	char	*value;
 
 	key = ft_arena_strndup(arena, param->s + 1, param->used - 1);
 	if (!key)
 		return (NULL);
-	entry = NULL;
+	value = NULL;
 	if (ctx && ctx->env_table)
-		entry = hash_search(key, ctx->env_table);
-	if (!entry || !entry->data.value)
+		value = env_lookup(ctx->tmp_table, ctx->env_table, key);
+	if (!value)
 	{
 		param->len = 0;
 		return ("");
 	}
-	param->len = ft_strlen(entry->data.value);
-	return (entry->data.value);
+	param->len = ft_strlen(value);
+	return (value);
 }
 
 char	*expand_param(t_ctx *ctx, t_arena *arena, t_param *param)

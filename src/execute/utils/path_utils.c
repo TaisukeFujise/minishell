@@ -10,21 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../../include/execute.h"
 #include "../../../include/parser.h"
 
 char	*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table)
 {
-	t_bucket_contents	*item;
-
-	if (env_table == 0 || env_table->entry_count == 0)
-		return (NULL);
-	item = hash_search("PATH", tmp_table);
-	if (item != NULL)
-		return (item->data.value);
-	item = hash_search("PATH", env_table);
-	if (item == NULL)
-		return (NULL);
-	return (item->data.value);
+	return (env_lookup(tmp_table, env_table, "PATH"));
 }
 
 char	*extract_path_entry(char *path_value)

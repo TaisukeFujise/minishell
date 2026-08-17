@@ -14,6 +14,23 @@
 #include "../../../include/hashmap.h"
 #include "../../../include/parser.h"
 
+/*
+	Look a name up in the environment of the current command.
+	The assignments of this command win over the persistent table.
+	The returned value belongs to the table.
+*/
+char	*env_lookup(t_hashtable *tmp_table, t_hashtable *env_table, char *name)
+{
+	t_bucket_contents	*item;
+
+	item = hash_search(name, tmp_table);
+	if (item == NULL)
+		item = hash_search(name, env_table);
+	if (item == NULL)
+		return (NULL);
+	return (item->data.value);
+}
+
 char	*make_env_entry(char *key, char *value)
 {
 	char	*entry;

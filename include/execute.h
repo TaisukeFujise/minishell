@@ -113,6 +113,8 @@ void		free_exec_params(char **argv, char **envp);
 char		*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table);
 char		*extract_path_entry(char *path_value);
 /* envp_utils.c */
+char		*env_lookup(t_hashtable *tmp_table, t_hashtable *env_table,
+				char *name);
 char		*make_env_entry(char *key, char *value);
 char		**build_envp(t_hashtable *tmp_table, t_hashtable *env_table);
 void		free_envp(char **envp);

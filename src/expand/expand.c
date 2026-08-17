@@ -1,17 +1,16 @@
+#include "../../include/execute.h"
 #include "expand_internal/expand_internal.h"
 
 static const char	*get_ifs(t_ctx *ctx)
 {
-	t_bucket_contents	*entry;
+	char	*value;
 
 	if (!ctx->env_table)
 		return (IFS_DEFAULT);
-	entry = hash_search("IFS", ctx->env_table);
-	if (!entry)
+	value = env_lookup(ctx->tmp_table, ctx->env_table, "IFS");
+	if (!value)
 		return (IFS_DEFAULT);
-	if (!entry->data.value)
-		return ("");
-	return (entry->data.value);
+	return (value);
 }
 
 t_status	expand_command(t_node *node, t_ctx *ctx, t_arenas *arenas)
