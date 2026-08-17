@@ -13,7 +13,6 @@
 #include "../../include/execute.h"
 #include "../../include/hashmap.h"
 
-int			_preprocess_item(t_bucket_contents *item);
 char		*_extract_key_from_envp(char *entry);
 char		*_extract_value_from_envp(char *entry);
 static int	_load_envp_to_table(t_hashtable *env_table, char **envp);
@@ -49,26 +48,16 @@ static int	_load_envp_to_table(t_hashtable *env_table, char **envp)
 			return (FAILURE);
 		item = hash_insert(key, env_table);
 		free(key);
-		if (_preprocess_item(item) == FAILURE)
+		if (item == NULL)
 			return (FAILURE);
 		value = _extract_value_from_envp(*envp);
 		if (value == NULL)
 			return (FAILURE);
-		item->data.value = value;
+		if (!hash_set_value(item, value))
+			return (free(value), FAILURE);
+		free(value);
 		item->data.exported = true;
 		envp++;
-	}
-	return (SUCCESS);
-}
-
-int	_preprocess_item(t_bucket_contents *item)
-{
-	if (item == NULL)
-		return (FAILURE);
-	if (item->data.value != NULL)
-	{
-		free(item->data.value);
-		item->data.value = NULL;
 	}
 	return (SUCCESS);
 }

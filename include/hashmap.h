@@ -52,6 +52,8 @@ t_bucket_contents					*hash_remove(char *string,
 										t_hashtable *table);
 t_bucket_contents					*hash_insert(char *string,
 										t_hashtable *table);
+bool								hash_set_value(t_bucket_contents *item,
+										const char *value);
 /* hashmap_free.c */
 typedef void	t_free_func(void *); // Any free function
 void								hash_flush(t_hashtable *table,

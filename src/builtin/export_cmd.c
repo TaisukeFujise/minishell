@@ -81,8 +81,9 @@ static t_status	set_export_value(t_export_arg *arg, t_bucket_contents *item)
 		if (!value)
 			return (ST_FATAL);
 	}
-	free(item->data.value);
-	item->data.value = value;
+	if (!hash_set_value(item, value))
+		return (free(value), ST_FATAL);
+	free(value);
 	return (ST_OK);
 }
 

@@ -97,13 +97,7 @@ t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 	free(oldpwd_key);
 	if (oldpwd == NULL)
 		return (ST_FATAL);
-	if (oldpwd->data.value != NULL)
-	{
-		free(oldpwd->data.value);
-		oldpwd->data.value = NULL;
-	}
-	oldpwd->data.value = ft_strdup(pwd->data.value);
-	if (oldpwd->data.value == NULL)
+	if (!hash_set_value(oldpwd, pwd->data.value))
 		return (ST_FATAL);
 	return (ST_OK);
 }
@@ -123,11 +117,8 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 	free(pwd_key);
 	if (pwd == NULL)
 		return (ST_FATAL);
-	if (pwd->data.value != NULL)
-	{
-		free(pwd->data.value);
-		pwd->data.value = NULL;
-	}
-	pwd->data.value = path;
+	if (!hash_set_value(pwd, path))
+		return (free(path), ST_FATAL);
+	free(path);
 	return (ST_OK);
 }
