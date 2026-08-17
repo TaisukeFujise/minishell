@@ -85,6 +85,12 @@ cat out.txt'
 run_case andor_true 'echo a && echo b'
 run_case andor_false 'nosuchcmd_xyz || echo yes'
 run_case pipe 'echo x | cat'
+run_case export_no_value 'export FOO
+env | grep -c "^FOO"
+echo end'
+run_case export_keeps_prefix 'unset A
+A=one export A
+echo "[$A]"'
 
 # Simple command ordering. See the bash manual, Simple Command Expansion.
 run_case assign_prefix_arg 'X=old

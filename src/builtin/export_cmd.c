@@ -68,10 +68,25 @@ static int	print_export(t_bucket_contents *item)
 	return (0);
 }
 
-static t_status	set_export_value(t_export_arg *arg, t_bucket_contents *item)
+/*
+	"export name" keeps the value the name has in the current command,
+	so "A=one export A" leaves A set to one.
+*/
+static t_status	set_export_value(t_export_arg *arg, t_bucket_contents *item,
+		t_ctx *ctx)
 {
-	char	*value;
+	t_bucket_contents	*tmp;
+	char				*value;
 
+	if (arg->value_pos == 0)
+	{
+		tmp = hash_search(arg->word->str, ctx->tmp_table);
+		if (tmp == NULL)
+			return (ST_OK);
+		if (!hash_set_value(item, tmp->data.value))
+			return (ST_FATAL);
+		return (ST_OK);
+	}
 	value = ft_strdup(arg->word->str + arg->value_pos);
 	if (!value)
 		return (ST_FATAL);
@@ -108,9 +123,7 @@ static t_status	put_export(t_word *wd, t_ctx *ctx)
 	if (!item)
 		return (ST_FATAL);
 	item->data.exported = true;
-	if (arg.value_pos > 0)
-		return (set_export_value(&arg, item));
-	return (ST_OK);
+	return (set_export_value(&arg, item, ctx));
 }
 
 /*
