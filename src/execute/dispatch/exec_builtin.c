@@ -37,7 +37,7 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, t_stage st)
 {
 	pid_t	pid;
 
-	if (st.in == NO_PIPE && st.out == NO_PIPE)
+	if (st.pipe_in == NO_PIPE && st.pipe_out == NO_PIPE)
 		return (exec_builtin_in_parent(cmd, ctx));
 	pid = fork();
 	if (pid < 0)

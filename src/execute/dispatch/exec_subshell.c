@@ -31,8 +31,8 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, t_stage st)
 		if (expand_command(node, ctx, ctx->arenas) != ST_OK
 			|| apply_redirects(node->u_node.subshell.redirects, false) != ST_OK)
 			exit(EXIT_FAILURE);
-		st.in = NO_PIPE;
-		st.out = NO_PIPE;
+		st.pipe_in = NO_PIPE;
+		st.pipe_out = NO_PIPE;
 		execute_internal(node->left, ctx, st);
 		exit(ctx->err.exit_code);
 	}

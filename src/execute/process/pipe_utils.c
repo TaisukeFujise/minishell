@@ -18,12 +18,12 @@
 	A stage that holds nothing: no pipe, no fd to close in a child.
 	Callers fill in what they own. One place knows the fields.
 */
-t_stage	new_stage(int in, int out)
+t_stage	new_stage(int pipe_in, int pipe_out)
 {
 	t_stage	st;
 
-	st.in = in;
-	st.out = out;
+	st.pipe_in = pipe_in;
+	st.pipe_out = pipe_out;
 	st.close = NULL;
 	return (st);
 }
@@ -51,17 +51,17 @@ t_status	move_fd(int source, int target)
 */
 void	enter_child(t_stage st)
 {
-	if (st.in != NO_PIPE && move_fd(st.in, STDIN_FILENO) != ST_OK)
+	if (st.pipe_in != NO_PIPE && move_fd(st.pipe_in, STDIN_FILENO) != ST_OK)
 		exit(EXIT_FAILURE);
-	if (st.out != NO_PIPE && move_fd(st.out, STDOUT_FILENO) != ST_OK)
+	if (st.pipe_out != NO_PIPE && move_fd(st.pipe_out, STDOUT_FILENO) != ST_OK)
 		exit(EXIT_FAILURE);
 	close_fd_bitmap(st.close);
 }
 
 void	close_pipes(t_stage st)
 {
-	if (st.in != NO_PIPE)
-		close(st.in);
-	if (st.out != NO_PIPE)
-		close(st.out);
+	if (st.pipe_in != NO_PIPE)
+		close(st.pipe_in);
+	if (st.pipe_out != NO_PIPE)
+		close(st.pipe_out);
 }

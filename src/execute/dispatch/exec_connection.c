@@ -78,11 +78,11 @@ t_status	exec_pipeline(t_node *node, t_ctx *ctx, t_stage st)
 	inner->bitmap[pipe_fd[0]] = 1;
 	side = st;
 	side.close = inner;
-	side.out = pipe_fd[1];
+	side.pipe_out = pipe_fd[1];
 	execute_internal(node->left, ctx, side);
 	close(pipe_fd[1]);
-	side.out = st.out;
-	side.in = pipe_fd[0];
+	side.pipe_out = st.pipe_out;
+	side.pipe_in = pipe_fd[0];
 	result = execute_internal(node->right, ctx, side);
 	close(pipe_fd[0]);
 	dispose_fd_bitmap(inner);

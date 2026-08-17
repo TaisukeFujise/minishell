@@ -61,7 +61,7 @@ t_status	execute_internal(t_node *node, t_ctx *ctx, t_stage st)
 		return (exec_connection(node, ctx, st));
 	else
 		return (ST_FATAL);
-	if (result == ST_OK && st.out == NO_PIPE && ctx->npid > 0)
+	if (result == ST_OK && st.pipe_out == NO_PIPE && ctx->npid > 0)
 		result = collect_child_result(ctx);
 	return (result);
 }

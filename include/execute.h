@@ -32,15 +32,15 @@
 /*
 	What one step of the execution holds. It is passed by value, so what
 	a stage sets stays inside the subtree it runs.
-	- in/out: the fds to become stdin and stdout, NO_PIPE when there are
-	  none. The pipeline that made them owns them.
+	- pipe_in/pipe_out: the fds to become stdin and stdout, NO_PIPE when
+	  there are none. The pipeline that made them owns them.
 	- close: the fds a forked child must not keep, the read ends of the
 	  pipelines around it.
 */
 typedef struct s_stage
 {
-	int			in;
-	int			out;
+	int			pipe_in;
+	int			pipe_out;
 	t_fd_bitmap	*close;
 }				t_stage;
 
@@ -91,7 +91,7 @@ t_fd_bitmap	*grow_fd_bitmap(t_fd_bitmap *src, int fd);
 void		close_fd_bitmap(t_fd_bitmap *fd_bitmap);
 void		dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
 /* pipe_utils.c */
-t_stage		new_stage(int in, int out);
+t_stage		new_stage(int pipe_in, int pipe_out);
 t_status	move_fd(int source, int target);
 void		enter_child(t_stage st);
 void		close_pipes(t_stage st);
