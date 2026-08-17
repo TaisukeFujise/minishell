@@ -8,3 +8,11 @@ t_status	execute_internal(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 	ctx->err.exit_code = 41;
 	return (ST_OK);
 }
+
+t_status	expand_command(t_node *node, t_ctx *ctx, t_arenas *arenas)
+{
+	(void)node;
+	(void)ctx;
+	(void)arenas;
+	return (ST_OK);
+}

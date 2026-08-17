@@ -117,6 +117,15 @@ run_case lexical_assign 'EMPTY=
 $EMPTY X=1'
 
 run_case subshell '(echo sub)'
+run_case subshell_redirect '(echo a) > out.txt
+cat out.txt'
+run_case subshell_redirect_pipe '(echo a) > out.txt | cat
+cat out.txt'
+run_case subshell_input 'echo a > in.txt
+(cat) < in.txt'
+run_case subshell_keeps_shell 'cd /tmp
+(cd / && pwd)
+pwd'
 # The status of a subshell that is the right hand side of a pipe. It is lost
 # if the child waits for the pids it inherited from the shell (review S43-05).
 run_case subshell_status 'echo a | (nosuchcmd_xyz)
