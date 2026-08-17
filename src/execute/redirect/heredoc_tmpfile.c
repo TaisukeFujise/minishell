@@ -71,6 +71,8 @@ static bool	write_all(int fd, char *buf, size_t len)
 
 /*
 	The read fd belongs to the caller: the AST keeps no fd of its own.
+	The name is removed on every path, so a failure leaves nothing behind.
+	The file itself lives until the caller closes the fd.
 */
 int	open_heredoc_fd(t_redirect *redirect)
 {
@@ -82,14 +84,11 @@ int	open_heredoc_fd(t_redirect *redirect)
 	write_fd = open_tmp_write_fd(&filename);
 	if (write_fd < 0)
 		return (-1);
-	if (!write_all(write_fd, redirect->hd.raw_str.str,
-			redirect->hd.raw_str.len))
-		return (close(write_fd), unlink(filename), free(filename), -1);
+	read_fd = -1;
+	if (write_all(write_fd, redirect->hd.raw_str.str, redirect->hd.raw_str.len))
+		read_fd = open(filename, O_RDONLY);
 	close(write_fd);
-	read_fd = open(filename, O_RDONLY);
-	if (read_fd < 0)
-		return (unlink(filename), free(filename), -1);
-	if (unlink(filename) < 0)
-		return (free(filename), close(read_fd), -1);
-	return (free(filename), read_fd);
+	unlink(filename);
+	free(filename);
+	return (read_fd);
 }
