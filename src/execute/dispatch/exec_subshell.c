@@ -26,5 +26,6 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 		execute_internal(node->left, ctx, pipe_in, pipe_out);
 		_exit(ctx->err.exit_code);
 	}
-	return (adopt_child(ctx, pid, pipe_in, pipe_out));
+	close_pipes(pipe_in, pipe_out);
+	return (register_pid(ctx, pid));
 }

@@ -79,12 +79,10 @@ void		close_fd_bitmap(t_fd_bitmap *fd_bitmap);
 void		dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
 /* pipe_utils.c */
 t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out);
-void		enter_child(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-				int pipe_out);
+void		enter_child(t_ctx *ctx, int pipe_in, int pipe_out);
 void		close_pipes(int pipe_in, int pipe_out);
 /* register_pid.c */
 t_status	register_pid(t_ctx *ctx, pid_t pid);
-t_status	adopt_child(t_ctx *ctx, pid_t pid, int pipe_in, int pipe_out);
 /* wait_children.c */
 t_status	collect_child_result(t_ctx *ctx);
 

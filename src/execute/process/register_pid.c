@@ -35,14 +35,3 @@ t_status	register_pid(t_ctx *ctx, pid_t pid)
 	ctx->npid++;
 	return (ST_OK);
 }
-
-/*
-	adopt_child is the parent side of every fork the executor does.
-	The shell drops its copy of the pipe endpoints and keeps the pid,
-	so that execute_internal can wait for the command.
-*/
-t_status	adopt_child(t_ctx *ctx, pid_t pid, int pipe_in, int pipe_out)
-{
-	close_pipes(pipe_in, pipe_out);
-	return (register_pid(ctx, pid));
-}

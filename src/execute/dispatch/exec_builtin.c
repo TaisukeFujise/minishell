@@ -45,11 +45,14 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		return (ST_FAILURE);
 	if (pid == 0)
 	{
-		enter_child(cmd, ctx, pipe_in, pipe_out);
+		enter_child(ctx, pipe_in, pipe_out);
+		if (apply_redirects(cmd->redirects) != ST_OK)
+			exit(EXIT_FAILURE);
 		set_exit_code(ctx, builtin_cmd(cmd->args, ctx));
 		exit(ctx->err.exit_code);
 	}
-	return (adopt_child(ctx, pid, pipe_in, pipe_out));
+	close_pipes(pipe_in, pipe_out);
+	return (register_pid(ctx, pid));
 }
 
 /*

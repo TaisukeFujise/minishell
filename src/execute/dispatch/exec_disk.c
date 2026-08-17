@@ -44,12 +44,15 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 		return (free_exec_params(params.argv, params.envp), ST_FAILURE);
 	if (pid == 0)
 	{
-		enter_child(cmd, ctx, pipe_in, pipe_out);
+		enter_child(ctx, pipe_in, pipe_out);
+		if (apply_redirects(cmd->redirects) != ST_OK)
+			exit(EXIT_FAILURE);
 		disk_command(params.argv, params.envp, ctx);
 		_exit(EXIT_FAILURE);
 	}
 	free_exec_params(params.argv, params.envp);
-	return (adopt_child(ctx, pid, pipe_in, pipe_out));
+	close_pipes(pipe_in, pipe_out);
+	return (register_pid(ctx, pid));
 }
 
 /*
