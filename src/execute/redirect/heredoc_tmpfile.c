@@ -70,33 +70,26 @@ static bool	write_all(int fd, char *buf, size_t len)
 }
 
 /*
-	Put the body of a heredoc in a temporary file and open it for reading.
-	The name is unlinked once both ends are settled, so no error path
-	leaves an entry behind. The caller owns the fd this returns; the AST
-	keeps no fd of its own.
+	The read fd belongs to the caller: the AST keeps no fd of its own.
 */
 int	open_heredoc_fd(t_redirect *redirect)
 {
 	char	*filename;
-	int		fd;
+	int		write_fd;
+	int		read_fd;
 
 	filename = NULL;
-	fd = open_tmp_write_fd(&filename);
-	if (fd < 0)
+	write_fd = open_tmp_write_fd(&filename);
+	if (write_fd < 0)
 		return (-1);
-	if (!write_all(fd, redirect->hd.raw_str.str, redirect->hd.raw_str.len))
-		return (close(fd), unlink(filename), free(filename), -1);
-	close(fd);
-	fd = open(filename, O_RDONLY);
-	unlink(filename);
-	free(filename);
-	return (fd);
+	if (!write_all(write_fd, redirect->hd.raw_str.str,
+			redirect->hd.raw_str.len))
+		return (close(write_fd), unlink(filename), free(filename), -1);
+	close(write_fd);
+	read_fd = open(filename, O_RDONLY);
+	if (read_fd < 0)
+		return (unlink(filename), free(filename), -1);
+	if (unlink(filename) < 0)
+		return (free(filename), close(read_fd), -1);
+	return (free(filename), read_fd);
 }
-
-// int	main(void)
-// {
-// 	printf("%s\n", create_tmp_filename());
-// 	printf("%s\n", create_tmp_filename());
-// 	printf("%s\n", create_tmp_filename());
-// 	printf("%s\n", create_tmp_filename());
-// }
