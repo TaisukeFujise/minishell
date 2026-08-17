@@ -114,8 +114,7 @@ char		*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table);
 char		*extract_path_entry(char *path_value);
 /* envp_utils.c */
 char		*make_env_entry(char *key, char *value);
-char		**table_to_envp(t_hashtable *table, char **envp);
-char		**tables_to_envp(t_hashtable *tmp_table, t_hashtable *env_table,
-				char **envp);
+char		**build_envp(t_hashtable *tmp_table, t_hashtable *env_table);
+void		free_envp(char **envp);
 
 #endif
