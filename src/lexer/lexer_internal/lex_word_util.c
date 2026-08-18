@@ -71,26 +71,19 @@ void	lex_dollar(char **cur_ptr, uint8_t *flag)
 	size_t	len;
 
 	(*cur_ptr)++;
-	if (**cur_ptr == '?' || ft_isdigit(**cur_ptr))
+	if (**cur_ptr == '?')
 	{
 		(*cur_ptr)++;
 		*flag = W_DOLL;
 		return ;
 	}
-	if (**cur_ptr == '{')
+	else
 	{
-		len = str_name_len(*cur_ptr + 1);
-		if (len > 0 && (*cur_ptr)[len + 1] == '}')
+		len = str_name_len(*cur_ptr);
+		if (len > 0)
 		{
-			*cur_ptr += len + 2;
+			*cur_ptr += len;
 			*flag = W_DOLL;
 		}
-		return ;
-	}
-	len = str_name_len(*cur_ptr);
-	if (len > 0)
-	{
-		*cur_ptr += len;
-		*flag = W_DOLL;
 	}
 }

@@ -80,11 +80,6 @@ pwd'
 run_case builtin_export 'export ZZ=1
 echo $ZZ'
 run_case param 'echo $HOME'
-run_case param_braced 'echo ${HOME}'
-run_case param_braced_word 'V=b
-echo a${V}c'
-run_case param_braced_unset 'echo ${NOPE}x'
-run_case param_positional 'echo x$1y'
 run_case redirect_target 'echo done > out.txt
 cat out.txt'
 run_case redirect_keeps_fd 'echo hi 3>f1
