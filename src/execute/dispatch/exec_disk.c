@@ -18,7 +18,7 @@
 void		run_in_place(t_simple_cmd *cmd, t_ctx *ctx, t_exec_params params);
 void		disk_command(char **argv, char **envp, t_ctx *ctx);
 bool		has_slash(char *str);
-int			run_path_search_command(char *path_value, char **argv, char **envp);
+int			report_exec_error(char *name, int reason);
 
 /*
 	execute disk command(external command), like ls.
@@ -59,32 +59,45 @@ void	run_in_place(t_simple_cmd *cmd, t_ctx *ctx, t_exec_params params)
 }
 
 /*
-	Todo
-	- disk_command find disk command and execute it.
-	- It returns error, like "command not found", if there is no command.
+	Say why a command did not run, and give the status a shell gives for
+	it: 127 when there was nothing to run, 126 when there was something
+	but it could not be run. [review D37-07, D37-09]
+*/
+int	report_exec_error(char *name, int reason)
+{
+	char	*msg;
+
+	write(STDERR_FILENO, "minishell: ", 11);
+	write(STDERR_FILENO, name, ft_strlen(name));
+	write(STDERR_FILENO, ": ", 2);
+	msg = "command not found";
+	if (reason != 0)
+		msg = strerror(reason);
+	write(STDERR_FILENO, msg, ft_strlen(msg));
+	write(STDERR_FILENO, "\n", 1);
+	if (reason == 0 || reason == ENOENT || reason == ENOTDIR)
+		return (127);
+	return (126);
+}
+
+/*
+	Become the command. A name with a slash is the pathname itself, and
+	so is any name when PATH is unset. Never returns.
 	2.9.1 Simple command
 	> Command Search and Execution
 */
 void	disk_command(char **argv, char **envp, t_ctx *ctx)
 {
-	char	*path_value;
-	int		exit_code;
+	char	*path;
 
-	if (has_slash(argv[0]))
+	path = extract_path_value(ctx->tmp_table, ctx->env_table);
+	if (has_slash(argv[0]) || path == NULL)
 	{
+		set_underscore(envp, argv[0]);
 		execve(argv[0], argv, envp);
-		if (errno == ENOENT)
-			exit(127);
-		exit(126);
+		exit(report_exec_error(argv[0], errno));
 	}
-	else
-	{
-		path_value = extract_path_value(ctx->tmp_table, ctx->env_table);
-		if (path_value == NULL)
-			exit(1);
-		exit_code = run_path_search_command(path_value, argv, envp);
-		exit(exit_code);
-	}
+	exit(report_exec_error(argv[0], search_path(path, argv, envp)));
 }
 
 bool	has_slash(char *str)
@@ -99,32 +112,4 @@ bool	has_slash(char *str)
 		i++;
 	}
 	return (false);
-}
-
-/*
-	127 means errno ENOENT("command not found")
-*/
-int	run_path_search_command(char *path_value, char **argv, char **envp)
-{
-	char	*dir;
-	char	*pathname;
-	int		exit_code;
-
-	exit_code = 127;
-	while (*path_value)
-	{
-		dir = extract_path_entry(path_value);
-		if (dir == NULL)
-			return (1);
-		pathname = ft_strjoin(dir, argv[0]);
-		if (pathname == NULL)
-			return (free(dir), 1);
-		execve(pathname, argv, envp);
-		if (errno != ENOENT)
-			exit_code = 126;
-		path_value += ft_strlen(dir);
-		if (*path_value == ':')
-			path_value++;
-	}
-	return (exit_code);
 }

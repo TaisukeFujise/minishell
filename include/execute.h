@@ -112,7 +112,9 @@ int			build_exec_params(t_exec_params *exec_params, t_word_list *args,
 void		free_exec_params(char **argv, char **envp);
 /* path_utils.c */
 char		*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table);
-char		*extract_path_entry(char *path_value);
+char		*next_path_candidate(char **scan, char *name);
+void		set_underscore(char **envp, char *pathname);
+int			search_path(char *path, char **argv, char **envp);
 /* envp_utils.c */
 char		*env_lookup(t_hashtable *tmp_table, t_hashtable *env_table,
 				char *name);

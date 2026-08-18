@@ -94,7 +94,8 @@ static char	**walk_table(t_hashtable *table, t_hashtable *skip, char **envp)
 /*
 	Build the environment of the current command from the persistent table
 	and the assignments of this command. tmp_table wins on the same key.
-	The result is a NULL terminated array the caller owns.
+	The result is a NULL terminated array the caller owns. One slot is
+	left free for set_underscore().
 */
 char	**build_envp(t_hashtable *tmp_table, t_hashtable *env_table)
 {
@@ -102,7 +103,7 @@ char	**build_envp(t_hashtable *tmp_table, t_hashtable *env_table)
 	char	**tail;
 	int		count;
 
-	count = 1;
+	count = 2;
 	if (tmp_table != NULL)
 		count += tmp_table->entry_count;
 	if (env_table != NULL)

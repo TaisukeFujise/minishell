@@ -31,8 +31,6 @@ EXPECTED_FAIL="
 builtin_stdio_buffer
 stdin_readahead
 exit_bad_arg
-missing_diagnostic
-unset_path
 exit_prints
 heredoc
 "
@@ -142,6 +140,13 @@ run_case missing_diagnostic 'nosuchcmd_xyz 2>err.txt
 grep -c nosuchcmd_xyz err.txt'
 run_case unset_path 'unset PATH
 ls'
+run_case path_empty_element 'echo x > mycmd
+PATH=:/nonexistent
+mycmd'
+run_case path_not_executable 'echo x > notexec
+PATH=.
+notexec'
+run_case exec_a_directory '/tmp'
 run_case exit_prints 'exit 7'
 # The shell exits 1 on ST_FATAL whatever status the builtin chose (main.c).
 run_case exit_bad_arg 'exit abc'
