@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../../include/execute.h"
+#include <sys/stat.h>
 #include "../../../include/signal_handle.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
@@ -65,9 +66,12 @@ void	run_in_place(t_simple_cmd *cmd, t_ctx *ctx, t_exec_params params)
 */
 int	report_exec_error(char *name, int reason)
 {
-	char	*msg;
+	struct stat	info;
+	char		*msg;
 
 	msg = "command not found";
+	if (reason == EACCES && stat(name, &info) == 0 && S_ISDIR(info.st_mode))
+		reason = EISDIR;
 	if (reason != 0)
 		msg = strerror(reason);
 	print_error(name, msg);
