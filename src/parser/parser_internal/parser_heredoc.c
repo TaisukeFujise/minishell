@@ -45,8 +45,8 @@ static char	*read_next_heredoc_line(t_parser_state *ps)
 	if (*(ps->lex.line) == '\0')
 	{
 		start = readline("> ");
-		if (!start)
-			return (NULL);
+		if (!start || g_signum == SIGINT)
+			return (free(start), NULL);
 		line = ft_arena_strdup(&ps->arenas->tmp, start);
 		free(start);
 		return (line);
@@ -79,6 +79,12 @@ static bool	read_heredoc_body(t_parser_state *ps, char *delim, t_strbuf *buf)
 	}
 	if (line)
 		return (true);
+	if (g_signum == SIGINT)
+	{
+		parser_fail(ps, ST_FAILURE, NULL);
+		ps->ctx->err.exit_code = 130;
+		return (false);
+	}
 	parser_fail(ps, ST_FAILURE, hd_eof_warn_msg(ps, delim));
 	return (false);
 }

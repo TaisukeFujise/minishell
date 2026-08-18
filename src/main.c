@@ -101,6 +101,7 @@ int main(int argc, char **argv, char **envp)
 		return (1);
 	while (1)
 	{
+		g_signum = 0;
 		if (isatty(STDIN_FILENO) == 1) // if user_input is sent by tty.
 			user_input = readline("minishell$ ");
 		else
@@ -111,7 +112,6 @@ int main(int argc, char **argv, char **envp)
 			add_history(user_input);
 		if (g_signum == SIGINT)
 			ctx.err.exit_code = 130;
-		g_signum = 0;
 		parse_and_execute(user_input, &ast, &ctx);
 		/*
 			Here free "user_input" and the member of "node and ctx"(not node and ctx itself)
