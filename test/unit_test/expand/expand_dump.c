@@ -290,7 +290,7 @@ static void	dump_command(char *begin, char *cursor, t_ctx *ctx,
 	printf("EXPAND_STATUS=");
 	print_status(status);
 	if (status != ST_OK)
-		printf(" err=\"%s\"", ctx->err.err_msg);
+		printf(" exit_code=%d", ctx->err.exit_code);
 	printf("\nAFTER_EXPAND:\n");
 	dump_node(ast, 0);
 }
@@ -320,7 +320,7 @@ void	expand_dump_input(char *line)
 		if (status == ST_OK)
 			dump_command(begin, cursor, &ctx, &ast, &arenas);
 		else
-			printf("err=\"%s\"\n", ctx.err.err_msg);
+			printf("exit_code=%d\n", ctx.err.exit_code);
 		if (status == ST_OK)
 			close_heredocs(ast.left);
 		destroy_arenas(&arenas);

@@ -33,6 +33,7 @@ int	test_pwd(char **envp)
 	CHECK(capture(buf, sizeof(buf), pwd_cmd, NULL, NULL) == ST_OK
 		&& ft_strcmp(buf, expected) == 0, "pwd: no args");
 	CHECK(capture(buf, sizeof(buf), pwd_cmd, make_args((char *[]){"x", NULL}),
-			NULL) == ST_FAILURE, "pwd: with args");
+			NULL) == ST_OK && ft_strcmp(buf, expected) == 0,
+		"pwd: operands ignored");
 	return (g_ng);
 }

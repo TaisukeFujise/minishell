@@ -54,7 +54,7 @@ void	print_ctx(t_ctx ctx)
 	// print_table(ctx.tmp_table);
 	// print_bitmap(ctx.bitmap);
 	// print_pids(ctx.pids);
-	printf("npid: %d\n", ctx.npid);
+	// The pids of a pipeline belong to that pipeline now, not to the ctx.
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -128,6 +128,7 @@ int	main(int argc, char **argv, char **envp)
 	assign_C.next = NULL;
 
 
+	(void)cmd2;
 	// if (exec_builtin(&cmd2, &ctx, NO_PIPE, NO_PIPE) == ST_FATAL)
 	// 	return (1);
 	// print_table(ctx.env_table);

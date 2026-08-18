@@ -35,24 +35,31 @@ BUILTIN_SRCS := cd_cmd.c\
 				exit_cmd.c\
 				export_cmd.c\
 				pwd_cmd.c\
-				unset_cmd.c
+				unset_cmd.c\
+				export_print.c
 
-STRUTIL_SRCS := name.c
+STRUTIL_SRCS := name.c strbuf.c
 
 EXEC_SRCS := init_ctx.c\
 			exec_builtin.c\
+			exec_simple.c\
 			pipe_utils.c\
 			procs.c\
 			wait_children.c\
 			apply_redirect.c\
 			assigns.c\
-			count_args.c\
+			args_utils.c\
 			heredoc_tmpfile.c\
 			envp_utils.c\
+			path_utils.c\
+			exec_disk.c\
+			signal_handle.c\
 
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
+EXPAND_SRCS := expand.c $(notdir $(wildcard $(ROOT)/src/expand/expand_internal/*.c))
 
-SRCS := $(TEST_SRCS) $(BUILTIN_SRCS) $(STRUTIL_SRCS) $(HASHMAP_SRCS) $(EXEC_SRCS)
+SRCS := $(TEST_SRCS) $(BUILTIN_SRCS) $(STRUTIL_SRCS) $(HASHMAP_SRCS) $(EXEC_SRCS) \
+	$(EXPAND_SRCS)
 
 OBJDIR := obj
 OBJS := $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))
@@ -65,6 +72,9 @@ vpath %.c $(ROOT)/src/hashmap \
 	$(ROOT)/src/execute/utils \
 	$(ROOT)/src/builtin \
 	$(ROOT)/src/strutil \
+	$(ROOT)/src/expand \
+	$(ROOT)/src/expand/expand_internal \
+	$(ROOT)/src/signal \
 	.
 
 LDLIBS := -lreadline

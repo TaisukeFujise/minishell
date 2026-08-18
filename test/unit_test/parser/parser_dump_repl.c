@@ -102,7 +102,7 @@ static void	dump_input(char *line)
 		{
 			printf(" command=\"");
 			print_escaped_segment(begin, cursor);
-			printf("\" err=\"%s\"\n", ctx.err.err_msg);
+			printf("\" exit_code=%d\n", ctx.err.exit_code);
 			if (status != ST_FAILURE)
 			{
 				destroy_arenas(&arenas);

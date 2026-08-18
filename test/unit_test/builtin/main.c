@@ -12,6 +12,8 @@
 
 #include "builtin_test.h"
 
+static int	g_ng;
+
 static t_word	*new_word(char *str)
 {
 	t_word	*word;
@@ -54,23 +56,6 @@ static t_word_list	*new_args_2(char *arg0, char *arg1)
 	return (head);
 }
 
-static void	free_args(t_word_list *args)
-{
-	t_word_list	*next;
-
-	while (args)
-	{
-		next = args->next;
-		if (args->wd != NULL)
-		{
-			free(args->wd->str);
-			free(args->wd);
-		}
-		free(args);
-		args = next;
-	}
-}
-
 static int	test_builtin_single(t_ctx *ctx)
 {
 	t_simple_cmd	cmd;
@@ -85,33 +70,40 @@ static int	test_builtin_single(t_ctx *ctx)
 	return (0);
 }
 
+/*
+	A builtin writes to the fd it is given, and does not fork: the stage
+	of a pipeline is already a process of its own. The old shape of this
+	test waited for a child that is never made.
+*/
 static int	test_builtin_pipe(t_ctx *ctx)
 {
 	t_simple_cmd	cmd;
-	int			fds[2];
-	char		buf[64];
-	ssize_t		nread;
+	int				fds[2];
+	int				saved;
+	char			buf[64];
+	ssize_t			nread;
 
-	fflush(NULL);
 	if (pipe(fds) < 0)
 		return (1);
 	ft_bzero(&cmd, sizeof(t_simple_cmd));
 	cmd.args = new_args_2("echo", "hello");
-	if (cmd.args == NULL)
+	saved = dup(STDOUT_FILENO);
+	if (cmd.args == NULL || saved < 0)
 		return (close(fds[0]), close(fds[1]), 1);
-	if (exec_builtin(&cmd, ctx) != ST_OK)
+	if (dup2(fds[1], STDOUT_FILENO) < 0)
 		return (close(fds[0]), close(fds[1]), free_args(cmd.args), 1);
-	if (wait_pid_status(ctx, -1) != ST_OK)
+	close(fds[1]);
+	if (exec_builtin(&cmd, ctx) != ST_OK)
 		return (close(fds[0]), free_args(cmd.args), 1);
+	dup2(saved, STDOUT_FILENO);
+	close(saved);
 	nread = read(fds[0], buf, sizeof(buf) - 1);
-	if (nread < 0)
-		return (close(fds[0]), free_args(cmd.args), 1);
-	buf[nread] = '\0';
 	close(fds[0]);
 	free_args(cmd.args);
-	if (ctx->err.exit_code != 0)
+	if (nread < 0)
 		return (1);
-	if (ft_strcmp(buf, "hello\n") != 0)
+	buf[nread] = '\0';
+	if (ctx->err.exit_code != 0 || ft_strcmp(buf, "hello\n") != 0)
 		return (1);
 	return (0);
 }
@@ -129,13 +121,19 @@ static int	test_builtin_pipe(t_ctx *ctx)
 int	main(int argc, char **argv, char **envp)
 {
 	t_ctx	ctx;
-	int		ng_count;
-	int		result;
+	int		NG_count;
 
 	(void)argc;
 	(void)argv;
-	int NG_count = 0;
-
+	NG_count = 0;
+	g_ng = 0;
+	if (setup_ctx(&ctx, envp) == 0)
+	{
+		CHECK(test_builtin_single(&ctx) == 0, "builtin single");
+		CHECK(test_builtin_pipe(&ctx) == 0, "builtin pipe");
+		teardown_ctx(&ctx);
+	}
+	NG_count += g_ng;
 	NG_count += test_cd(envp);
 	NG_count += test_echo();
 	NG_count += test_env(envp);

@@ -506,6 +506,11 @@ char	*parser_dump_ast_to_string(t_node *node)
 	return (buf.data);
 }
 
+void	parser_dump_free_string(char *s)
+{
+	free(s);
+}
+
 void	parser_dump_ast(t_node *node)
 {
 	char	*dump;

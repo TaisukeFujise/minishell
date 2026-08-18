@@ -68,7 +68,7 @@ int	test_cd(char **envp)
 	if (setup_ctx(&ctx, envp))
 		return (1);
 	args = make_args((char *[]){"/no_such_dir_xyz", NULL});
-	CHECK(cd_cmd(args, &ctx) == ST_FATAL, "cd: invalid path");
+	CHECK(cd_cmd(args, &ctx) == ST_FAILURE, "cd: invalid path");
 	free_args(args);
 	teardown_ctx(&ctx);
 	if (setup_ctx(&ctx, envp))

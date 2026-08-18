@@ -7,6 +7,9 @@ LIBFT_DIR:=$(ROOT)/libft
 LIBFT:=$(LIBFT_DIR)/libft.a
 
 ROOT_SRCS:=strutil/name.c \
+	strutil/msg.c \
+	signal/signal_handle.c \
+	input.c \
 	parser/parser.c \
 	parser/parser_internal/parser_error.c \
 	parser/parser_internal/parser_stream.c \
@@ -52,13 +55,13 @@ $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME_CASES): $(CASE_OBJS) $(ROOT_OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) -o $@ $(CASE_OBJS) $(ROOT_OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) -o $@ $(CASE_OBJS) $(ROOT_OBJS) $(LIBFT) -lreadline
 
 $(NAME_DUMP): $(DUMP_OBJS) $(ROOT_OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) -o $@ $(DUMP_OBJS) $(ROOT_OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) -o $@ $(DUMP_OBJS) $(ROOT_OBJS) $(LIBFT) -lreadline
 
 $(NAME_SNAPSHOT): $(SNAPSHOT_OBJS) $(ROOT_OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) -o $@ $(SNAPSHOT_OBJS) $(ROOT_OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) -o $@ $(SNAPSHOT_OBJS) $(ROOT_OBJS) $(LIBFT) -lreadline
 
 $(ROOT_OBJDIR)/%.o: $(ROOT)/src/%.c
 	@mkdir -p $(dir $@)

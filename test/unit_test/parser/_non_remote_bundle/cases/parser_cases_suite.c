@@ -353,7 +353,7 @@ static int	case_10(void)
 	cursor = ")";
 	if (parse(&cursor, &ast, &ctx) != ST_FAILURE)
 		return (0);
-	return (ctx.err.err_msg != NULL);
+	return (ctx.err.exit_code != 0);
 }
 
 static int	case_11(void)

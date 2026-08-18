@@ -36,8 +36,8 @@ int	test_env(char **envp)
 	CHECK(capture(buf, sizeof(buf), env_cmd, NULL, &ctx) == ST_OK && strstr(buf,
 			"PATH=") != NULL, "env: no args");
 	args = make_args((char *[]){"x", NULL});
-	CHECK(capture(buf, sizeof(buf), env_cmd, args, &ctx) == ST_FAILURE,
-		"env: with args");
+	CHECK(capture(buf, sizeof(buf), env_cmd, args, &ctx) == ST_OK && strstr(buf,
+			"PATH=") != NULL, "env: operands never reach the builtin");
 	free_args(args);
 	teardown_ctx(&ctx);
 	if (setup_ctx(&ctx, envp))
