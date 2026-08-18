@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../../include/execute.h"
+#include <sys/stat.h>
 #include "../../../include/parser.h"
 
 char	*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table)
@@ -72,6 +73,22 @@ void	set_underscore(char **envp, char *pathname)
 }
 
 /*
+	Whether the candidate is a file that could have been run at all.
+	execve() answers EACCES for a directory as well as for a file that
+	may not be run, and only the second is worth reporting: bash leaves
+	anything that is not a regular file out of the search, so "cd .."
+	as a command ends as not found and not as a refusal.
+*/
+static bool	is_regular(char *pathname)
+{
+	struct stat	info;
+
+	if (stat(pathname, &info) < 0)
+		return (false);
+	return (S_ISREG(info.st_mode));
+}
+
+/*
 	Try every candidate in PATH. A candidate that is simply not there is
 	not worth reporting, so keep the reason of one that was there and
 	still could not run. Returns 0 when nothing was found at all.
@@ -90,7 +107,7 @@ int	search_path(char *path, char **argv, char **envp)
 			return (ENOMEM);
 		set_underscore(envp, candidate);
 		execve(candidate, argv, envp);
-		if (errno != ENOENT && errno != ENOTDIR)
+		if (errno != ENOENT && errno != ENOTDIR && is_regular(candidate))
 			reason = errno;
 		free(candidate);
 	}
