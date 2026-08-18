@@ -53,3 +53,18 @@ void	print_error(const char *name, const char *reason)
 {
 	print_error_at(name, NULL, reason);
 }
+
+/*
+	A name the shell refuses, quoted the way bash quotes it:
+	"minishell: unset: `1x': not a valid identifier".
+*/
+void	print_error_name(const char *name, const char *word, const char *reason)
+{
+	write_all(STDERR_FILENO, "minishell: ", 11);
+	write_all(STDERR_FILENO, name, ft_strlen(name));
+	write_all(STDERR_FILENO, ": `", 3);
+	write_all(STDERR_FILENO, word, ft_strlen(word));
+	write_all(STDERR_FILENO, "': ", 3);
+	write_all(STDERR_FILENO, reason, ft_strlen(reason));
+	write_all(STDERR_FILENO, "\n", 1);
+}

@@ -98,6 +98,12 @@ echo a | cat'
 run_case builtin_out_subshell 'cd /
 pwd
 (echo a)'
+# A name that cannot be one is reported and the status becomes 1, where bash
+# is silent and returns 0: without a function name space there is nothing for
+# such a name to be. Only the unsetting of the names around it is compared.
+run_case unset_keeps_going 'export A_X=1 B_X=2
+unset A_X 1BAD B_X
+echo "[$A_X][$B_X]"'
 run_case cd_empty_home 'cd /
 export HOME=""
 cd

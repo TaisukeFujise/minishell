@@ -14,41 +14,45 @@
 #include "../../include/parser.h"
 #include "../../include/strutil.h"
 
-static void	print_invalid_identifier(char *name)
+static bool	is_identifier(char *name)
 {
-	ft_putstr_fd("minishell: unset: `", STDERR_FILENO);
-	ft_putstr_fd(name, STDERR_FILENO);
-	ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
+	return (*name != '\0' && name[str_name_len(name)] == '\0');
 }
 
 /*
 	unset name...
 	"unset" unset the args from env table, and update the ctx->exit_code.
 	If no parameters, it does nothing.
+	Every name is looked at on its own: a name that cannot be one is
+	reported and the status becomes a failure, but the names around it
+	are still unset. bash reaches the same result by way of its function
+	name space, which this shell does not have. [plan 15.1]
 */
 t_status	unset_cmd(t_word_list *args, t_ctx *ctx)
 {
-	t_word_list			*cursor;
 	t_bucket_contents	*item;
+	t_status			status;
 
-	cursor = args;
-	while (cursor)
-	{
-		if (!*cursor->wd->str
-			|| cursor->wd->str[str_name_len(cursor->wd->str)] != '\0')
-			return (print_invalid_identifier(cursor->wd->str), ST_FAILURE);
-		cursor = cursor->next;
-	}
+	status = ST_OK;
 	while (args)
 	{
-		item = hash_remove(args->wd->str, ctx->env_table);
-		if (item != NULL)
+		if (!is_identifier(args->wd->str))
 		{
-			free(item->key);
-			free(item->data.value);
-			free(item);
+			print_error_name("unset", args->wd->str,
+				"not a valid identifier");
+			status = ST_FAILURE;
+		}
+		else
+		{
+			item = hash_remove(args->wd->str, ctx->env_table);
+			if (item != NULL)
+			{
+				free(item->key);
+				free(item->data.value);
+				free(item);
+			}
 		}
 		args = args->next;
 	}
-	return (ST_OK);
+	return (status);
 }
