@@ -36,10 +36,10 @@ static t_arena_chunk	*new_chunk(t_arena *arena, size_t min_data_size)
 	chunk = malloc(total_bytes);
 	if (!chunk)
 		return (NULL);
-	chunk->prev = arena->current;
+	chunk->prev = arena->head;
 	chunk->capacity = cap;
 	chunk->used = 0;
-	arena->current = chunk;
+	arena->head = chunk;
 	return (chunk);
 }
 
@@ -47,7 +47,7 @@ static t_arena_chunk	*find_chunk(t_arena *arena, size_t aligned)
 {
 	t_arena_chunk	*chunk;
 
-	chunk = arena->current;
+	chunk = arena->head;
 	while (chunk)
 	{
 		if (aligned <= chunk->capacity
@@ -73,7 +73,6 @@ void	*ft_arena_alloc(t_arena *arena, size_t size)
 		if (!chunk)
 			return (NULL);
 	}
-	arena->current = chunk;
 	ptr = chunk->data + chunk->used;
 	chunk->used += aligned;
 	return (ptr);

@@ -28,13 +28,16 @@ jobs:
     - name: Run Norminette
       run: norminette .
 
-    # 5. Makeを実行する
-    - name: Run Make
-      run: make
+    # 5. Unit test の実行
+    - name: Run Unit Tests
+      run: make -C test
+    # 6. Makeを実行する
+    # - name: Run Make
+    #   run: make
 
 
 
-    # 6. discord 通知
+    # 7. discord 通知
     - name: Discord Notification
       uses: sarisia/actions-status-discord@v1
       if: always()

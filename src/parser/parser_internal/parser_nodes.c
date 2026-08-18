@@ -44,14 +44,21 @@ t_node	*make_binary(t_parser_state *ps, t_op_connect op, t_node *left,
 	t_node_kind	kind;
 
 	if (ps->status != ST_OK || !left || !right)
+	{
+		close_heredocs(left);
+		close_heredocs(right);
 		return (NULL);
+	}
+	kind = NODE_ANDOR;
 	if (op == CONNECT_PIPE)
 		kind = NODE_PIPE;
-	else
-		kind = NODE_ANDOR;
 	node = new_node(ps, kind);
 	if (!node)
+	{
+		close_heredocs(left);
+		close_heredocs(right);
 		return (NULL);
+	}
 	node->u_node.and_or.op = op;
 	node->left = left;
 	node->right = right;

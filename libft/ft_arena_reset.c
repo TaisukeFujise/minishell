@@ -6,7 +6,7 @@ void	ft_arena_reset(t_arena *arena)
 
 	if (!arena)
 		return ;
-	chunk = arena->current;
+	chunk = arena->head;
 	while (chunk)
 	{
 		chunk->used = 0;

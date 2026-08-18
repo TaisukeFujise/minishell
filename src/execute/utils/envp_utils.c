@@ -14,8 +14,22 @@
 #include "../../../include/hashmap.h"
 #include "../../../include/parser.h"
 
-static int	_item_to_envp(t_bucket_contents *item, t_bucket_contents *item_tmp,
-				char ***envp);
+/*
+	Look a name up in the environment of the current command.
+	The assignments of this command win over the persistent table.
+	The returned value belongs to the table.
+*/
+char	*env_lookup(t_hashtable *tmp_table, t_hashtable *env_table, char *name)
+{
+	t_bucket_contents	*item;
+
+	item = hash_search(name, tmp_table);
+	if (item == NULL)
+		item = hash_search(name, env_table);
+	if (item == NULL)
+		return (NULL);
+	return (item->data.value);
+}
 
 char	*make_env_entry(char *key, char *value)
 {
@@ -46,73 +60,76 @@ char	*make_env_entry(char *key, char *value)
 	return (head);
 }
 
-char	**table_to_envp(t_hashtable *table, char **envp)
+/*
+	Walk one table and append the entries the merged environment keeps.
+	From env_table we skip the keys tmp_table overrides, they come from
+	the tmp_table walk. Entries that are not exported are shell variables.
+*/
+static char	**walk_table(t_hashtable *table, t_hashtable *skip, char **envp)
 {
-	char				**head_envp;
-	t_bucket_contents	*item;
 	int					i;
+	t_bucket_contents	*item;
 
-	head_envp = envp;
 	i = 0;
-	while (i++ < table->bucket_size)
+	while (table != NULL && i < table->bucket_size)
 	{
-		item = hash_items(i - 1, table);
-		while (item)
+		item = hash_items(i, table);
+		while (item != NULL)
 		{
-			if (item->data.exported)
+			if (item->data.exported && item->data.value != NULL
+				&& (skip == NULL || hash_search(item->key, skip) == NULL))
 			{
-				*envp++ = make_env_entry(item->key, item->data.value);
-				if (*(envp - 1) == NULL)
-					return (free_exec_params(NULL, head_envp), NULL);
+				*envp = make_env_entry(item->key, item->data.value);
+				if (*envp == NULL)
+					return (NULL);
+				envp++;
 			}
 			item = item->next;
 		}
+		i++;
 	}
-	*envp = NULL;
-	return (head_envp);
+	return (envp);
 }
 
-char	**tables_to_envp(t_hashtable *tmp_table, t_hashtable *env_table,
-		char **envp)
+/*
+	Build the environment of the current command from the persistent table
+	and the assignments of this command. tmp_table wins on the same key.
+	The result is a NULL terminated array the caller owns.
+*/
+char	**build_envp(t_hashtable *tmp_table, t_hashtable *env_table)
 {
-	char				**head_envp;
-	t_bucket_contents	*item;
-	t_bucket_contents	*item_tmp;
-	int					i;
+	char	**envp;
+	char	**tail;
+	int		count;
 
-	head_envp = envp;
+	count = 1;
+	if (tmp_table != NULL)
+		count += tmp_table->entry_count;
+	if (env_table != NULL)
+		count += env_table->entry_count;
+	envp = ft_calloc(count, sizeof(char *));
+	if (envp == NULL)
+		return (NULL);
+	tail = walk_table(tmp_table, NULL, envp);
+	if (tail != NULL)
+		tail = walk_table(env_table, tmp_table, tail);
+	if (tail == NULL)
+		return (free_envp(envp), NULL);
+	*tail = NULL;
+	return (envp);
+}
+
+void	free_envp(char **envp)
+{
+	int	i;
+
 	i = 0;
-	while (i++ < env_table->bucket_size)
+	if (envp == NULL)
+		return ;
+	while (envp[i])
 	{
-		item = hash_items(i - 1, env_table);
-		while (item)
-		{
-			item_tmp = hash_search(item->key, tmp_table);
-			if (_item_to_envp(item, item_tmp, &envp) == FAILURE)
-				return (free_exec_params(NULL, head_envp), NULL);
-			item = item->next;
-		}
+		free(envp[i]);
+		i++;
 	}
-	*envp = NULL;
-	return (head_envp);
-}
-
-static int	_item_to_envp(t_bucket_contents *item, t_bucket_contents *item_tmp,
-		char ***envp)
-{
-	if (item_tmp != NULL)
-	{
-		**envp = make_env_entry(item_tmp->key, item_tmp->data.value);
-		if (**envp == NULL)
-			return (FAILURE);
-		(*envp)++;
-	}
-	else if (item->data.exported)
-	{
-		**envp = make_env_entry(item->key, item->data.value);
-		if (**envp == NULL)
-			return (FAILURE);
-		(*envp)++;
-	}
-	return (SUCCESS);
+	free(envp);
 }

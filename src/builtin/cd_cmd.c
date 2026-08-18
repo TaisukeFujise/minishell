@@ -31,27 +31,23 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 */
 t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 {
-	t_bucket_contents	*home;
-	char				*path;
+	char	*home;
+	char	*path;
 
 	if (args == NULL)
 	{
-		home = hash_search("HOME", ctx->tmp_table);
+		home = env_lookup(ctx->tmp_table, ctx->env_table, "HOME");
 		if (home == NULL)
 		{
-			home = hash_search("HOME", ctx->env_table);
-			if (home == NULL)
-			{
-				ft_putendl_fd("minishell: cd: HOME not set", STDERR_FILENO);
-				return (ST_FAILURE);
-			}
+			ft_putendl_fd("minishell: cd: HOME not set", STDERR_FILENO);
+			return (ST_FAILURE);
 		}
-		if (chdir(home->data.value) < 0)
+		if (chdir(home) < 0)
 		{
 			perror("minishell: cd");
 			return (ST_FAILURE);
 		}
-		path = ft_strdup(home->data.value);
+		path = ft_strdup(home);
 		if (path == NULL)
 			return (ST_FATAL);
 		return (update_pwd(ctx->tmp_table, ctx->env_table, path));
@@ -79,17 +75,13 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 
 t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 {
-	t_bucket_contents	*pwd;
+	char				*pwd;
 	char				*oldpwd_key;
 	t_bucket_contents	*oldpwd;
 
-	pwd = hash_search("PWD", tmp_table);
+	pwd = env_lookup(tmp_table, env_table, "PWD");
 	if (pwd == NULL)
-	{
-		pwd = hash_search("PWD", env_table);
-		if (pwd == NULL)
-			return (ST_OK);
-	}
+		return (ST_OK);
 	oldpwd_key = ft_strdup("OLDPWD");
 	if (oldpwd_key == NULL)
 		return (ST_FATAL);
@@ -97,13 +89,7 @@ t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
 	free(oldpwd_key);
 	if (oldpwd == NULL)
 		return (ST_FATAL);
-	if (oldpwd->data.value != NULL)
-	{
-		free(oldpwd->data.value);
-		oldpwd->data.value = NULL;
-	}
-	oldpwd->data.value = ft_strdup(pwd->data.value);
-	if (oldpwd->data.value == NULL)
+	if (!hash_set_value(oldpwd, pwd))
 		return (ST_FATAL);
 	return (ST_OK);
 }
@@ -123,11 +109,8 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 	free(pwd_key);
 	if (pwd == NULL)
 		return (ST_FATAL);
-	if (pwd->data.value != NULL)
-	{
-		free(pwd->data.value);
-		pwd->data.value = NULL;
-	}
-	pwd->data.value = path;
+	if (!hash_set_value(pwd, path))
+		return (free(path), ST_FATAL);
+	free(path);
 	return (ST_OK);
 }

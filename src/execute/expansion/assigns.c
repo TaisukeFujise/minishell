@@ -15,31 +15,49 @@
 #include "../../../include/parser.h"
 
 /*
-	apply_assings assign the vars to table depending on table type.
-	- TMP means temp env table.
-	- VAR means vars table. This situation, you don't touch the exported flag.
+	"key+=value" keeps the value the name has in the current environment.
+	The old value is read before the entry is created,
+	so that an entry created in tmp_table does not hide the persistent one.
 */
-t_status	apply_assigns(t_hashtable *table, t_assign *assign,
+static bool	set_value(t_bucket_contents *item, char *old, char *value)
+{
+	char	*joined;
+	bool	ok;
+
+	if (old == NULL)
+		return (hash_set_value(item, value));
+	joined = ft_strjoin(old, value);
+	if (joined == NULL)
+		return (false);
+	ok = hash_set_value(item, joined);
+	free(joined);
+	return (ok);
+}
+
+/*
+	apply_assign stores one expanded assignment.
+	- TMP is the environment of the current command, and is exported to it.
+	- VARS is the persistent table, where the exported flag is left alone.
+*/
+t_status	apply_assign(t_assign *assign, t_hashtable *table, t_ctx *ctx,
 		t_tabletype type)
 {
 	t_bucket_contents	*item;
+	char				*value;
+	char				*old;
 
+	value = "";
+	if (assign->value != NULL && assign->value->str != NULL)
+		value = assign->value->str;
+	old = NULL;
+	if (assign->key->flag & W_APPEND)
+		old = env_lookup(ctx->tmp_table, ctx->env_table, assign->key->str);
+	item = hash_insert(assign->key->str, table);
+	if (item == NULL)
+		return (ST_FATAL);
+	if (!set_value(item, old, value))
+		return (ST_FATAL);
 	if (type == TMP)
-		hash_flush(table, NULL);
-	while (assign)
-	{
-		item = hash_insert(assign->key->str, table);
-		if (item == NULL)
-			return (ST_FATAL);
-		if (item->data.value != NULL)
-		{
-			free(item->data.value);
-			item->data.value = NULL;
-		}
-		item->data.value = assign->value->str;
-		if (type == TMP)
-			item->data.exported = true;
-		assign = assign->next;
-	}
+		item->data.exported = true;
 	return (ST_OK);
 }
