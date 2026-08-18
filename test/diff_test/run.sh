@@ -30,7 +30,6 @@ XFAIL=0
 EXPECTED_FAIL="
 heredoc_unclosed
 builtin_stdio_buffer
-exit_bad_arg
 exit_prints
 "
 
@@ -147,8 +146,10 @@ PATH=.
 notexec'
 run_case exec_a_directory '/tmp'
 run_case exit_prints 'exit 7'
-# The shell exits 1 on ST_FATAL whatever status the builtin chose (main.c).
 run_case exit_bad_arg 'exit abc'
+run_case digit_last_word 'echo 7
+nosuchcmd_xyz 12
+echo done'
 # A pipeline stage runs in a child, so what it assigns cannot reach the
 # shell. bash forks before it expands the words for this reason.
 run_case pipe_assign_leak 'unset X
