@@ -103,12 +103,15 @@ export ZC_X=3
 export | grep Z._X'
 run_case export_bad_name 'export 1BAD=2 OK_X=1
 echo "$? [$OK_X]"'
-# A name that cannot be one is reported and the status becomes 1, where bash
-# is silent and returns 0: without a function name space there is nothing for
-# such a name to be. Only the unsetting of the names around it is compared.
 run_case unset_keeps_going 'export A_X=1 B_X=2
 unset A_X 1BAD B_X
-echo "[$A_X][$B_X]"'
+echo "[$A_X][$B_X] $?"'
+run_case unset_bad_name 'unset 1BAD
+echo $?
+unset A=1
+echo $?
+unset ""
+echo $?'
 run_case cd_empty_home 'cd /
 export HOME=""
 cd

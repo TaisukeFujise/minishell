@@ -12,47 +12,31 @@
 
 #include "../../include/builtin.h"
 #include "../../include/parser.h"
-#include "../../include/strutil.h"
-
-static bool	is_identifier(char *name)
-{
-	return (*name != '\0' && name[str_name_len(name)] == '\0');
-}
 
 /*
 	unset name...
 	"unset" unset the args from env table, and update the ctx->exit_code.
 	If no parameters, it does nothing.
-	Every name is looked at on its own: a name that cannot be one is
-	reported and the status becomes a failure, but the names around it
-	are still unset. bash reaches the same result by way of its function
-	name space, which this shell does not have. [plan 15.1]
+	A word that cannot be a name is passed over in silence, and the
+	status stays 0. bash does the same, by handing such a word to its
+	function name space; POSIX does not say what should happen; and a
+	word that cannot be a name never matches an entry anyway. dash
+	reports an error instead, so this follows bash rather than a rule.
 */
 t_status	unset_cmd(t_word_list *args, t_ctx *ctx)
 {
 	t_bucket_contents	*item;
-	t_status			status;
 
-	status = ST_OK;
 	while (args)
 	{
-		if (!is_identifier(args->wd->str))
+		item = hash_remove(args->wd->str, ctx->env_table);
+		if (item != NULL)
 		{
-			print_error_name("unset", args->wd->str,
-				"not a valid identifier");
-			status = ST_FAILURE;
-		}
-		else
-		{
-			item = hash_remove(args->wd->str, ctx->env_table);
-			if (item != NULL)
-			{
-				free(item->key);
-				free(item->data.value);
-				free(item);
-			}
+			free(item->key);
+			free(item->data.value);
+			free(item);
 		}
 		args = args->next;
 	}
-	return (status);
+	return (ST_OK);
 }
