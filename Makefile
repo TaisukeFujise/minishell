@@ -14,6 +14,7 @@ NAME:=minishell
 
 SRCDIR:=src
 SRCS:=main.c\
+	  input.c\
 	  signal/signal_handle.c\
 	  strutil/name.c\
 	  lexer/lexer.c\

@@ -17,8 +17,6 @@
 #include "../include/lexer.h"
 #include "../include/parser.h"
 
-volatile sig_atomic_t g_signum = 0;
-
 /*
 	Everything the shell itself owns: the line it is running, the tables
 	of its environment and the history. The ast and the ctx are on the
@@ -73,42 +71,6 @@ static void	report_error(t_ctx *ctx)
 	ctx->err.err_msg = NULL;
 }
 
-/*
-	A script is read one byte at a time. A command that reads standard
-	input must find it where the shell stopped reading, and lseek() is
-	not available to give back what was read ahead.
-*/
-static char	*read_script_line(void)
-{
-	t_strbuf	buf;
-	char		c;
-	ssize_t		n;
-
-	if (!strbuf_init(&buf))
-		return (NULL);
-	n = read(STDIN_FILENO, &c, 1);
-	while (n == 1 && c != '\n')
-	{
-		if (!strbuf_append(&buf, &c, 1))
-			return (strbuf_free(&buf), NULL);
-		n = read(STDIN_FILENO, &c, 1);
-	}
-	if (n <= 0 && buf.len == 0)
-		return (strbuf_free(&buf), NULL);
-	return (strbuf_detach(&buf, NULL));
-}
-
-/*
-	One line of input, with a prompt and history when a terminal is
-	reading it. The heredoc reader asks for its lines here too, so that
-	both take them from the same place.
-*/
-char	*shell_read_line(char *prompt)
-{
-	if (isatty(STDIN_FILENO) == 1)
-		return (readline(prompt));
-	return (read_script_line());
-}
 
 static t_status	parse_and_execute(char *user_input, t_node *ast, t_ctx *ctx)
 {
