@@ -55,6 +55,8 @@ typedef struct s_exec_params
 
 /* init.c */
 int			init_ctx(t_ctx *ctx, char **envp);
+/* init_env.c */
+int			init_shell_vars(t_hashtable *env_table);
 /* execute.c */
 t_status	execute(t_node *node, t_ctx *ctx);
 t_status	execute_internal(t_node *node, t_ctx *ctx, bool own);
