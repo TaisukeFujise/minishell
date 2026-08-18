@@ -18,3 +18,8 @@ t_status	expand_command(t_node *node, t_ctx *ctx, t_arenas *arenas)
 	(void)arenas;
 	return (ST_OK);
 }
+
+/* the shell's signal setup is not linked into this test */
+void	reset_signals(void)
+{
+}

@@ -27,6 +27,11 @@ static t_word	*new_word(char *str)
 	return (word);
 }
 
+/* the shell's signal setup is not linked into this test */
+void	reset_signals(void)
+{
+}
+
 static t_word_list	*new_args_1(char *arg0)
 {
 	t_word_list	*args;
