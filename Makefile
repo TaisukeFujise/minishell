@@ -52,6 +52,7 @@ SRCS:=main.c\
 	  builtin/unset_cmd.c\
 	  execute/execute.c\
 	  execute/init_ctx.c\
+	  execute/init_env.c\
 	  execute/dispatch/exec_builtin.c\
 	  execute/dispatch/exec_connection.c\
 	  execute/dispatch/exec_disk.c\

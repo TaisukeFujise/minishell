@@ -206,6 +206,11 @@ run_case path_not_executable 'echo x > notexec
 PATH=.
 notexec'
 run_case shlvl 'echo $SHLVL'
+run_case pwd_var 'cd /
+echo $PWD'
+run_case pwd_var_after_cd 'cd /tmp
+cd /
+echo "[$PWD][$OLDPWD]"'
 run_case exec_dotdot '..
 echo rc=$?'
 run_case exec_a_directory '/tmp'
