@@ -31,8 +31,6 @@
 
 extern volatile sig_atomic_t	g_signum;
 
-char							*shell_read_line(char *prompt);
-
 typedef struct s_arenas
 {
 	t_arena						ast;
@@ -56,6 +54,9 @@ typedef struct s_ctx
 	t_arenas					*arenas;
 	// arenas of the current parse iteration. NULL outside of it.
 }								t_ctx;
+
+char							*shell_read_line(char *prompt);
+void							dispose_shell(char *user_input, t_ctx *ctx);
 
 typedef enum e_status
 {
