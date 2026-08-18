@@ -26,16 +26,16 @@ EXECUTE_SRCS := \
 	procs.c \
 	wait_children.c \
 	apply_redirect.c \
-	assigns.c\
 	heredoc_tmpfile.c\
 	exec_disk.c\
 	args_utils.c\
 	path_utils.c\
-	envp_utils.c\
+	env_table.c\
 
+VARIABLES_SRCS := env_table.c assign.c
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
 
-SRCS := $(TEST_SRCS) $(EXECUTE_SRCS) $(HASHMAP_SRCS)
+SRCS := $(TEST_SRCS) $(EXECUTE_SRCS) $(HASHMAP_SRCS) $(VARIABLES_SRCS)
 
 OBJDIR := obj
 OBJS := $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))
@@ -43,7 +43,7 @@ vpath %.c $(ROOT)/src/strutil \
 	$(ROOT)/src/hashmap \
 	$(ROOT)/src/execute \
 	$(ROOT)/src/execute/dispatch \
-	$(ROOT)/src/execute/expansion \
+	$(ROOT)/src/variables \
 	$(ROOT)/src/execute/process \
 	$(ROOT)/src/execute/redirect \
 	$(ROOT)/src/execute/utils \

@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../include/execute.h"
-#include "../../../include/minishell.h"
-#include "../../../include/parser.h"
+#include "../../include/variables.h"
 
 /*
 	"key+=value" keeps the value the name has in the current environment.

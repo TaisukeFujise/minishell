@@ -7,8 +7,8 @@ LIBFT:=$(LIBFT_DIR)/libft.a
 
 ROOT_SRCS:=strutil/name.c \
 	strutil/msg.c \
-	execute/utils/envp_utils.c \
-	execute/expansion/assigns.c \
+	variables/env_table.c \
+	variables/assign.c \
 	signal/signal_handle.c \
 	input.c \
 	parser/parser.c \

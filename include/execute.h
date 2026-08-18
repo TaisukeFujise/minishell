@@ -41,12 +41,6 @@ typedef struct s_procs
 	int		capacity;
 }			t_procs;
 
-typedef enum s_tabletype
-{
-	TMP,
-	VARS,
-}			t_tabletype;
-
 typedef struct s_exec_params
 {
 	char	**argv;
@@ -78,12 +72,6 @@ t_status	set_exit_code(t_ctx *ctx, t_status status);
 /* exec_subshell.c */
 t_status	exec_subshell(t_node *node, t_ctx *ctx, bool own);
 
-// <expansion>
-/* assigns.c */
-t_status	apply_assign(t_assign *assign, t_hashtable *table, t_ctx *ctx,
-				t_tabletype type);
-/* expand.c */
-
 // <process>
 /* pipe_utils.c */
 void		close_fd(int fd);
@@ -106,7 +94,6 @@ int			open_heredoc_fd(t_redirect *redirect);
 
 // <utils>
 /* args_utils.c */
-int			count_args(t_word_list *args);
 int			build_exec_params(t_exec_params *exec_params, t_word_list *args,
 				t_hashtable *tmp_table, t_hashtable *env_table);
 void		free_exec_params(char **argv, char **envp);
@@ -115,11 +102,5 @@ char		*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table);
 char		*next_path_candidate(char **scan, char *name);
 void		set_underscore(char **envp, char *pathname);
 int			search_path(char *path, char **argv, char **envp);
-/* envp_utils.c */
-char		*env_lookup(t_hashtable *tmp_table, t_hashtable *env_table,
-				char *name);
-char		*make_env_entry(char *key, char *value);
-char		**build_envp(t_hashtable *tmp_table, t_hashtable *env_table);
-void		free_envp(char **envp);
 
 #endif

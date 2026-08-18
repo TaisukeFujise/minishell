@@ -25,9 +25,7 @@ EXECUTE_SRCS := \
 	pipe_utils.c \
 	procs.c \
 	apply_redirect.c \
-	assigns.c\
 	heredoc_tmpfile.c\
-	envp_utils.c \
 	args_utils.c \
 	path_utils.c \
 	exec_builtin.c \
@@ -36,12 +34,13 @@ EXECUTE_SRCS := \
 	wait_children.c \
 	signal_handle.c \
 
+VARIABLES_SRCS := env_table.c assign.c
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
 BUILTIN_SRCS := $(notdir $(wildcard $(ROOT)/src/builtin/*.c))
 
 EXPAND_SRCS := expand.c $(notdir $(wildcard $(ROOT)/src/expand/expand_internal/*.c))
 
-SRCS := $(TEST_SRCS) $(EXECUTE_SRCS) $(HASHMAP_SRCS) $(BUILTIN_SRCS) $(EXPAND_SRCS)
+SRCS := $(TEST_SRCS) $(EXECUTE_SRCS) $(HASHMAP_SRCS) $(BUILTIN_SRCS) $(EXPAND_SRCS) $(VARIABLES_SRCS)
 
 OBJDIR := obj
 OBJS := $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))
@@ -49,7 +48,7 @@ vpath %.c $(ROOT)/src/strutil \
 	$(ROOT)/src/hashmap \
 	$(ROOT)/src/execute \
 	$(ROOT)/src/execute/dispatch \
-	$(ROOT)/src/execute/expansion \
+	$(ROOT)/src/variables \
 	$(ROOT)/src/execute/process \
 	$(ROOT)/src/execute/redirect \
 	$(ROOT)/src/execute/utils \

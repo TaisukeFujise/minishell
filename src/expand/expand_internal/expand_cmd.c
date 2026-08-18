@@ -1,4 +1,4 @@
-#include "../../../include/execute.h"
+#include "../../../include/variables.h"
 #include "expand_internal.h"
 
 static t_status	expand_arg(t_expand *exp, t_word *wd, char **cmd,

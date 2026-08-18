@@ -1,4 +1,4 @@
-#include "../../../include/execute.h"
+#include "../../../include/variables.h"
 #include "expand_internal.h"
 #include "strutil.h"
 

@@ -12,6 +12,7 @@
 
 #include "../../include/builtin.h"
 #include "../../include/execute.h"
+#include "../../include/variables.h"
 #include "../../include/parser.h"
 
 static t_status	set_var(t_hashtable *table, char *key, char *value);

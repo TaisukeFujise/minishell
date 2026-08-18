@@ -28,7 +28,7 @@ EXECUTE_SRCS := \
 	procs.c \
 	wait_children.c
 
-SRCS := $(TEST_SRCS) $(EXECUTE_SRCS)
+SRCS := $(TEST_SRCS) $(EXECUTE_SRCS) $(VARIABLES_SRCS)
 
 OBJDIR := obj
 OBJS := $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))

@@ -1,7 +1,7 @@
 #ifndef EXPAND_INTERNAL_H
 # define EXPAND_INTERNAL_H
 
-# include "execute.h"
+# include "variables.h"
 # include "expand.h"
 # include "strbuf.h"
 # include <dirent.h>

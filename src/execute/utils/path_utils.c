@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../../include/execute.h"
+#include "../../../include/variables.h"
 #include "../../../include/parser.h"
 
 char	*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table)

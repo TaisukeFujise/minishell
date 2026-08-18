@@ -12,6 +12,7 @@
 
 #include "../../include/builtin.h"
 #include "../../include/execute.h"
+#include "../../include/variables.h"
 #include "../../include/hashmap.h"
 
 /*

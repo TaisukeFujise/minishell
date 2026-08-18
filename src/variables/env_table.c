@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../include/execute.h"
-#include "../../../include/hashmap.h"
-#include "../../../include/parser.h"
+#include "../../include/variables.h"
 
 /*
 	Look a name up in the environment of the current command.

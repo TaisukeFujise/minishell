@@ -1,4 +1,4 @@
-#include "../../include/execute.h"
+#include "../../include/variables.h"
 #include "expand_internal/expand_internal.h"
 
 static const char	*get_ifs(t_ctx *ctx)

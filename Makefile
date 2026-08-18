@@ -58,7 +58,6 @@ SRCS:=main.c\
 	  execute/dispatch/exec_pipeline.c\
 	  execute/dispatch/exec_simple.c\
 	  execute/dispatch/exec_subshell.c\
-	  execute/expansion/assigns.c\
 	  execute/process/pipe_utils.c\
 	  execute/process/procs.c\
 	  execute/process/wait_children.c\
@@ -66,13 +65,15 @@ SRCS:=main.c\
 	  execute/redirect/heredoc_tmpfile.c\
 	  execute/utils/args_utils.c\
 	  execute/utils/path_utils.c\
-	  execute/utils/envp_utils.c\
+	  variables/env_table.c\
+	  variables/assign.c\
 	  hashmap/hashmap_crud.c\
 	  hashmap/hashmap_free.c\
 	  hashmap/hashmap_utils.c
 
 HEADDIR:=include
 HEADERS:=minishell.h\
+		 variables.h\
 		 strutil.h\
 		 signal_handle.h\
 		 lexer.h\

@@ -11,10 +11,11 @@
 /* ************************************************************************** */
 
 #include "../../../include/execute.h"
+#include "../../../include/variables.h"
 #include "../../../include/hashmap.h"
 #include "../../../include/parser.h"
 
-int	count_args(t_word_list *args)
+static int	count_args(t_word_list *args)
 {
 	int	count;
 
