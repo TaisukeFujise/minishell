@@ -28,11 +28,10 @@ XFAIL=0
 
 # Cases that minishell is not expected to pass yet.
 EXPECTED_FAIL="
+heredoc_unclosed
 builtin_stdio_buffer
-stdin_readahead
 exit_bad_arg
 exit_prints
-heredoc
 "
 
 run_case()
@@ -155,13 +154,20 @@ run_case exit_bad_arg 'exit abc'
 run_case pipe_assign_leak 'unset X
 echo a | X=5
 echo "[$X]"'
-# minishell loops forever on a heredoc that EOF ends: parse() reports the
-# failure without consuming the input and the main loop parses it again.
 run_case heredoc 'cat << EOF
 hello
 EOF'
-# The shell reads its input a block at a time, so a command that reads the
-# script itself sees nothing left. Same cause as the heredoc case.
+run_case heredoc_expand 'V=x
+cat << EOF
+v=$V
+EOF'
+run_case heredoc_pipe 'cat << EOF | cat
+body
+EOF'
+# bash warns and runs the command with what it read; the parser here makes
+# it a syntax error instead. The subject does not say which.
+run_case heredoc_unclosed 'cat << EOF
+body'
 run_case stdin_readahead 'cat
 AFTER'
 

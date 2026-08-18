@@ -44,7 +44,7 @@ static char	*read_next_heredoc_line(t_parser_state *ps)
 
 	if (*(ps->lex.line) == '\0')
 	{
-		start = readline("> ");
+		start = shell_read_line("> ");
 		if (!start || g_signum == SIGINT)
 			return (free(start), NULL);
 		line = ft_arena_strdup(&ps->arenas->tmp, start);

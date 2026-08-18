@@ -31,6 +31,8 @@
 
 extern volatile sig_atomic_t	g_signum;
 
+char							*shell_read_line(char *prompt);
+
 typedef struct s_arenas
 {
 	t_arena						ast;
