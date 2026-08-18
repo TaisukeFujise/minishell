@@ -14,9 +14,34 @@
 #include "../../include/execute.h"
 #include "../../include/parser.h"
 
-t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table);
-t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
-				char *path);
+static t_status	set_var(t_hashtable *table, char *key, char *value);
+t_status		update_pwd(t_hashtable *tmp_table, t_hashtable *env_table);
+
+/*
+	Where cd is asked to go. Without an operand it is HOME, and an empty
+	destination is the directory the shell is in already, which is what
+	bash does with cd "" and with an empty HOME. NULL when there is
+	nowhere to go; the reason is reported here.
+*/
+static char	*cd_destination(t_word_list *args, t_ctx *ctx)
+{
+	char	*target;
+
+	if (args != NULL)
+		target = args->wd->str;
+	else
+	{
+		target = env_lookup(ctx->tmp_table, ctx->env_table, "HOME");
+		if (target == NULL)
+		{
+			print_error("cd", "HOME not set");
+			return (NULL);
+		}
+	}
+	if (*target == '\0')
+		return (".");
+	return (target);
+}
 
 /*
 	cd [directory]
@@ -31,86 +56,59 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 */
 t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 {
-	char	*home;
-	char	*path;
+	char	*target;
 
-	if (args == NULL)
-	{
-		home = env_lookup(ctx->tmp_table, ctx->env_table, "HOME");
-		if (home == NULL)
-		{
-			ft_putendl_fd("minishell: cd: HOME not set", STDERR_FILENO);
-			return (ST_FAILURE);
-		}
-		if (chdir(home) < 0)
-		{
-			perror("minishell: cd");
-			return (ST_FAILURE);
-		}
-		path = ft_strdup(home);
-		if (path == NULL)
-			return (ST_FATAL);
-		return (update_pwd(ctx->tmp_table, ctx->env_table, path));
-	}
 	if (count_args(args) > 1)
 	{
-		ft_putendl_fd("minishell: cd: too many arguments", STDERR_FILENO);
+		print_error("cd", "too many arguments");
 		return (ST_FAILURE);
 	}
-	if (chdir(args->wd->str) < 0)
+	target = cd_destination(args, ctx);
+	if (target == NULL)
+		return (ST_FAILURE);
+	if (chdir(target) < 0)
 	{
-		perror("minishell: cd");
+		print_error_at("cd", target, strerror(errno));
 		return (ST_FAILURE);
 	}
-	path = getcwd(NULL, 0);
-	if (path == NULL)
-	{
-		perror("minishell: cd");
-		return (ST_FAILURE);
-	}
-	if (update_pwd(ctx->tmp_table, ctx->env_table, path) != ST_OK)
-		return (free(path), ST_FATAL);
-	return (ST_OK);
+	return (update_pwd(ctx->tmp_table, ctx->env_table));
 }
 
-t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
+/*
+	OLDPWD becomes the value PWD had, and empty when it had none, as bash
+	leaves it. PWD is asked of getcwd() after the move: the operand may
+	be relative, and PWD has to be a path whichever way the shell got
+	here. Neither string is owned here, the table copies what it is
+	given. [review D37-24]
+*/
+t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table)
 {
-	char				*pwd;
-	char				*oldpwd_key;
-	t_bucket_contents	*oldpwd;
+	char		*cwd;
+	t_status	status;
 
-	pwd = env_lookup(tmp_table, env_table, "PWD");
-	if (pwd == NULL)
-		return (ST_OK);
-	oldpwd_key = ft_strdup("OLDPWD");
-	if (oldpwd_key == NULL)
-		return (ST_FATAL);
-	oldpwd = hash_insert(oldpwd_key, env_table);
-	free(oldpwd_key);
-	if (oldpwd == NULL)
-		return (ST_FATAL);
-	if (!hash_set_value(oldpwd, pwd))
-		return (ST_FATAL);
-	return (ST_OK);
+	status = set_var(env_table, "OLDPWD",
+			env_lookup(tmp_table, env_table, "PWD"));
+	if (status != ST_OK)
+		return (status);
+	cwd = getcwd(NULL, 0);
+	if (cwd == NULL)
+	{
+		print_error("cd", strerror(errno));
+		return (ST_FAILURE);
+	}
+	status = set_var(env_table, "PWD", cwd);
+	free(cwd);
+	return (status);
 }
 
-t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
-		char *path)
+static t_status	set_var(t_hashtable *table, char *key, char *value)
 {
-	t_bucket_contents	*pwd;
-	char				*pwd_key;
+	t_bucket_contents	*item;
 
-	if (_update_oldpwd(tmp_table, env_table) != ST_OK)
+	item = hash_insert(key, table);
+	if (item == NULL)
 		return (ST_FATAL);
-	pwd_key = ft_strdup("PWD");
-	if (pwd_key == NULL)
+	if (!hash_set_value(item, value))
 		return (ST_FATAL);
-	pwd = hash_insert(pwd_key, env_table);
-	free(pwd_key);
-	if (pwd == NULL)
-		return (ST_FATAL);
-	if (!hash_set_value(pwd, path))
-		return (free(path), ST_FATAL);
-	free(path);
 	return (ST_OK);
 }

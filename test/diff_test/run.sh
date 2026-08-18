@@ -98,6 +98,25 @@ echo a | cat'
 run_case builtin_out_subshell 'cd /
 pwd
 (echo a)'
+run_case cd_empty_home 'cd /
+export HOME=""
+cd
+echo "$? [$PWD] [$OLDPWD]"'
+run_case cd_relative_home 'cd /tmp
+export HOME=..
+cd
+echo "[$PWD]"
+pwd'
+run_case cd_empty_operand 'cd /tmp
+cd ""
+echo "$? [$PWD] [$OLDPWD]"'
+run_case cd_no_such 'cd /no/such/dir'
+run_case cd_not_a_directory 'cd /etc/hostname'
+run_case cd_oldpwd_cleared 'cd /tmp
+cd /var
+unset PWD
+cd /usr
+echo "[$OLDPWD] [$PWD]"'
 run_case echo_n_repeated 'echo -n -n hello
 echo end'
 run_case echo_n_joined 'echo -nnn hello
