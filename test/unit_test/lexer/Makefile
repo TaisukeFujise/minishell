@@ -6,6 +6,7 @@ LIBFT_DIR:=$(ROOT)/libft
 LIBFT:=$(LIBFT_DIR)/libft.a
 
 ROOT_SRCS:=strutil/name.c \
+	strutil/msg.c \
 	lexer/lexer.c \
 	lexer/lexer_internal/lex_ops.c \
 	lexer/lexer_internal/lex_assign_util.c \

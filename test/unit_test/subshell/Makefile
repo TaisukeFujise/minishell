@@ -19,7 +19,7 @@ CFLAGS := -Wall -Wextra -Werror -I$(ROOT)/include -I$(ROOT)/libft
 LIBFT_DIR := $(ROOT)/libft
 LIBFT := $(LIBFT_DIR)/libft.a
 
-TEST_SRCS := main.c exec_stubs.c
+TEST_SRCS := msg.c main.c exec_stubs.c
 EXECUTE_SRCS := \
 	exec_subshell.c \
 	pipe_utils.c \
@@ -32,7 +32,8 @@ SRCS := $(TEST_SRCS) $(EXECUTE_SRCS)
 
 OBJDIR := obj
 OBJS := $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))
-vpath %.c $(ROOT)/src/execute \
+vpath %.c $(ROOT)/src/strutil \
+	$(ROOT)/src/execute \
 	$(ROOT)/src/execute/dispatch \
 	$(ROOT)/src/execute/process \
 	$(ROOT)/src/execute/redirect \

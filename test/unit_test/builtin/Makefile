@@ -20,7 +20,7 @@ CFLAGS := -Wall -Wextra -Werror -I$(ROOT)/include -I$(ROOT)/libft
 LIBFT_DIR := $(ROOT)/libft
 LIBFT := $(LIBFT_DIR)/libft.a
 
-TEST_SRCS := main.c\
+TEST_SRCS := msg.c main.c\
 			test_helpers.c\
 			echo_test.c\
 			cd_test.c\

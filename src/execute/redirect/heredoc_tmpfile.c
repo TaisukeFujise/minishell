@@ -50,26 +50,6 @@ static int	open_tmp_write_fd(char **filename)
 }
 
 /*
-	A write to a regular file can stop short, so keep writing until the
-	whole body is out. No progress is a failure.
-*/
-static bool	write_all(int fd, char *buf, size_t len)
-{
-	ssize_t	written;
-	size_t	done;
-
-	done = 0;
-	while (done < len)
-	{
-		written = write(fd, buf + done, len - done);
-		if (written <= 0)
-			return (false);
-		done += (size_t)written;
-	}
-	return (true);
-}
-
-/*
 	The read fd belongs to the caller: the AST keeps no fd of its own.
 	The name is removed on every path, so a failure leaves nothing behind.
 	The file itself lives until the caller closes the fd.

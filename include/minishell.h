@@ -40,7 +40,6 @@ typedef struct s_arenas
 typedef struct s_error
 {
 	int							exit_code;
-	char						*err_msg;
 }								t_error;
 
 typedef struct s_ctx
@@ -55,6 +54,8 @@ typedef struct s_ctx
 	// arenas of the current parse iteration. NULL outside of it.
 }								t_ctx;
 
+bool							write_all(int fd, const char *s, size_t len);
+void							print_error(const char *name, const char *reason);
 char							*shell_read_line(char *prompt);
 void							dispose_shell(char *user_input, t_ctx *ctx);
 

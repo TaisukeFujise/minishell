@@ -51,7 +51,7 @@ static t_status	expand_redir_target(t_expand *exp, t_redirect *redir)
 	if (status == ST_OK && (!fields.head || fields.head->next))
 	{
 		exp->ctx->err.exit_code = 1;
-		exp->ctx->err.err_msg = EXPAND_MSG_AMBIG_REDIR;
+		print_error(NULL, EXPAND_MSG_AMBIG_REDIR);
 		status = ST_FAILURE;
 	}
 	if (status == ST_OK)

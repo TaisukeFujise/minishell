@@ -81,9 +81,8 @@ static bool	read_heredoc_body(t_parser_state *ps, char *delim, t_strbuf *buf)
 		return (true);
 	if (g_signum == SIGINT)
 	{
-		parser_fail(ps, ST_FAILURE, NULL);
+		ps->status = ST_FAILURE;
 		ps->ctx->err.exit_code = 130;
-		ps->ctx->err.err_msg = NULL;
 		return (false);
 	}
 	parser_fail(ps, ST_FAILURE, hd_eof_warn_msg(ps, delim));

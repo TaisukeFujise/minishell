@@ -67,14 +67,10 @@ int	report_exec_error(char *name, int reason)
 {
 	char	*msg;
 
-	write(STDERR_FILENO, "minishell: ", 11);
-	write(STDERR_FILENO, name, ft_strlen(name));
-	write(STDERR_FILENO, ": ", 2);
 	msg = "command not found";
 	if (reason != 0)
 		msg = strerror(reason);
-	write(STDERR_FILENO, msg, ft_strlen(msg));
-	write(STDERR_FILENO, "\n", 1);
+	print_error(name, msg);
 	if (reason == 0 || reason == ENOENT || reason == ENOTDIR)
 		return (127);
 	return (126);

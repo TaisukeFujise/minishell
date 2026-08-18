@@ -17,6 +17,7 @@ SRCS:=main.c\
 	  input.c\
 	  signal/signal_handle.c\
 	  strutil/name.c\
+	  strutil/msg.c\
 	  lexer/lexer.c\
 	  lexer/lexer_internal/lex_ops.c\
 	  lexer/lexer_internal/lex_assign_util.c\

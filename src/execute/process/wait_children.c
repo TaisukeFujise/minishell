@@ -56,14 +56,14 @@ static void	report_signal(int status)
 	if (!WIFSIGNALED(status))
 		return ;
 	if (WTERMSIG(status) == SIGINT)
-		return ((void)write(STDERR_FILENO, "\n", 1));
+		return ((void)write_all(STDERR_FILENO, "\n", 1));
 	name = signal_name(WTERMSIG(status));
 	if (name == NULL)
 		return ;
-	write(STDERR_FILENO, name, ft_strlen(name));
+	write_all(STDERR_FILENO, name, ft_strlen(name));
 	if (WCOREDUMP(status))
-		write(STDERR_FILENO, " (core dumped)", 14);
-	write(STDERR_FILENO, "\n", 1);
+		write_all(STDERR_FILENO, " (core dumped)", 14);
+	write_all(STDERR_FILENO, "\n", 1);
 }
 
 /*

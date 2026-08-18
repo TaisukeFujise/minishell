@@ -85,5 +85,5 @@ void	parser_fail(t_parser_state *ps, t_status status, char *msg)
 		if (!msg)
 			msg = PARSER_MSG_SYNTAX;
 	}
-	ps->ctx->err.err_msg = msg;
+	print_error(NULL, msg);
 }

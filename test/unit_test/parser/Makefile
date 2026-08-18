@@ -6,6 +6,7 @@ LIBFT_DIR:=$(ROOT)/libft
 LIBFT:=$(LIBFT_DIR)/libft.a
 
 ROOT_SRCS:=strutil/name.c \
+	strutil/msg.c \
 	signal/signal_handle.c \
 	input.c \
 	parser/parser.c \
