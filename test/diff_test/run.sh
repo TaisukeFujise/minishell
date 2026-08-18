@@ -99,6 +99,11 @@ echo a | cat'
 run_case builtin_out_subshell 'cd /
 pwd
 (echo a)'
+run_case pwd_operand 'cd /
+pwd ignored'
+run_case env_operand 'env nosuchcmd_xyz
+echo $?'
+run_case env_runs_command 'env /bin/echo hi'
 run_case export_out_order 'export ZZZ_ORDER=1
 export | grep ZZZ_ORDER
 echo marker'

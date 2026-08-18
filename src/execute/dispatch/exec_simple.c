@@ -24,6 +24,21 @@
 		using executor->input_fd and executor->output_fd.
 	- Update last_pid in ctx in order to waitpid.
 */
+/*
+	Whether this command runs inside the shell. env is a builtin only
+	without operands: bash has no env builtin at all, so "env cmd" and
+	"env -i" have to reach the env of the system through PATH.
+	[plan 15.2]
+*/
+static bool	runs_as_builtin(t_word_list *args)
+{
+	if (find_builtin(args->wd->str) == NULL)
+		return (false);
+	if (args->next != NULL && ft_strcmp(args->wd->str, "env") == 0)
+		return (false);
+	return (true);
+}
+
 t_status	exec_simple(t_node *node, t_ctx *ctx, bool own)
 {
 	t_simple_cmd	*cmd;
@@ -34,7 +49,7 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, bool own)
 	cmd = &node->u_node.simple_command;
 	if (status == ST_OK)
 	{
-		if (cmd->args != NULL && find_builtin(cmd->args->wd->str) == NULL)
+		if (cmd->args != NULL && !runs_as_builtin(cmd->args))
 			status = exec_disk_command(cmd, ctx, own);
 		else
 			status = exec_builtin(cmd, ctx);
