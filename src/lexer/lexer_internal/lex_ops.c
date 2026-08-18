@@ -142,7 +142,8 @@ t_token_kind	lex_io_number(char **line, t_token *token)
 
 	end_ptr = *line;
 	fd = str2fd(&end_ptr);
-	if (end_ptr != *line && ft_strchr("><", *end_ptr) && fd >= 0)
+	if (end_ptr != *line && *end_ptr != '\0' && ft_strchr("><", *end_ptr)
+		&& fd >= 0)
 	{
 		token->token_kind = TK_IO_NUMBER;
 		token->u_token.io_num = fd;

@@ -19,14 +19,11 @@ CFLAGS := -Wall -Wextra -Werror -I$(ROOT)/include -I$(ROOT)/libft
 LIBFT_DIR := $(ROOT)/libft
 LIBFT := $(LIBFT_DIR)/libft.a
 
-TEST_SRCS := main.c
+TEST_SRCS := msg.c main.c
 EXECUTE_SRCS := \
 	init_ctx.c \
-	fd_bitmap.c\
-	exec_null.c \
 	pipe_utils.c \
-	register_pid.c \
-	stdio_guard.c \
+	procs.c \
 	apply_redirect.c \
 	assigns.c\
 	heredoc_tmpfile.c\
@@ -37,7 +34,8 @@ SRCS := $(TEST_SRCS) $(EXECUTE_SRCS) $(HASHMAP_SRCS)
 
 OBJDIR := obj
 OBJS := $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))
-vpath %.c $(ROOT)/src/hashmap \
+vpath %.c $(ROOT)/src/strutil \
+	$(ROOT)/src/hashmap \
 	$(ROOT)/src/execute \
 	$(ROOT)/src/execute/dispatch \
 	$(ROOT)/src/execute/expansion \

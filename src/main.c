@@ -11,33 +11,49 @@
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+#include "../include/strbuf.h"
 #include "../include/signal_handle.h"
 #include "../include/execute.h"
 #include "../include/lexer.h"
 #include "../include/parser.h"
 
-volatile sig_atomic_t g_signum = 0;
+/*
+	Everything the shell itself owns: the line it is running, the tables
+	of its environment and the history. The ast and the ctx are on the
+	stack of main, only their members are freed. [review D37-24]
+*/
+void	dispose_shell(char *user_input, t_ctx *ctx)
+{
+	free(user_input);
+	if (ctx->env_table != NULL)
+	{
+		hash_flush(ctx->env_table, NULL);
+		hash_dispose(ctx->env_table);
+		ctx->env_table = NULL;
+	}
+	if (ctx->tmp_table != NULL)
+	{
+		hash_flush(ctx->tmp_table, NULL);
+		hash_dispose(ctx->tmp_table);
+		ctx->tmp_table = NULL;
+	}
+	rl_clear_history();
+}
 
 /*
 	handle_command_termination sets ctx->exit_code only when the main process cannot continue.
+	A failure the shell cannot continue from keeps the status the builtin
+	chose, and falls back to 1 when nothing chose one.
 */
 void	handle_command_termination(t_status status, char *user_input, t_node *node, t_ctx *ctx)
 {
-	(void)user_input;
 	(void)node;
-	/*
-		Here free "user_input" and the member of "node and ctx"(not node and ctx itself)
-		because node and ctx itself are not allocated memory.
-	*/
-	if (status == ST_EXIT)
+	if (status == ST_FATAL && ctx->err.exit_code == 0)
+		ctx->err.exit_code = 1;
+	if (status == ST_EXIT || status == ST_FATAL)
 	{
-		clear_history();
+		dispose_shell(user_input, ctx);
 		exit(ctx->err.exit_code);
-	}
-	if (status == ST_FATAL)
-	{
-		clear_history();
-		exit(1);
 	}
 }
 
@@ -52,12 +68,12 @@ static t_status	parse_and_execute(char *user_input, t_node *ast, t_ctx *ctx)
 	{
 		ft_arena_init(&arenas.ast, ARENA_DEFAULT_CHUNK_SIZE);
 		ft_arena_init(&arenas.tmp, ARENA_DEFAULT_CHUNK_SIZE);
-		ft_arena_init(&arenas.heredoc, ARENA_DEFAULT_CHUNK_SIZE);
+		ctx->arenas = &arenas;
 		status = parse(&cursor, ast, ctx, &arenas);
 		if (status == ST_FAILURE)
 		{
+			ctx->arenas = NULL;
 			ft_arena_destroy(&arenas.tmp);
-			ft_arena_destroy(&arenas.heredoc);
 			ft_arena_destroy(&arenas.ast);
 			continue ;
 		}
@@ -65,8 +81,8 @@ static t_status	parse_and_execute(char *user_input, t_node *ast, t_ctx *ctx)
 		{
 			close_heredocs(ast->left);
 			ast->left = NULL;
+			ctx->arenas = NULL;
 			ft_arena_destroy(&arenas.tmp);
-			ft_arena_destroy(&arenas.heredoc);
 			ft_arena_destroy(&arenas.ast);
 			handle_command_termination(status, user_input, ast, ctx);
 		}
@@ -76,8 +92,8 @@ static t_status	parse_and_execute(char *user_input, t_node *ast, t_ctx *ctx)
 			close_heredocs(ast->left);
 			ast->left = NULL;
 		}
+		ctx->arenas = NULL;
 		ft_arena_destroy(&arenas.tmp);
-		ft_arena_destroy(&arenas.heredoc);
 		ft_arena_destroy(&arenas.ast);
 		if (status == ST_FAILURE)
 			continue ;
@@ -101,21 +117,17 @@ int main(int argc, char **argv, char **envp)
 		return (1);
 	while (1)
 	{
-		if (isatty(STDIN_FILENO) == 1) // if user_input is sent by tty.
-			user_input = readline("minishell$ ");
-		else
-			user_input = get_next_line(STDIN_FILENO); // if user_input is sent by pipe
+		g_signum = 0;
+		user_input = shell_read_line("minishell$ ");
 		if (user_input == NULL)
 			break; // ctrl-D sends EOF, and readline returns NULL receiving EOF.
 		if (*user_input)
 			add_history(user_input);
-		g_signum = 0;
+		if (g_signum == SIGINT)
+			ctx.err.exit_code = 130;
 		parse_and_execute(user_input, &ast, &ctx);
-		/*
-			Here free "user_input" and the member of "node and ctx"(not node and ctx itself)
-			because node and ctx itself are not allocated memory.
-		*/
+		free(user_input);
 	}
-	clear_history();
+	dispose_shell(NULL, &ctx);
 	return (ctx.err.exit_code);
 }

@@ -5,7 +5,11 @@ ROOT:=../../..
 LIBFT_DIR:=$(ROOT)/libft
 LIBFT:=$(LIBFT_DIR)/libft.a
 
-ROOT_SRCS:=parser/parser.c \
+ROOT_SRCS:=strutil/name.c \
+	strutil/msg.c \
+	signal/signal_handle.c \
+	input.c \
+	parser/parser.c \
 	parser/parser_internal/parser_error.c \
 	parser/parser_internal/parser_stream.c \
 	parser/parser_internal/parser_nodes.c \
@@ -19,7 +23,8 @@ ROOT_SRCS:=parser/parser.c \
 	lexer/lexer_internal/lex_assign_util.c \
 	lexer/lexer_internal/lex_word.c \
 	lexer/lexer_internal/lex_word_util.c \
-	lexer/lexer_internal/lexer_utils.c
+	lexer/lexer_internal/lexer_utils.c \
+	strutil/strbuf.c
 LOCAL_SRCS:=parser_dump.c
 
 LINE_SRCS:=$(LOCAL_SRCS) parser_dump_line.c
@@ -56,6 +61,7 @@ $(TEST_OBJDIR)/%.o: %.c
 
 clean:
 	rm -rf $(TEST_OBJDIR)
+	rm -rf $(ROOT_OBJDIR)/parser $(ROOT_OBJDIR)/lexer $(ROOT_OBJDIR)/strutil
 	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean

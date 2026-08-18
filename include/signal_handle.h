@@ -18,7 +18,8 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-int	set_signal(void);
-int	handle_readline_signal(void);
+int		set_signal(void);
+int		handle_readline_signal(void);
+void	reset_signals(void);
 
 #endif

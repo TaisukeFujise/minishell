@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/05/09 00:19:18 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/05/10 21:57:07 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,39 +31,33 @@
 
 extern volatile sig_atomic_t	g_signum;
 
-typedef struct s_fd_bitmap
-{
-	int							size;
-	char						*bitmap;
-}								t_fd_bitmap;
-
 typedef struct s_arenas
 {
 	t_arena						ast;
 	t_arena						tmp;
-	t_arena						heredoc;
 }								t_arenas;
 
 typedef struct s_error
 {
 	int							exit_code;
-	char						*err_msg;
 }								t_error;
 
 typedef struct s_ctx
 {
 	t_error						err;
-	t_hashtable *env_table; // environment variable table. When execve, this is
-							// converted to envp.
-	// Reset following member on every command.
-	t_hashtable *tmp_table; // tmp environment variable table. This is set by
-							// assignment word in front of cmd.
-	t_fd_bitmap					*bitmap;
-	// It's for managing fd,especially pipe read end fd,when using pipe.
-	pid_t *pids;        // Array of pids.
-	int npid;           // Count of pids.
-	int already_forked; // Flag about whether already forked or not.
+	t_hashtable					*env_table;
+	// environment variable table. When execve,this is converted to envp.
+	/* Reset following member on every command. */
+	t_hashtable					*tmp_table;
+	// tmp environment variable table.This is set by assignment word in front of cmd.
+	t_arenas					*arenas;
+	// arenas of the current parse iteration. NULL outside of it.
 }								t_ctx;
+
+bool							write_all(int fd, const char *s, size_t len);
+void							print_error(const char *name, const char *reason);
+char							*shell_read_line(char *prompt);
+void							dispose_shell(char *user_input, t_ctx *ctx);
 
 typedef enum e_status
 {
@@ -103,8 +97,7 @@ typedef enum e_flag
 	W_DOLL = 1u << 2,
 	W_WILD = 1u << 3,
 	W_ASSIGN = 1u << 4,
-	W_APPEND = 1u << 5,
-	W_ID = 1u << 6
+	W_APPEND = 1u << 5
 }								t_flag;
 
 typedef struct s_word			t_word;
@@ -112,8 +105,8 @@ typedef struct s_word			t_word;
 struct							s_word
 {
 	char						*str;
-	int							len;
-	char						*eq_ptr;
+	size_t						len;
+	size_t						eq_pos;
 	uint8_t						flag;
 	t_word						*next;
 };

@@ -6,71 +6,52 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:17 by tafujise          #+#    #+#             */
-/*   Updated: 2026/04/19 22:38:15 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/04/19 22:40:23 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../../include/execute.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
-t_status	exec_connection(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	exec_connection(t_node *node, t_ctx *ctx)
 {
-	t_status	result;
-
 	if (node->node_kind == NODE_COMPLETE)
-		return (exec_complete(node, ctx, pipe_in, pipe_out));
+		return (exec_complete(node, ctx));
 	if (node->node_kind == NODE_ANDOR)
-		return (exec_andor(node, ctx, pipe_in, pipe_out));
+		return (exec_andor(node, ctx));
 	if (node->node_kind == NODE_PIPE)
-		return (exec_pipeline(node, ctx, pipe_in, pipe_out));
+		return (exec_pipeline(node, ctx));
 	return (ST_FATAL);
 }
 
-t_status	exec_complete(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	exec_complete(t_node *node, t_ctx *ctx)
 {
 	t_status	result;
 
-	result = execute_internal(node->left, ctx, pipe_in, pipe_out);
+	result = execute_internal(node->left, ctx, false);
 	if (result == ST_EXIT || result == ST_FATAL)
 		return (result);
 	if (node->right == NULL)
 		return (result);
-	return (execute_internal(node->right, ctx, pipe_in, pipe_out));
-}
-
-t_status	exec_andor(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
-{
-	// while (node != NULL)
-	// {
-	// 	result = execute(node->child, executor, ctx);
-	// 	if (result == ST_FATAL)
-	// 		return (ST_FATAL);
-	// 	if (node->u_node.and_or.op == CONNECT_AND_IF)
-	// 		if (ctx->exit_code != 0)
-	// 			// If the last exit result is not 0,end the process.
-	// 			break ;
-	// 	if (node->u_node.and_or.op == CONNECT_OR_IF)
-	// 		if (ctx->exit_code == 0)
-	// 			// If the last exit result is 0,end the process.
-	// 			break ;
-	// 	node = node->next;
-	// }
-	// return (result);
+	return (execute_internal(node->right, ctx, false));
 }
 
 /*
-	Todo
-	- First and last simple cmds requires separate process
-	- Other simple cmds has the same process
-	- also subshell may happens here.
+	&& and || look at the status of the left hand command, which is the
+	number it left in ctx->err.exit_code. A t_status only says whether
+	the shell can go on.
 */
-t_status	exec_pipeline(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
+t_status	exec_andor(t_node *node, t_ctx *ctx)
 {
-	int	pipe_fd[2];
-	int	prev_read_fd;
+	t_status	result;
 
-	while (node != NULL)
-	{
-		// node = node->next;
-	}
+	result = execute_internal(node->left, ctx, false);
+	if (result == ST_EXIT || result == ST_FATAL)
+		return (result);
+	if (node->u_node.and_or.op == CONNECT_AND_IF && ctx->err.exit_code != 0)
+		return (result);
+	if (node->u_node.and_or.op == CONNECT_OR_IF && ctx->err.exit_code == 0)
+		return (result);
+	return (execute_internal(node->right, ctx, false));
 }

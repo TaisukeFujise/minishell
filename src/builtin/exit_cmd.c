@@ -33,10 +33,7 @@ t_status	exit_cmd(t_word_list *args, t_ctx *ctx)
 	long	arg_num;
 
 	if (args == NULL)
-	{
-		ctx->err.exit_code = 0;
 		return (ST_EXIT);
-	}
 	if (count_args(args) > 1)
 	{
 		ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
