@@ -16,6 +16,7 @@
 char		*_extract_key_from_envp(char *entry);
 char		*_extract_value_from_envp(char *entry);
 static int	_load_envp_to_table(t_hashtable *env_table, char **envp);
+static int	bump_shell_level(t_hashtable *env_table);
 
 int	init_ctx(t_ctx *ctx, char **envp)
 {
@@ -27,7 +28,7 @@ int	init_ctx(t_ctx *ctx, char **envp)
 		return (FAILURE);
 	ctx->tmp_table = hash_create(BUCKET_SIZE);
 	if (ctx->tmp_table == NULL || _load_envp_to_table(ctx->env_table,
-			envp) == FAILURE)
+			envp) == FAILURE || bump_shell_level(ctx->env_table) == FAILURE)
 	{
 		hash_flush(ctx->env_table, NULL);
 		hash_dispose(ctx->env_table);
@@ -38,6 +39,40 @@ int	init_ctx(t_ctx *ctx, char **envp)
 }
 
 // envp is reliable value, so we ignore the entry if the *envp doesn't have "="
+/*
+	SHLVL counts how deep this shell is. bash adds one to the value it
+	was given, reads anything that is not a number as zero, and starts
+	over at 1 above a thousand.
+	[bash-5.3 variables.c adjust_shell_level()]
+*/
+static int	bump_shell_level(t_hashtable *env_table)
+{
+	t_bucket_contents	*item;
+	char				*scan;
+	char				*text;
+	long				level;
+
+	item = hash_insert("SHLVL", env_table);
+	if (item == NULL)
+		return (FAILURE);
+	level = 0;
+	scan = item->data.value;
+	while (scan != NULL && ft_isdigit(*scan))
+		scan++;
+	if (scan != NULL && scan != item->data.value && *scan == '\0')
+		level = ft_atol(item->data.value);
+	level++;
+	if (level >= 1000)
+		level = 1;
+	text = ft_itoa((int)level);
+	if (text == NULL)
+		return (FAILURE);
+	item->data.exported = true;
+	if (!hash_set_value(item, text))
+		return (free(text), FAILURE);
+	return (free(text), SUCCESS);
+}
+
 static int	_load_envp_to_table(t_hashtable *env_table, char **envp)
 {
 	char				*key;
