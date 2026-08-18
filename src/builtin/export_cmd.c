@@ -45,18 +45,15 @@ static t_bucket_contents	*next_in_order(t_hashtable *table, char *prev)
 static t_status	print_exported(t_hashtable *table)
 {
 	t_bucket_contents	*item;
-	char				*prev;
 
 	if (table == NULL)
 		return (ST_OK);
-	prev = NULL;
-	item = next_in_order(table, prev);
+	item = next_in_order(table, NULL);
 	while (item != NULL)
 	{
 		if (print_export(item) < 0)
 			return (ST_FAILURE);
-		prev = item->key;
-		item = next_in_order(table, prev);
+		item = next_in_order(table, item->key);
 	}
 	return (ST_OK);
 }
