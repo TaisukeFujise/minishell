@@ -18,7 +18,7 @@ int	handle_readline_signal()
 	if (g_signum == SIGINT)
 	{
 		write(1, "^C", 2);
-		// rl_redisplay();
+		rl_replace_line("", 0);
 		rl_done = 1;
 	}
 	return (0);

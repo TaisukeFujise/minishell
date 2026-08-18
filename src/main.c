@@ -109,6 +109,8 @@ int main(int argc, char **argv, char **envp)
 			break; // ctrl-D sends EOF, and readline returns NULL receiving EOF.
 		if (*user_input)
 			add_history(user_input);
+		if (g_signum == SIGINT)
+			ctx.err.exit_code = 130;
 		g_signum = 0;
 		parse_and_execute(user_input, &ast, &ctx);
 		/*
