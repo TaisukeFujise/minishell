@@ -98,6 +98,12 @@ echo a | cat'
 run_case builtin_out_subshell 'cd /
 pwd
 (echo a)'
+run_case export_sorted 'export ZB_X=1
+export ZA_X=2
+export ZC_X=3
+export | grep Z._X'
+run_case export_bad_name 'export 1BAD=2 OK_X=1
+echo "$? [$OK_X]"'
 # A name that cannot be one is reported and the status becomes 1, where bash
 # is silent and returns 0: without a function name space there is nothing for
 # such a name to be. Only the unsetting of the names around it is compared.

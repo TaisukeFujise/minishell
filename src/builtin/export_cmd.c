@@ -14,6 +14,54 @@
 #include "../../include/strutil.h"
 
 /*
+	The name that comes after the one just printed, or NULL when there is
+	none left. export lists its names in order; walking the table again
+	for each name costs nothing at this size and needs no array to sort.
+*/
+static t_bucket_contents	*next_in_order(t_hashtable *table, char *prev)
+{
+	t_bucket_contents	*item;
+	t_bucket_contents	*best;
+	int					i;
+
+	best = NULL;
+	i = 0;
+	while (i < table->bucket_size)
+	{
+		item = hash_items(i, table);
+		while (item != NULL)
+		{
+			if (item->data.exported
+				&& (prev == NULL || ft_strcmp(item->key, prev) > 0)
+				&& (best == NULL || ft_strcmp(item->key, best->key) < 0))
+				best = item;
+			item = item->next;
+		}
+		i++;
+	}
+	return (best);
+}
+
+static t_status	print_exported(t_hashtable *table)
+{
+	t_bucket_contents	*item;
+	char				*prev;
+
+	if (table == NULL)
+		return (ST_OK);
+	prev = NULL;
+	item = next_in_order(table, prev);
+	while (item != NULL)
+	{
+		if (print_export(item) < 0)
+			return (ST_FAILURE);
+		prev = item->key;
+		item = next_in_order(table, prev);
+	}
+	return (ST_OK);
+}
+
+/*
 	"export name" keeps the value the name has in the current command,
 	so "A=one export A" leaves A set to one.
 */
@@ -85,18 +133,15 @@ t_status	export_cmd(t_word_list *args, t_ctx *ctx)
 	t_status	status;
 
 	if (!args)
-	{
-		hash_walk(ctx->env_table, print_export);
-		return (ST_OK);
-	}
+		return (print_exported(ctx->env_table));
 	status = ST_OK;
 	while (args)
 	{
 		arg_status = put_export(args->wd, ctx);
 		if (arg_status == ST_FAILURE)
 		{
-			ft_putendl_fd("minishell: export: not a valid identifier",
-				STDERR_FILENO);
+			print_error_name("export", args->wd->str,
+				"not a valid identifier");
 			status = ST_FAILURE;
 		}
 		else if (arg_status == ST_FATAL)
