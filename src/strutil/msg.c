@@ -27,12 +27,12 @@ bool	write_all(int fd, const char *s, size_t len)
 }
 
 /*
-	How the shell reports a failure: "minishell: name: reason" on stderr,
-	the name left out when there is nothing to name. Written where the
-	failure happens, so that a child can report its own and no message
-	has to outlive the arena it was built in.
+	How the shell reports a failure: "minishell: name: operand: reason" on
+	stderr, each part left out when there is nothing to put there. Written
+	where the failure happens, so that a child can report its own and no
+	message has to outlive the arena it was built in.
 */
-void	print_error(const char *name, const char *reason)
+void	print_error_at(const char *name, const char *arg, const char *reason)
 {
 	write_all(STDERR_FILENO, "minishell: ", 11);
 	if (name != NULL)
@@ -40,6 +40,16 @@ void	print_error(const char *name, const char *reason)
 		write_all(STDERR_FILENO, name, ft_strlen(name));
 		write_all(STDERR_FILENO, ": ", 2);
 	}
+	if (arg != NULL)
+	{
+		write_all(STDERR_FILENO, arg, ft_strlen(arg));
+		write_all(STDERR_FILENO, ": ", 2);
+	}
 	write_all(STDERR_FILENO, reason, ft_strlen(reason));
 	write_all(STDERR_FILENO, "\n", 1);
+}
+
+void	print_error(const char *name, const char *reason)
+{
+	print_error_at(name, NULL, reason);
 }

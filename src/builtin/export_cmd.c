@@ -13,61 +13,6 @@
 #include "../../include/builtin.h"
 #include "../../include/strutil.h"
 
-#define EXPORT_CTRL "\033\a\b\t\n\v\f\r"
-#define EXPORT_ESC "Eabtnvfr"
-
-static void	print_quoted_value(char *str, char quote)
-{
-	char	*esc;
-
-	printf("%c", quote);
-	while (*str)
-	{
-		if (quote == '\'')
-		{
-			esc = ft_strchr(EXPORT_CTRL, *str);
-			if (esc)
-				printf("\\%c", EXPORT_ESC[esc - EXPORT_CTRL]);
-			else if (!ft_isprint((unsigned char)*str))
-				printf("\\%03o", (unsigned char)*str);
-			else if (*str == '\\' || *str == '\'')
-				printf("\\%c", *str);
-			else
-				printf("%c", *str);
-		}
-		else if (ft_strchr("\"\\$`", *str))
-			printf("\\%c", *str);
-		else
-			printf("%c", *str);
-		str++;
-	}
-	printf("%c", quote);
-}
-
-static int	print_export(t_bucket_contents *item)
-{
-	char	*value;
-
-	if (!item->data.exported)
-		return (0);
-	printf("declare -x %s", item->key);
-	value = item->data.value;
-	while (value && *value && ft_isprint((unsigned char)*value))
-		value++;
-	if (value && *value)
-	{
-		printf("=$");
-		print_quoted_value(item->data.value, '\'');
-	}
-	else if (value)
-	{
-		printf("=");
-		print_quoted_value(item->data.value, '"');
-	}
-	printf("\n");
-	return (0);
-}
-
 /*
 	"export name" keeps the value the name has in the current command,
 	so "A=one export A" leaves A set to one.

@@ -29,7 +29,6 @@ XFAIL=0
 # Cases that minishell is not expected to pass yet.
 EXPECTED_FAIL="
 heredoc_unclosed
-builtin_stdio_buffer
 exit_prints
 "
 
@@ -91,6 +90,18 @@ echo second'
 # put back and never reaches the file (review D37-23).
 run_case builtin_stdio_buffer 'pwd > out.txt
 grep -c / out.txt'
+run_case builtin_out_order 'cd /
+pwd
+echo marker'
+run_case builtin_out_not_doubled 'cd /
+pwd
+echo a | cat'
+run_case builtin_out_subshell 'cd /
+pwd
+(echo a)'
+run_case export_out_order 'export ZZZ_ORDER=1
+export | grep ZZZ_ORDER
+echo marker'
 run_case andor_true 'echo a && echo b'
 run_case andor_false 'nosuchcmd_xyz || echo yes'
 run_case pipe 'echo x | cat'

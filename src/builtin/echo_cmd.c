@@ -29,22 +29,23 @@ t_status	echo_cmd(t_word_list *args, t_ctx *ctx)
 	n_flag = false;
 	if (args == NULL)
 	{
-		if (write(STDOUT_FILENO, "\n", 1) < 0)
+		if (!write_all(STDOUT_FILENO, "\n", 1))
 			return (ST_FAILURE);
 		return (ST_OK);
 	}
 	_consume_n_flag(&args, &n_flag);
 	while (args)
 	{
-		if (write(STDOUT_FILENO, args->wd->str, ft_strlen(args->wd->str)) < 0)
+		if (!write_all(STDOUT_FILENO, args->wd->str,
+				ft_strlen(args->wd->str)))
 			return (ST_FAILURE);
 		if (args->next != NULL)
-			if (write(STDOUT_FILENO, " ", 1) < 0)
+			if (!write_all(STDOUT_FILENO, " ", 1))
 				return (ST_FAILURE);
 		args = args->next;
 	}
 	if (!n_flag)
-		if (write(STDOUT_FILENO, "\n", 1) < 0)
+		if (!write_all(STDOUT_FILENO, "\n", 1))
 			return (ST_FAILURE);
 	return (ST_OK);
 }
