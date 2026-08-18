@@ -85,8 +85,8 @@ static bool	read_heredoc_body(t_parser_state *ps, char *delim, t_strbuf *buf)
 		ps->ctx->err.exit_code = 130;
 		return (false);
 	}
-	parser_fail(ps, ST_FAILURE, hd_eof_warn_msg(ps, delim));
-	return (false);
+	print_error(NULL, hd_eof_warn_msg(ps, delim));
+	return (true);
 }
 
 void	collect_one_heredoc(t_parser_state *ps, t_redirect *redir)

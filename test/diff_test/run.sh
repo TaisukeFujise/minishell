@@ -28,7 +28,6 @@ XFAIL=0
 
 # Cases that minishell is not expected to pass yet.
 EXPECTED_FAIL="
-heredoc_unclosed
 "
 
 run_case()
@@ -234,6 +233,9 @@ EOF'
 # bash warns and runs the command with what it read; the parser here makes
 # it a syntax error instead. The subject does not say which.
 run_case heredoc_unclosed 'cat << EOF
+body'
+run_case heredoc_unclosed_empty 'cat << EOF'
+run_case heredoc_unclosed_pipe 'cat << EOF | tr a-z A-Z
 body'
 run_case stdin_readahead 'cat
 AFTER'
