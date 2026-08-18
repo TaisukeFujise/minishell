@@ -16,10 +16,32 @@ static char	*expand_status(t_ctx *ctx, t_arena *arena, size_t *len)
 	return (copy);
 }
 
+static char	*lookup_var(t_ctx *ctx, t_arena *arena, t_param *param);
+
 static char	*set_param(t_param *param, size_t len, size_t used, char *value)
 {
 	param->len = len;
 	param->used = used;
+	return (value);
+}
+
+/*
+	${name} names the same variable as $name; the braces only say where
+	the name ends. Without a name and a closing brace the text stays.
+*/
+static char	*expand_braced(t_ctx *ctx, t_arena *arena, t_param *param)
+{
+	size_t	namelen;
+	char	*value;
+
+	namelen = str_name_len(param->s + 2);
+	if (namelen == 0 || param->s[namelen + 2] != '}')
+		return (set_param(param, 1, 1, "$"));
+	param->s++;
+	param->used = namelen + 1;
+	value = lookup_var(ctx, arena, param);
+	param->s--;
+	param->used = namelen + 3;
 	return (value);
 }
 
@@ -56,6 +78,10 @@ char	*expand_param(t_ctx *ctx, t_arena *arena, t_param *param)
 		param->used = 2;
 		return (expand_status(ctx, arena, &param->len));
 	}
+	if (ft_isdigit(param->s[1]))
+		return (set_param(param, 0, 2, ""));
+	if (param->s[1] == '{')
+		return (expand_braced(ctx, arena, param));
 	namelen = str_name_len(param->s + 1);
 	if (namelen == 0)
 		return (set_param(param, 1, 1, "$"));
