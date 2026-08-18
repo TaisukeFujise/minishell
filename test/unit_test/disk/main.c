@@ -61,7 +61,6 @@ static int	run_disk_command_and_wait(t_ctx *ctx, char *arg0)
 	cmd.args = new_args_1(arg0);
 	assert(cmd.args != NULL);
 	assert(exec_disk_command(&cmd, ctx, NO_PIPE, NO_PIPE) == ST_OK);
-	assert(ctx->already_forked == 1);
 	assert(ctx->npid == 1);
 	assert(collect_child_result(ctx) == ST_OK);
 	free_args_1(cmd.args);
@@ -82,6 +81,15 @@ static int	run_test_case(t_ctx *ctx, char *label, char *arg0)
 	return (1);
 }
 
+/*
+	Executed test cases
+	1. command with slash
+		- /bin/ls
+		- expect: exit_code=0
+	2. command without slash
+		- ls (PATH search)
+		- expect: exit_code=0
+*/
 int	main(int argc, char **argv, char **envp)
 {
 	t_ctx	ctx;

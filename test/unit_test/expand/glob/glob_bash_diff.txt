@@ -1,0 +1,32 @@
+# Known, accepted divergences from bash, as unified-diff lines of
+# `diff -u <bash output> <minishell output>`:
+#   '-' is what bash produced, '+' is what minishell produced.
+#
+# glob_test.sh --bash passes only when the divergence set matches this file
+# exactly, so a new divergence fails the run and a fixed one must be removed
+# from here.
+#
+# Every entry below is the same deliberate limit: the subject scopes the
+# wildcard bonus to "the current working directory", so patterns containing
+# '/' are not expanded. A dirent name never contains '/', so such a pattern
+# simply matches nothing and the word is kept verbatim.
+#
+# Anything appearing here that is NOT a path pattern is a real bug.
++*/	*/
++*/*.c	*/*.c
++*//	*//
++.*/*	.*/*
++.hid/*	.hid/*
++@FIX@/*	@FIX@/*
++a/*	a/*
++a//*	a//*
++a/b/*	a/b/*
+-*/	a/ ab/ dir.d/ link.dir/ xy/
+-*/*.c	xy/y.c
+-*//	a/ ab/ dir.d/ link.dir/ xy/
+-.*/*	.hid/sub
+-.hid/*	.hid/sub
+-@FIX@/*	@FIX@/a @FIX@/aXbXc @FIX@/ab @FIX@/abc @FIX@/abcd @FIX@/broken.link @FIX@/dir.d @FIX@/f.txt @FIX@/f1.c @FIX@/f2.c @FIX@/link.c @FIX@/link.dir @FIX@/xy
+-a/*	a/b
+-a//*	a//b
+-a/b/*	a/b/c

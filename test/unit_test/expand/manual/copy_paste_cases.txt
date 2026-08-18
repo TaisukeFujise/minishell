@@ -1,0 +1,151 @@
+# Test environment:
+#   These variables are not read from the parent shell environment.
+#   They are hard-coded by init_ctx() in test/unit_test/expand/expand_dump.c.
+#
+#   FOO="alpha beta"
+#   BAR="z"
+#   EMPTY=""
+#   STAR="*.c"
+#   HOME="/home/tester"
+#   $?=42
+#
+# The first cases below dump those fixed values so the test preconditions are
+# visible in the same output as the expansion result.
+
+# Fixed test environment sanity check
+echo $FOO "$FOO" '$FOO'
+echo $BAR "$BAR" '$BAR'
+echo $EMPTY "$EMPTY" '$EMPTY'
+echo $STAR "$STAR" '$STAR'
+echo $HOME "$HOME" '$HOME'
+echo $?
+
+# Plain words and quoted/unquoted word concatenation
+echo plain
+echo plain words
+echo pre$BAR-post
+echo pre"$BAR"post
+echo 'pre'$BAR"post"
+
+# Parameter expansion and quote suppression
+echo $FOO
+echo "$FOO"
+echo '$FOO'
+echo $FOO "$FOO" '$FOO'
+echo $?
+echo "$?"
+echo '$?'
+echo $$ $1 $- $
+echo "$$" "$1" "$-" "$"
+echo $UNSET after
+echo "$UNSET" after
+echo $EMPTY after
+echo "$EMPTY" after
+echo a$EMPTY b
+echo a"$EMPTY"b
+echo a$UNSET b
+echo a"$UNSET"b
+
+# Variable name boundaries and unsupported forms kept literal
+echo $FOO$BAR
+echo "$FOO$BAR"
+echo $FOO_suffix
+echo ${FOO}
+echo "$?x"
+echo $?x
+
+# Empty quoted words
+echo ''
+echo ""
+echo a''b
+echo a""b
+echo '' "$EMPTY" "$UNSET"
+
+# Field splitting
+echo before $FOO after
+echo before "$FOO" after
+echo x$FOO
+echo "$FOO"x
+echo x"$FOO"y
+echo $FOO$BAR
+echo "$FOO"$BAR
+
+# Glob expansion
+echo *
+echo "*"
+echo '*'
+echo *.c
+echo no_such_*.minishell
+echo $STAR
+echo "$STAR"
+echo '$STAR'
+echo pre*post
+echo .*
+
+# Assignment words before command name
+A=$FOO
+A="$FOO"
+A=$EMPTY
+A=$UNSET
+A=$FOO echo "$A"
+A="$FOO" echo "$A"
+A=$FOO B=$BAR echo ok
+A=$EMPTY B="$EMPTY" echo ok
+
+# Export assignment-like arguments
+export A=$FOO
+export A="$FOO"
+export A=$EMPTY
+export A=$UNSET
+export A=$STAR
+export A="$STAR"
+export A=$FOO B="$FOO" C=$EMPTY D="$EMPTY"
+export A+=suffix
+export A+=$FOO
+
+# Redirection target expansion and ambiguous redirect
+cat < "$HOME"
+cat < $HOME
+cat > out.txt
+cat >> out.txt
+cat > "$FOO"
+cat > $FOO
+cat > $EMPTY
+cat > "$EMPTY"
+cat > $UNSET
+cat > "$UNSET"
+cat > no_such_*.minishell
+
+# Heredoc body expansion
+cat <<EOF
+$FOO $? $
+EOF
+cat <<'EOF'
+$FOO $? $
+EOF
+cat <<"EOF"
+$FOO $? $
+EOF
+cat <<E"O"F
+$FOO $? $
+EOF
+cat <<A <<B
+$FOO
+A
+$BAR
+B
+
+# Expansion inside command tree shapes
+(echo "$FOO") > out.txt
+(echo "$FOO" && echo $BAR) > "$HOME"
+echo left | cat "$FOO"
+echo "$FOO" | cat > "$HOME"
+echo ok && echo "$BAR" || echo fail
+echo ok && (echo "$FOO") || echo $UNSET
+
+# Parser and lexer error samples
+echo "unterminated
+echo 'unterminated
+cat <<EOF
+echo ok |
+echo ok &&

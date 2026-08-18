@@ -6,20 +6,19 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:15 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 02:59:54 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/04/19 21:25:21 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../../include/builtin.h"
 #include "../../../include/execute.h"
+#include "../../../include/expand.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
-
-bool		find_builtin(char *str);
 
 /*
 	Todo
 	- Create tmp_env_table from "t_word_list *assigns"
-	- Expand Environment Variable
 	- Set Redirect from "t_redirect *redirects"
 	- Execute cmd, which is "built-in" or "execve",
 		using executor->input_fd and executor->output_fd.
@@ -27,25 +26,33 @@ bool		find_builtin(char *str);
 */
 t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
-	ctx->already_forked = 0;
-	if (expand_words(node->u_node.simple_command, ctx) != ST_OK)
-		return (ST_FAILURE);
-	if (node->u_node.simple_command.args == 0)
-		return (exec_null_command(&node->u_node.simple_command, ctx, pipe_in,
-				pipe_out));
-	if (find_builtin(node->u_node.simple_command.args->wd->str))
-		return (exec_builtin(&node->u_node.simple_command, ctx, pipe_in,
-				pipe_out));
-	return (exec_disk_command(&node->u_node.simple_command, ctx, pipe_in,
-			pipe_out));
+	t_simple_cmd	*cmd;
+	t_status		status;
+
+	hash_flush(ctx->tmp_table, NULL);
+	status = expand_command(node, ctx, ctx->arenas);
+	cmd = &node->u_node.simple_command;
+	if (status == ST_OK)
+	{
+		if (cmd->args != NULL && find_builtin(cmd->args->wd->str) == NULL)
+			status = exec_disk_command(cmd, ctx, pipe_in, pipe_out);
+		else
+			status = exec_builtin(cmd, ctx, pipe_in, pipe_out);
+	}
+	return (set_exit_code(ctx, status));
 }
 
-bool	find_builtin(char *str)
+/*
+	The numeric status is what the next command tests, so a simple command
+	settles it before it returns. A command that forked gets it from
+	collect_child_result, ST_EXIT and ST_FATAL carry the code the builtin
+	chose.
+*/
+t_status	set_exit_code(t_ctx *ctx, t_status status)
 {
-	if ((ft_strcmp(str, "echo") == 0) || (ft_strcmp(str, "cd") == 0)
-		|| (ft_strcmp(str, "pwd") == 0) || (ft_strcmp(str, "export") == 0)
-		|| (ft_strcmp(str, "export") == 0) || (ft_strcmp(str, "unset") == 0)
-		|| (ft_strcmp(str, "env") == 0) || (ft_strcmp(str, "exit") == 0))
-		return (true);
-	return (false);
+	if (status == ST_OK)
+		ctx->err.exit_code = 0;
+	else if (status == ST_FAILURE)
+		ctx->err.exit_code = 1;
+	return (status);
 }

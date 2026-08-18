@@ -31,6 +31,20 @@ t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out)
 	return (ST_OK);
 }
 
+/*
+	enter_child sets up the process boundary of a forked command:
+	connect the pipe endpoints to stdio and close the fds inherited from
+	the pipelines around this command. What the command itself needs,
+	its redirects, is applied by the caller.
+	The child cannot run anything if the boundary fails, so it exits.
+*/
+void	enter_child(t_ctx *ctx, int pipe_in, int pipe_out)
+{
+	if (attach_pipe_to_stdio(pipe_in, pipe_out) != ST_OK)
+		exit(EXIT_FAILURE);
+	close_fd_bitmap(ctx->bitmap);
+}
+
 void	close_pipes(int pipe_in, int pipe_out)
 {
 	if (pipe_in != NO_PIPE)

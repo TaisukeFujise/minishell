@@ -12,6 +12,15 @@
 
 #include "parser_internal/parser_internal.h"
 
+static void	free_heredoc_body(t_redirect *redir)
+{
+	if (redir->op != REDIR_DLESS)
+		return ;
+	free(redir->hd.raw_str.str);
+	redir->hd.raw_str.str = NULL;
+	redir->hd.raw_str.len = 0;
+}
+
 static void	init_parser(char **cursor, t_parser_state *ps,
 									t_ctx *ctx, t_arenas *arenas)
 {
@@ -47,8 +56,7 @@ void	close_heredocs(t_node *node)
 		redir = node->u_node.subshell.redirects;
 	while (redir)
 	{
-		if (redir->op == REDIR_DLESS)
-			redir->hd.raw_str.str = NULL;
+		free_heredoc_body(redir);
 		if (redir->hd.content_fd >= 0)
 		{
 			close(redir->hd.content_fd);

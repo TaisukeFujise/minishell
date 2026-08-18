@@ -3,37 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   unset_cmd.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:41:53 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/25 00:23:09 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/08/15 16:21:06 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/builtin.h"
 #include "../../include/parser.h"
+#include "../../include/strutil.h"
 
 static void	print_invalid_identifier(char *name)
 {
 	ft_putstr_fd("minishell: unset: `", STDERR_FILENO);
 	ft_putstr_fd(name, STDERR_FILENO);
 	ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
-}
-
-static bool	is_valid_identifier(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (str[i] == '\0' || ft_isdigit(str[i]))
-		return (false);
-	while (str[i])
-	{
-		if (!(ft_isalnum(str[i]) || str[i] == '_'))
-			return (false);
-		i++;
-	}
-	return (true);
 }
 
 /*
@@ -49,7 +34,8 @@ t_status	unset_cmd(t_word_list *args, t_ctx *ctx)
 	cursor = args;
 	while (cursor)
 	{
-		if (!is_valid_identifier(cursor->wd->str))
+		if (!*cursor->wd->str
+			|| cursor->wd->str[str_name_len(cursor->wd->str)] != '\0')
 			return (print_invalid_identifier(cursor->wd->str), ST_FAILURE);
 		cursor = cursor->next;
 	}

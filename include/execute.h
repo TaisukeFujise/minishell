@@ -40,12 +40,6 @@ typedef struct s_exec_params
 	char	**envp;
 }			t_exec_params;
 
-typedef struct s_pipes
-{
-	int		pipe_in;
-	int		pipe_out;
-}			t_pipes;
-
 /* init.c */
 int			init_ctx(t_ctx *ctx, char **envp);
 /* execute.c */
@@ -66,17 +60,15 @@ t_status	exec_pipeline(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 /* exec_disk.c */
 t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
 				int pipe_out);
-/* exec_null.c */
-t_status	exec_null_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-				int pipe_out);
 /* exec_simple.c */
 t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
+t_status	set_exit_code(t_ctx *ctx, t_status status);
 /* exec_subshell.c */
 t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out);
 
 // <expansion>
 /* assigns.c */
-t_status	apply_assigns(t_hashtable *table, t_assign *assign,
+t_status	apply_assign(t_assign *assign, t_hashtable *table, t_ctx *ctx,
 				t_tabletype type);
 /* expand.c */
 
@@ -87,6 +79,7 @@ void		close_fd_bitmap(t_fd_bitmap *fd_bitmap);
 void		dispose_fd_bitmap(t_fd_bitmap *fd_bitmap);
 /* pipe_utils.c */
 t_status	attach_pipe_to_stdio(int pipe_in, int pipe_out);
+void		enter_child(t_ctx *ctx, int pipe_in, int pipe_out);
 void		close_pipes(int pipe_in, int pipe_out);
 /* register_pid.c */
 t_status	register_pid(t_ctx *ctx, pid_t pid);
@@ -113,9 +106,10 @@ void		free_exec_params(char **argv, char **envp);
 char		*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table);
 char		*extract_path_entry(char *path_value);
 /* envp_utils.c */
+char		*env_lookup(t_hashtable *tmp_table, t_hashtable *env_table,
+				char *name);
 char		*make_env_entry(char *key, char *value);
-char		**table_to_envp(t_hashtable *table, char **envp);
-char		**tables_to_envp(t_hashtable *tmp_table, t_hashtable *env_table,
-				char **envp);
+char		**build_envp(t_hashtable *tmp_table, t_hashtable *env_table);
+void		free_envp(char **envp);
 
 #endif

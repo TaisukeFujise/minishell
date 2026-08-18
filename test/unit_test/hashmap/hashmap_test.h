@@ -7,6 +7,6 @@
 void	print_data(t_data data);
 void	print_bucket_array(t_bucket_contents **bucket_array, int bucket_size);
 void	print_table(t_hashtable *table);
-void	print_executor(t_exec *executor);
+void	print_ctx(t_ctx *ctx);
 
 #endif
