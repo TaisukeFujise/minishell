@@ -27,26 +27,29 @@ bool	write_all(int fd, const char *s, size_t len)
 }
 
 /*
-	How the shell reports a failure: "minishell: name: operand: reason" on
-	stderr, each part left out when there is nothing to put there. Written
-	where the failure happens, so that a child can report its own and no
-	message has to outlive the arena it was built in.
+	One part of a message and the separator that follows it, left out
+	when there is no part to write.
+*/
+static void	put_part(const char *s, const char *tail)
+{
+	if (s == NULL)
+		return ;
+	write_all(STDERR_FILENO, s, ft_strlen(s));
+	write_all(STDERR_FILENO, tail, ft_strlen(tail));
+}
+
+/*
+	How the shell reports a failure: "minishell: name: operand: reason"
+	on stderr, each part left out when there is nothing to put there.
+	Written where the failure happens, so that a child can report its own
+	and no message has to outlive the arena it was built in.
 */
 void	print_error_at(const char *name, const char *arg, const char *reason)
 {
 	write_all(STDERR_FILENO, "minishell: ", 11);
-	if (name != NULL)
-	{
-		write_all(STDERR_FILENO, name, ft_strlen(name));
-		write_all(STDERR_FILENO, ": ", 2);
-	}
-	if (arg != NULL)
-	{
-		write_all(STDERR_FILENO, arg, ft_strlen(arg));
-		write_all(STDERR_FILENO, ": ", 2);
-	}
-	write_all(STDERR_FILENO, reason, ft_strlen(reason));
-	write_all(STDERR_FILENO, "\n", 1);
+	put_part(name, ": ");
+	put_part(arg, ": ");
+	put_part(reason, "\n");
 }
 
 void	print_error(const char *name, const char *reason)
@@ -55,16 +58,13 @@ void	print_error(const char *name, const char *reason)
 }
 
 /*
-	A name the shell refuses, quoted the way bash quotes it:
-	"minishell: unset: `1x': not a valid identifier".
+	The same, for a name the shell refuses, quoted the way bash quotes
+	it: "minishell: unset: `1x': not a valid identifier".
 */
 void	print_error_name(const char *name, const char *word, const char *reason)
 {
 	write_all(STDERR_FILENO, "minishell: ", 11);
-	write_all(STDERR_FILENO, name, ft_strlen(name));
-	write_all(STDERR_FILENO, ": `", 3);
-	write_all(STDERR_FILENO, word, ft_strlen(word));
-	write_all(STDERR_FILENO, "': ", 3);
-	write_all(STDERR_FILENO, reason, ft_strlen(reason));
-	write_all(STDERR_FILENO, "\n", 1);
+	put_part(name, ": `");
+	put_part(word, "': ");
+	put_part(reason, "\n");
 }

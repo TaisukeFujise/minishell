@@ -12,6 +12,7 @@
 static void	stage_child(t_node *node, t_ctx *ctx, int prevfd, int *pipefd)
 {
 	reset_signals();
+	ctx->interactive = false;
 	if (pipefd[0] != NO_PIPE)
 		close(pipefd[0]);
 	if (prevfd != NO_PIPE && move_fd(prevfd, STDIN_FILENO) != ST_OK)

@@ -41,6 +41,7 @@ t_status	exec_subshell(t_node *node, t_ctx *ctx, bool own)
 	if (pid == 0)
 	{
 		reset_signals();
+		ctx->interactive = false;
 		subshell_body(node, ctx);
 		exit(ctx->err.exit_code);
 	}

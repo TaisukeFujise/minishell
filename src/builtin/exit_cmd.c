@@ -15,17 +15,6 @@
 #include "../../include/parser.h"
 
 /*
-	An interactive shell says that it is leaving, whatever the argument
-	turns out to be. It goes to stderr, so that "exit 0 > file" does not
-	put it in the file. [bash-5.3 builtins/exit.def exit_builtin()]
-*/
-static void	announce_exit(t_ctx *ctx)
-{
-	if (ctx->interactive)
-		write_all(STDERR_FILENO, "exit\n", 5);
-}
-
-/*
 	The number of "exit n", as bash reads it: the space around it is
 	skipped, a sign is allowed, and the whole of the rest has to be
 	digits. [bash-5.3 general.c valid_number()]
@@ -61,13 +50,17 @@ static bool	parse_exit_status(char *str, long *out)
 	error, not too many arguments, and leaves the shell with 2. Too many
 	arguments is the one case that does not exit at all. With no argument
 	the status of the last command stands.
-	[bash-5.3 builtins/common.c get_exitstat()]
+	An interactive shell says that it is leaving before it looks at the
+	argument at all, on stderr, so that "exit 0 > file" does not put it
+	in the file.
+	[bash-5.3 builtins/common.c get_exitstat(), builtins/exit.def]
 */
 t_status	exit_cmd(t_word_list *args, t_ctx *ctx)
 {
 	long	value;
 
-	announce_exit(ctx);
+	if (ctx->interactive)
+		write_all(STDERR_FILENO, "exit\n", 5);
 	if (args == NULL)
 		return (ST_EXIT);
 	if (!parse_exit_status(args->wd->str, &value))

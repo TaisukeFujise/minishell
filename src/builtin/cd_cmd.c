@@ -58,7 +58,7 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 {
 	char	*target;
 
-	if (count_args(args) > 1)
+	if (args != NULL && args->next != NULL)
 	{
 		print_error("cd", "too many arguments");
 		return (ST_FAILURE);
