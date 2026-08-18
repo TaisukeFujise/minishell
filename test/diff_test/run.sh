@@ -82,6 +82,12 @@ cat out.txt'
 run_case redirect_keeps_fd 'echo hi 3>f1
 echo second'
 # An io number above the fixed backup base of a shell. dash loses stdout here.
+run_case redirect_in_missing 'cat < missing
+echo rc=$?'
+run_case redirect_out_bad_dir 'echo x > /nonexistent/dir/f
+echo rc=$?'
+run_case redirect_in_missing_pipe 'cat < missing | cat
+echo rc=$?'
 run_case redirect_high_fd 'echo hi 12>f1
 echo second'
 # pwd writes through stdio, so its output is flushed after the redirect is

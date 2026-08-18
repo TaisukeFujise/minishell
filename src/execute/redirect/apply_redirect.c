@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../../include/execute.h"
+#include <string.h>
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
@@ -110,17 +111,25 @@ t_status	undo_redirects(t_redirect *redirects)
 	return (status);
 }
 
+/*
+	The file a redirect names, or below zero with the reason already
+	reported. A heredoc reports whatever went wrong with its own file.
+*/
 static int	open_redirect_fd(t_redirect *redirect)
 {
-	if (redirect->op == REDIR_GREATER)
-		return (open(redirect->target.str, O_WRONLY | O_CREAT | O_TRUNC, 0644));
-	else if (redirect->op == REDIR_LESS)
-		return (open(redirect->target.str, O_RDONLY, 0644));
-	else if (redirect->op == REDIR_DGREATER)
-		return (open(redirect->target.str, O_WRONLY | O_CREAT | O_APPEND,
-				0644));
-	else if (redirect->op == REDIR_DLESS)
+	int	fd;
+
+	if (redirect->op == REDIR_DLESS)
 		return (open_heredoc_fd(redirect));
+	if (redirect->op == REDIR_GREATER)
+		fd = open(redirect->target.str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else if (redirect->op == REDIR_LESS)
+		fd = open(redirect->target.str, O_RDONLY, 0644);
+	else if (redirect->op == REDIR_DGREATER)
+		fd = open(redirect->target.str, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
 		return (-1);
+	if (fd < 0)
+		print_error(redirect->target.str, strerror(errno));
+	return (fd);
 }
