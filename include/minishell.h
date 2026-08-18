@@ -54,7 +54,8 @@ typedef struct s_ctx
 	t_arenas					*arenas;
 	// arenas of the current parse iteration. NULL outside of it.
 	bool						interactive;
-	// whether a terminal is driving the shell. Decided once, at startup.
+	// whether a terminal drives the shell. Decided once at startup, and
+	// cleared in a forked child: a subshell is never the interactive one.
 }								t_ctx;
 
 bool							write_all(int fd, const char *s, size_t len);
