@@ -90,6 +90,8 @@ void	disk_command(char **argv, char **envp, t_ctx *ctx)
 {
 	char	*path;
 
+	if (argv[0][0] == '\0')
+		exit(report_exec_error(argv[0], 0));
 	path = extract_path_value(ctx->tmp_table, ctx->env_table);
 	if (has_slash(argv[0]) || path == NULL)
 	{

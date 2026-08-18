@@ -147,6 +147,11 @@ notexec'
 run_case exec_a_directory '/tmp'
 run_case exit_prints 'exit 7'
 run_case exit_bad_arg 'exit abc'
+# The status of a syntax error. bash ends a script there; this shell has no
+# script mode and goes on to the next line, as bash does when interactive.
+run_case syntax_status 'echo a >'
+run_case empty_command '""
+echo rc=$?'
 run_case digit_last_word 'echo 7
 nosuchcmd_xyz 12
 echo done'

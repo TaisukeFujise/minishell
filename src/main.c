@@ -60,6 +60,20 @@ void	handle_command_termination(t_status status, char *user_input, t_node *node,
 }
 
 /*
+	Say what went wrong with the line. The message can live in the arena
+	of this parse, so it is written before that arena goes.
+*/
+static void	report_error(t_ctx *ctx)
+{
+	if (ctx->err.err_msg == NULL)
+		return ;
+	write(STDERR_FILENO, "minishell: ", 11);
+	write(STDERR_FILENO, ctx->err.err_msg, ft_strlen(ctx->err.err_msg));
+	write(STDERR_FILENO, "\n", 1);
+	ctx->err.err_msg = NULL;
+}
+
+/*
 	A script is read one byte at a time. A command that reads standard
 	input must find it where the shell stopped reading, and lseek() is
 	not available to give back what was read ahead.
@@ -109,6 +123,7 @@ static t_status	parse_and_execute(char *user_input, t_node *ast, t_ctx *ctx)
 		ft_arena_init(&arenas.tmp, ARENA_DEFAULT_CHUNK_SIZE);
 		ctx->arenas = &arenas;
 		status = parse(&cursor, ast, ctx, &arenas);
+		report_error(ctx);
 		if (status == ST_FAILURE)
 		{
 			ctx->arenas = NULL;
@@ -126,6 +141,7 @@ static t_status	parse_and_execute(char *user_input, t_node *ast, t_ctx *ctx)
 			handle_command_termination(status, user_input, ast, ctx);
 		}
 		status = execute(ast, ctx);
+		report_error(ctx);
 		if (ast->left)
 		{
 			close_heredocs(ast->left);
