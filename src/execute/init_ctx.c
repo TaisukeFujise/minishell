@@ -20,6 +20,8 @@ static int	_load_envp_to_table(t_hashtable *env_table, char **envp);
 int	init_ctx(t_ctx *ctx, char **envp)
 {
 	ft_bzero(ctx, sizeof(t_ctx));
+	ctx->interactive = (isatty(STDIN_FILENO) == 1
+			&& isatty(STDERR_FILENO) == 1);
 	ctx->env_table = hash_create(BUCKET_SIZE);
 	if (ctx->env_table == NULL)
 		return (FAILURE);

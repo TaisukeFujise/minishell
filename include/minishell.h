@@ -53,6 +53,8 @@ typedef struct s_ctx
 	// tmp environment variable table.This is set by assignment word in front of cmd.
 	t_arenas					*arenas;
 	// arenas of the current parse iteration. NULL outside of it.
+	bool						interactive;
+	// whether a terminal is driving the shell. Decided once, at startup.
 }								t_ctx;
 
 bool							write_all(int fd, const char *s, size_t len);

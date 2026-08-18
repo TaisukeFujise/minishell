@@ -29,7 +29,6 @@ XFAIL=0
 # Cases that minishell is not expected to pass yet.
 EXPECTED_FAIL="
 heredoc_unclosed
-exit_prints
 "
 
 run_case()
@@ -163,6 +162,14 @@ notexec'
 run_case exec_a_directory '/tmp'
 run_case exit_prints 'exit 7'
 run_case exit_bad_arg 'exit abc'
+run_case exit_numeric_first 'exit abc 1'
+run_case exit_too_many 'exit 1 2
+echo survived $?'
+run_case exit_spaces 'exit " 42 "'
+run_case exit_keeps_status 'false
+exit'
+run_case exit_redirect 'exit 0 > out.txt
+echo unreachable'
 # The status of a syntax error. bash ends a script there; this shell has no
 # script mode and goes on to the next line, as bash does when interactive.
 run_case syntax_status 'echo a >'
