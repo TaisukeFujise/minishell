@@ -98,6 +98,13 @@ echo a | cat'
 run_case builtin_out_subshell 'cd /
 pwd
 (echo a)'
+run_case echo_n_repeated 'echo -n -n hello
+echo end'
+run_case echo_n_joined 'echo -nnn hello
+echo end'
+run_case echo_n_not_option 'echo - hello
+echo -nx hello
+echo -n-n hello'
 run_case pwd_operand 'cd /
 pwd ignored'
 run_case env_operand 'env nosuchcmd_xyz
