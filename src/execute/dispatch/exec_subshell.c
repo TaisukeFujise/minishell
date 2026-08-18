@@ -6,18 +6,31 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:12 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/11 11:03:56 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/04/19 22:24:41 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../../include/execute.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
 t_status	exec_subshell(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
 {
-	(void)node;
-	(void)ctx;
-	(void)pipe_in;
-	(void)pipe_out;
-	return (ST_OK);
+	pid_t	pid;
+
+	pid = fork();
+	if (pid < 0)
+		return (ST_FATAL);
+	else if (pid == 0)
+	{
+		ctx->subshell_level++;
+		_exit(execute_internal(node, ctx, pipe_in, pipe_out));
+	}
+	else
+	{
+		ctx->already_forked = 1;
+		close_pipes(pipe_in, pipe_out);
+		return (register_pid(ctx, pid));
+	}
+	return (ST_FATAL);
 }

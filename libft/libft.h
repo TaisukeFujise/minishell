@@ -34,12 +34,13 @@ struct s_arena_chunk
 	t_arena_chunk	*prev;
 	size_t			capacity;
 	size_t			used;
+	max_align_t		align;
 	char			data[];
 };
 
 typedef struct s_arena
 {
-	t_arena_chunk	*current;
+	t_arena_chunk	*head;
 	size_t			default_cap;
 }	t_arena;
 
@@ -60,6 +61,7 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dsize);
 int		ft_toupper(int c);
 int		ft_tolower(int c);
 char	*ft_strchr(const char *s, int c);
+char	*ft_strchrnul(const char *s, int c);
 char	*ft_strrchr(const char *s, int c);
 int		ft_strcmp(const char *s1, const char *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
@@ -68,6 +70,7 @@ int		ft_memcmp(const void *s1, const void *s2, size_t n);
 char	*ft_strnstr(const char *big, const char *little, size_t len);
 int		ft_atoi(const char *nptr);
 void	*ft_calloc(size_t nmemb, size_t size);
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 char	*ft_strdup(const char *s);
 char	*ft_strndup(const char *s, size_t n);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
@@ -88,8 +91,6 @@ long	ft_atol(char *nptr);
 void	ft_arena_init(t_arena *arena, size_t default_cap);
 void	*ft_arena_alloc(t_arena *arena, size_t size);
 void	*ft_arena_calloc(t_arena *arena, size_t count, size_t size);
-void	*ft_arena_realloc(t_arena *arena, void *ptr,
-			size_t old_size, size_t new_size);
 char	*ft_arena_strdup(t_arena *arena, const char *src);
 char	*ft_arena_strndup(t_arena *arena, const char *src, size_t n);
 void	ft_arena_reset(t_arena *arena);
