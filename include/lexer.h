@@ -37,7 +37,7 @@ typedef enum e_lexer_err
 	LEX_ERR_MEMORY_ALLOCATION = -1
 }	t_lexer_err;
 
-typedef struct s_token	t_token;
+typedef struct s_token		t_token;
 typedef struct s_lex_state	t_lex_state;
 
 struct s_token

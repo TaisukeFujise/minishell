@@ -50,7 +50,8 @@ typedef struct s_ctx
 	// environment variable table. When execve,this is converted to envp.
 	/* Reset following member on every command. */
 	t_hashtable					*tmp_table;
-	// tmp environment variable table.This is set by assignment word in front of cmd.
+	// tmp environment variable table. This is set by assignment word
+	// in front of cmd.
 	t_arenas					*arenas;
 	// arenas of the current parse iteration. NULL outside of it.
 	bool						interactive;
@@ -59,7 +60,8 @@ typedef struct s_ctx
 }								t_ctx;
 
 bool							write_all(int fd, const char *s, size_t len);
-void							print_error(const char *name, const char *reason);
+void							print_error(const char *name,
+									const char *reason);
 void							print_error_at(const char *name,
 									const char *arg, const char *reason);
 void							print_error_name(const char *name,

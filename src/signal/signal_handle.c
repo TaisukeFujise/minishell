@@ -19,7 +19,7 @@
 */
 volatile sig_atomic_t	g_signum = 0;
 
-int	handle_readline_signal()
+int	handle_readline_signal(void)
 {
 	if (g_signum == SIGINT)
 	{
@@ -48,12 +48,16 @@ static void	signal_handler(int signum)
 	g_signum = signum;
 }
 
+/*
+	rl_catch_signals: a non-zero value means using the default signal
+	handler, so I set 0 to use the original handler.
+*/
 int	set_signal(void)
 {
 	struct sigaction	sa_sigint;
 	struct sigaction	sa_ignore;
 
-	rl_catch_signals = 0; // non-zero value means using default signal handler, so I set 0 to use original handler.
+	rl_catch_signals = 0;
 	rl_event_hook = handle_readline_signal;
 	ft_bzero(&sa_sigint, sizeof(sa_sigint));
 	ft_bzero(&sa_ignore, sizeof(sa_ignore));
@@ -69,5 +73,3 @@ int	set_signal(void)
 		return (FAILURE);
 	return (SUCCESS);
 }
-
-

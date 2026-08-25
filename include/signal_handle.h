@@ -10,9 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#ifndef HANDLE_H
-# define HANDLE_H
+#ifndef SIGNAL_HANDLE_H
+# define SIGNAL_HANDLE_H
 
 # include <signal.h>
 # include <readline/readline.h>
