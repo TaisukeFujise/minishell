@@ -191,6 +191,14 @@ pwd'
 # if the child waits for the pids it inherited from the shell (review S43-05).
 run_case subshell_status 'echo a | (nosuchcmd_xyz)
 echo "rc=$?"'
+# The prefix assignments of one command must not reach the expansion of
+# the next one. A subshell expands its own redirects, so it is the second
+# caller of expand_command() and has to flush too (review OVL-01, OVL-02).
+run_case subshell_prefix_leak 'A=./leak.txt true
+( echo hi ) > $A'
+run_case subshell_prefix_ifs 'X=a:b
+IFS=: true
+( echo hi ) > $X'
 run_case missing_status 'nosuchcmd_xyz'
 
 # Not implemented yet. This case compares the message, not just the status:

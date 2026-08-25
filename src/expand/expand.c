@@ -1,13 +1,20 @@
 #include "../../include/execute.h"
 #include "expand_internal/expand_internal.h"
 
+/*
+	IFS comes from the environment of the shell, never from the prefix
+	assignments of the command being expanded: the words of "IFS=: cmd
+	$x" are split with the IFS that was in force before it. Passing no
+	tmp_table says so, instead of relying on it being empty here.
+	[review OVL-02]
+*/
 static const char	*get_ifs(t_ctx *ctx)
 {
 	char	*value;
 
 	if (!ctx->env_table)
 		return (IFS_DEFAULT);
-	value = env_lookup(ctx->tmp_table, ctx->env_table, "IFS");
+	value = env_lookup(NULL, ctx->env_table, "IFS");
 	if (!value)
 		return (IFS_DEFAULT);
 	return (value);

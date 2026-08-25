@@ -20,9 +20,13 @@
 	The body of a subshell runs in a process of its own. When this
 	process is already one, it is taken over instead of forking again,
 	the way dash skips the fork under EV_EXIT.
+	The prefix assignments of the command before it are not this
+	command's, so they are dropped here as well: every caller of
+	expand_command() flushes first. [review OVL-01]
 */
 static t_status	subshell_body(t_node *node, t_ctx *ctx)
 {
+	hash_flush(ctx->tmp_table, NULL);
 	if (expand_command(node, ctx, ctx->arenas) != ST_OK
 		|| apply_redirects(node->u_node.subshell.redirects,
 			REDIR_KEEP) != ST_OK)
