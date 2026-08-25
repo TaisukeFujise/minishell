@@ -13,11 +13,11 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx)
 	return (ST_FATAL);
 }
 
-t_status	exec_subshell(t_node *node, t_ctx *ctx, bool own)
+t_status	exec_subshell(t_node *node, t_ctx *ctx, t_exec_mode mode)
 {
 	(void)node;
 	(void)ctx;
-	(void)own;
+	(void)mode;
 	return (ST_FATAL);
 }
 

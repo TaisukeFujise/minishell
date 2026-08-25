@@ -2,10 +2,10 @@
 
 pid_t	g_body_pid = 0;
 
-t_status	execute_internal(t_node *node, t_ctx *ctx, bool own)
+t_status	execute_internal(t_node *node, t_ctx *ctx, t_exec_mode mode)
 {
 	(void)node;
-	(void)own;
+	(void)mode;
 	g_body_pid = getpid();
 	ctx->err.exit_code = 41;
 	return (ST_OK);

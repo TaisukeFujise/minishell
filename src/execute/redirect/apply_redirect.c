@@ -55,26 +55,20 @@ static int	backup_floor(t_redirect *redirects)
 }
 
 /*
-	apply_redirects call redirect func depending on redirect->op.
-	- apply_redir_great
-	- apply_redir_less
-	- apply_redir_dgreat
-	- apply_redir_dless
-	A shell process that keeps running asks for undoable, so that the
-	redirects of one command do not outlive it. A process that only runs
-	this command does not: it exits or execs.
+	Apply the redirects of one command, in the order they were written.
+	See t_redir_mode for what mode decides.
 */
-t_status	apply_redirects(t_redirect *redirects, bool undoable)
+t_status	apply_redirects(t_redirect *redirects, t_redir_mode mode)
 {
 	int	floor;
 	int	fd;
 
 	floor = 0;
-	if (undoable)
+	if (mode == REDIR_RESTORE)
 		floor = backup_floor(redirects);
 	while (redirects)
 	{
-		if (undoable)
+		if (mode == REDIR_RESTORE)
 		{
 			redirects->saved = dup_above(redirects->io_number, floor);
 			if (redirects->saved < 0)

@@ -18,17 +18,15 @@
 
 void		run_in_place(t_simple_cmd *cmd, t_ctx *ctx, t_exec_params params);
 void		disk_command(char **argv, char **envp, t_ctx *ctx);
-bool		has_slash(char *str);
 int			report_exec_error(char *name, int reason);
 
 /*
 	execute disk command(external command), like ls.
-	Fork regardless of whether pipe_in or pipe_out are not a NO_PIPE.
-	(It means whether command is connected by pipe or not doesn't matter.)
-	- own: this process is only for this command, so take it over
-	- otherwise: fork, run it in the child and wait for it
+	- EXEC_OWN_PROCESS: this process is only for this command, so take
+	  it over
+	- EXEC_SHELL_PROCESS: fork, run it in the child and wait for it
 */
-t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, bool own)
+t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, t_exec_mode mode)
 {
 	pid_t			pid;
 	t_exec_params	params;
@@ -36,7 +34,7 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, bool own)
 	if (build_exec_params(&params, cmd->args, ctx->tmp_table,
 			ctx->env_table) == FAILURE)
 		return (ST_FATAL);
-	if (own)
+	if (mode == EXEC_OWN_PROCESS)
 		run_in_place(cmd, ctx, params);
 	pid = fork();
 	if (pid < 0)
@@ -53,7 +51,7 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, bool own)
 void	run_in_place(t_simple_cmd *cmd, t_ctx *ctx, t_exec_params params)
 {
 	reset_signals();
-	if (apply_redirects(cmd->redirects, false) != ST_OK)
+	if (apply_redirects(cmd->redirects, REDIR_KEEP) != ST_OK)
 		exit(EXIT_FAILURE);
 	disk_command(params.argv, params.envp, ctx);
 	exit(EXIT_FAILURE);
@@ -92,7 +90,7 @@ void	disk_command(char **argv, char **envp, t_ctx *ctx)
 
 	if (argv[0][0] == '\0')
 		exit(report_exec_error(argv[0], 0));
-	path = extract_path_value(ctx->tmp_table, ctx->env_table);
+	path = env_lookup(ctx->tmp_table, ctx->env_table, "PATH");
 	if (has_slash(argv[0]) || path == NULL)
 	{
 		set_underscore(envp, argv[0]);
@@ -100,18 +98,4 @@ void	disk_command(char **argv, char **envp, t_ctx *ctx)
 		exit(report_exec_error(argv[0], errno));
 	}
 	exit(report_exec_error(argv[0], search_path(path, argv, envp)));
-}
-
-bool	has_slash(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '/')
-			return (true);
-		i++;
-	}
-	return (false);
 }

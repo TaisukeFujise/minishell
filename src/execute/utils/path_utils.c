@@ -14,9 +14,22 @@
 #include <sys/stat.h>
 #include "../../../include/parser.h"
 
-char	*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table)
+/*
+	Whether the name is a pathname rather than a name to look up in PATH.
+	[POSIX.1-2024 XCU 2.9.1.1 Command Search and Execution]
+*/
+bool	has_slash(char *str)
 {
-	return (env_lookup(tmp_table, env_table, "PATH"));
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '/')
+			return (true);
+		i++;
+	}
+	return (false);
 }
 
 /*

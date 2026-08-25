@@ -65,7 +65,7 @@ static int	run_disk_command_and_wait(t_ctx *ctx, char *arg0)
 	ft_bzero(&cmd, sizeof(t_simple_cmd));
 	cmd.args = new_args_1(arg0);
 	assert(cmd.args != NULL);
-	assert(exec_disk_command(&cmd, ctx, false) == ST_OK);
+	assert(exec_disk_command(&cmd, ctx, EXEC_SHELL_PROCESS) == ST_OK);
 
 	free_args_1(cmd.args);
 	return (ctx->err.exit_code);

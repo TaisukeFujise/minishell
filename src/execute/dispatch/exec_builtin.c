@@ -25,7 +25,7 @@ t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx)
 {
 	t_status	result;
 
-	result = apply_redirects(cmd->redirects, true);
+	result = apply_redirects(cmd->redirects, REDIR_RESTORE);
 	if (result == ST_OK)
 		result = builtin_cmd(cmd->args, ctx);
 	if (undo_redirects(cmd->redirects) != ST_OK)

@@ -47,6 +47,31 @@ typedef enum s_tabletype
 	VARS,
 }			t_tabletype;
 
+/*
+	Which process a node is evaluated on. EXEC_SHELL_PROCESS is the
+	shell itself: it outlives the node and forks what needs a process of
+	its own. EXEC_OWN_PROCESS is a pipeline stage, or a subshell that
+	was one: it never forks again and its caller exits when it returns.
+	[dash EV_EXIT, bash CMD_NO_FORK]
+*/
+typedef enum e_exec_mode
+{
+	EXEC_SHELL_PROCESS,
+	EXEC_OWN_PROCESS,
+}			t_exec_mode;
+
+/*
+	Whether the io numbers a command redirects have to come back.
+	REDIR_RESTORE keeps a backup for undo_redirects(), so the redirects
+	of one command do not outlive it. REDIR_KEEP does not: that process
+	exits or execs.
+*/
+typedef enum e_redir_mode
+{
+	REDIR_RESTORE,
+	REDIR_KEEP,
+}			t_redir_mode;
+
 typedef struct s_exec_params
 {
 	char	**argv;
@@ -59,7 +84,7 @@ int			init_ctx(t_ctx *ctx, char **envp);
 int			init_shell_vars(t_hashtable *env_table);
 /* execute.c */
 t_status	execute(t_node *node, t_ctx *ctx);
-t_status	execute_internal(t_node *node, t_ctx *ctx, bool own);
+t_status	execute_internal(t_node *node, t_ctx *ctx, t_exec_mode mode);
 int			count_stages(t_node *node);
 t_node		**collect_stages(t_node *node, t_node **out);
 
@@ -73,12 +98,13 @@ t_status	exec_andor(t_node *node, t_ctx *ctx);
 /* exec_pipeline.c */
 t_status	exec_pipeline(t_node *node, t_ctx *ctx);
 /* exec_disk.c */
-t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, bool own);
+t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx,
+				t_exec_mode mode);
 /* exec_simple.c */
-t_status	exec_simple(t_node *node, t_ctx *ctx, bool own);
+t_status	exec_simple(t_node *node, t_ctx *ctx, t_exec_mode mode);
 t_status	set_exit_code(t_ctx *ctx, t_status status);
 /* exec_subshell.c */
-t_status	exec_subshell(t_node *node, t_ctx *ctx, bool own);
+t_status	exec_subshell(t_node *node, t_ctx *ctx, t_exec_mode mode);
 
 // <expansion>
 /* assigns.c */
@@ -100,7 +126,7 @@ t_status	procs_wait(t_procs *procs, t_ctx *ctx);
 
 // <redirect>
 /* apply_redirect.c */
-t_status	apply_redirects(t_redirect *redirects, bool undoable);
+t_status	apply_redirects(t_redirect *redirects, t_redir_mode mode);
 t_status	undo_redirects(t_redirect *redirects);
 /* heredoc_tmpfile.c */
 char		*create_tmp_filename(void);
@@ -113,7 +139,7 @@ int			build_exec_params(t_exec_params *exec_params, t_word_list *args,
 				t_hashtable *tmp_table, t_hashtable *env_table);
 void		free_exec_params(char **argv, char **envp);
 /* path_utils.c */
-char		*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table);
+bool		has_slash(char *str);
 char		*next_path_candidate(char **scan, char *name);
 void		set_underscore(char **envp, char *pathname);
 int			search_path(char *path, char **argv, char **envp);

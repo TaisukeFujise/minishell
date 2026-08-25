@@ -24,16 +24,17 @@
 static t_status	subshell_body(t_node *node, t_ctx *ctx)
 {
 	if (expand_command(node, ctx, ctx->arenas) != ST_OK
-		|| apply_redirects(node->u_node.subshell.redirects, false) != ST_OK)
+		|| apply_redirects(node->u_node.subshell.redirects,
+			REDIR_KEEP) != ST_OK)
 		exit(EXIT_FAILURE);
-	return (execute_internal(node->left, ctx, false));
+	return (execute_internal(node->left, ctx, EXEC_SHELL_PROCESS));
 }
 
-t_status	exec_subshell(t_node *node, t_ctx *ctx, bool own)
+t_status	exec_subshell(t_node *node, t_ctx *ctx, t_exec_mode mode)
 {
 	pid_t	pid;
 
-	if (own)
+	if (mode == EXEC_OWN_PROCESS)
 		return (subshell_body(node, ctx));
 	pid = fork();
 	if (pid < 0)

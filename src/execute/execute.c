@@ -22,7 +22,7 @@ t_status	execute(t_node *root, t_ctx *ctx)
 {
 	if (root == NULL)
 		return (ST_OK);
-	return (execute_internal(root, ctx, false));
+	return (execute_internal(root, ctx, EXEC_SHELL_PROCESS));
 }
 
 /*
@@ -33,18 +33,17 @@ t_status	execute(t_node *root, t_ctx *ctx)
 	- exec_simple
 	- exec_connection
 
-	own says that this process runs only this node: a pipeline stage, or
-	a subshell that was one. Such a node does not fork again, it takes
-	over the process it is in, and the caller exits when it returns.
+	mode says which process this node is evaluated on: the shell itself,
+	or a process that exists only for this node. See t_exec_mode.
 */
-t_status	execute_internal(t_node *node, t_ctx *ctx, bool own)
+t_status	execute_internal(t_node *node, t_ctx *ctx, t_exec_mode mode)
 {
 	if (node == NULL)
 		return (ST_OK);
 	if (node->node_kind == NODE_SUBSHELL)
-		return (exec_subshell(node, ctx, own));
+		return (exec_subshell(node, ctx, mode));
 	if (node->node_kind == NODE_SIMPLE)
-		return (exec_simple(node, ctx, own));
+		return (exec_simple(node, ctx, mode));
 	if (node->node_kind == NODE_COMPLETE || node->node_kind == NODE_ANDOR
 		|| node->node_kind == NODE_PIPE)
 		return (exec_connection(node, ctx));

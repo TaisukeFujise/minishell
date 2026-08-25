@@ -7,7 +7,8 @@
 	The process boundary of a pipeline stage. It closes the end of the
 	new pipe it does not use, takes the end it reads from as its stdin
 	and the one it writes into as its stdout, then runs the node it was
-	forked for. It never returns: the status of that node is its own.
+	forked for. The node has this process to itself, so it never forks
+	again. It never returns: the status of that node is its own.
 */
 static void	stage_child(t_node *node, t_ctx *ctx, int prevfd, int *pipefd)
 {
@@ -19,7 +20,7 @@ static void	stage_child(t_node *node, t_ctx *ctx, int prevfd, int *pipefd)
 		exit(EXIT_FAILURE);
 	if (pipefd[1] != NO_PIPE && move_fd(pipefd[1], STDOUT_FILENO) != ST_OK)
 		exit(EXIT_FAILURE);
-	execute_internal(node, ctx, true);
+	execute_internal(node, ctx, EXEC_OWN_PROCESS);
 	exit(ctx->err.exit_code);
 }
 

@@ -39,7 +39,7 @@ static bool	runs_as_builtin(t_word_list *args)
 	return (true);
 }
 
-t_status	exec_simple(t_node *node, t_ctx *ctx, bool own)
+t_status	exec_simple(t_node *node, t_ctx *ctx, t_exec_mode mode)
 {
 	t_simple_cmd	*cmd;
 	t_status		status;
@@ -50,7 +50,7 @@ t_status	exec_simple(t_node *node, t_ctx *ctx, bool own)
 	if (status == ST_OK)
 	{
 		if (cmd->args != NULL && !runs_as_builtin(cmd->args))
-			status = exec_disk_command(cmd, ctx, own);
+			status = exec_disk_command(cmd, ctx, mode);
 		else
 			status = exec_builtin(cmd, ctx);
 	}

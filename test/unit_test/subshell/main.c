@@ -29,7 +29,7 @@ static int	test_basic_subshell(void)
 
 	ft_bzero(&ctx, sizeof(t_ctx));
 	node = new_subshell_node();
-	status = exec_subshell(&node, &ctx, false);
+	status = exec_subshell(&node, &ctx, EXEC_SHELL_PROCESS);
 	if (status != ST_OK)
 		return (printf("[NG] basic subshell: status=%d\n", status), 1);
 	if (ctx.err.exit_code != 41)
@@ -40,8 +40,8 @@ static int	test_basic_subshell(void)
 }
 
 /*
-	own says the process is already dedicated to this node, so the body
-	runs here instead of in a new process.
+	EXEC_OWN_PROCESS says the process is already dedicated to this
+	node, so the body runs here instead of in a new process.
 */
 static int	test_own_runs_in_place(void)
 {
@@ -51,14 +51,14 @@ static int	test_own_runs_in_place(void)
 	ft_bzero(&ctx, sizeof(t_ctx));
 	node = new_subshell_node();
 	g_body_pid = 0;
-	if (exec_subshell(&node, &ctx, true) != ST_OK)
-		return (printf("[NG] own subshell: status\n"), 1);
+	if (exec_subshell(&node, &ctx, EXEC_OWN_PROCESS) != ST_OK)
+		return (printf("[NG] owned subshell: status\n"), 1);
 	if (g_body_pid != getpid())
-		return (printf("[NG] own subshell: body ran in another process\n"), 1);
+		return (printf("[NG] owned subshell: body ran in another process\n"), 1);
 	if (ctx.err.exit_code != 41)
-		return (printf("[NG] own subshell: exit_code=%d\n",
+		return (printf("[NG] owned subshell: exit_code=%d\n",
 				ctx.err.exit_code), 1);
-	printf("[OK] own subshell runs in place\n");
+	printf("[OK] owned subshell runs in place\n");
 	return (0);
 }
 
@@ -67,8 +67,8 @@ static int	test_own_runs_in_place(void)
 	1. basic subshell
 		- run exec_subshell with NO_PIPE
 		- expect: register child pid and collect exit_code=41
-	2. own subshell runs in place
-		- run exec_subshell with own
+	2. owned subshell runs in place
+		- run exec_subshell with EXEC_OWN_PROCESS
 		- expect: the body runs in this process, exit_code=41
 */
 int	main(void)
