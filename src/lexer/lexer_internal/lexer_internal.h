@@ -14,7 +14,6 @@
 # define LEXER_INTERNAL_H
 
 # include "../../../include/lexer.h"
-# include "../../../include/strutil.h"
 
 typedef struct s_word_builder
 {

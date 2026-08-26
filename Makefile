@@ -14,7 +14,7 @@ NAME:=minishell
 
 SRCDIR:=src
 SRCS:=main.c\
-	  input.c\
+	  shell/input.c\
 	  signal/signal_handle.c\
 	  strutil/name.c\
 	  strutil/msg.c\
@@ -74,14 +74,12 @@ SRCS:=main.c\
 
 HEADDIR:=include
 HEADERS:=minishell.h\
-		 strutil.h\
 		 signal_handle.h\
 		 lexer.h\
 		 expand.h\
 		 execute.h\
 		 parser.h\
-		 hashmap.h\
-		 strbuf.h
+		 hashmap.h
 HEADERS:=$(addprefix $(HEADDIR)/, $(HEADERS))
 
 LIBFT_DIR:=libft

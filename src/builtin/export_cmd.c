@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../include/builtin.h"
-#include "../../include/strutil.h"
 
 /*
 	The name that comes after the one just printed, or NULL when there is

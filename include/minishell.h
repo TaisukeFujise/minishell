@@ -138,4 +138,20 @@ struct							s_word_list
 	t_word_list					*next;
 };
 
+typedef struct s_strbuf
+{
+	char						*data;
+	size_t						len;
+	size_t						cap;
+}								t_strbuf;
+
+bool							strbuf_init(t_strbuf *buf);
+bool							strbuf_append(t_strbuf *buf, const char *str,
+									size_t len);
+char							*strbuf_detach(t_strbuf *buf, size_t *len);
+void							strbuf_free(t_strbuf *buf);
+
+size_t							str_name_len(const char *str);
+size_t							str_assign_pos(const char *str, bool *append);
+
 #endif

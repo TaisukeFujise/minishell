@@ -1,9 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_internal.h                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/25 19:36:48 by fendo             #+#    #+#             */
+/*   Updated: 2026/08/25 19:36:49 by fendo            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef EXPAND_INTERNAL_H
 # define EXPAND_INTERNAL_H
 
 # include "execute.h"
 # include "expand.h"
-# include "strbuf.h"
 # include <dirent.h>
 
 # define IFS_DEFAULT " \t\n"

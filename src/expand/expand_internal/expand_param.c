@@ -1,6 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_param.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/25 19:36:44 by fendo             #+#    #+#             */
+/*   Updated: 2026/08/25 19:36:45 by fendo            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../include/execute.h"
 #include "expand_internal.h"
-#include "strutil.h"
 
 static char	*expand_status(t_ctx *ctx, t_arena *arena, size_t *len)
 {
