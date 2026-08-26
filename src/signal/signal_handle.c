@@ -17,6 +17,7 @@
 	The one global the subject allows: the number of a signal that
 	arrived. Nothing else is stored here and nothing reads through it.
 */
+
 volatile sig_atomic_t	g_signum = 0;
 
 int	handle_readline_signal(void)
