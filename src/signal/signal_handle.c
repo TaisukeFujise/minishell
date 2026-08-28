@@ -18,7 +18,7 @@
 	arrived. Nothing else is stored here and nothing reads through it.
 */
 
-volatile sig_atomic_t	g_signum = 0;
+volatile sig_atomic_t	g_signum;
 
 int	handle_readline_signal(void)
 {

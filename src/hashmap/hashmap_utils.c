@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../include/hashmap.h"
+#include "../../libft/libft.h"
 
 #define FNV_OFFSET 2166136261
 
