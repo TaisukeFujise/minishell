@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/04/19 22:23:42 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/08/28 19:06:58 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,31 +48,4 @@ t_status	execute_internal(t_node *node, t_ctx *ctx, t_exec_mode mode)
 		|| node->node_kind == NODE_PIPE)
 		return (exec_connection(node, ctx));
 	return (ST_FATAL);
-}
-
-/*
-	How many processes a pipeline starts, counted before the first fork
-	so that the process set is allocated once. [review PROC-01]
-*/
-int	count_stages(t_node *node)
-{
-	if (node != NULL && node->node_kind == NODE_PIPE)
-		return (count_stages(node->left) + count_stages(node->right));
-	return (1);
-}
-
-/*
-	The stages of a pipeline in the order they are written. The parse
-	tree nests them to the left; the coordinator wants a flat list, the
-	way dash keeps them in the node itself.
-*/
-t_node	**collect_stages(t_node *node, t_node **out)
-{
-	if (node != NULL && node->node_kind == NODE_PIPE)
-	{
-		out = collect_stages(node->left, out);
-		return (collect_stages(node->right, out));
-	}
-	*out = node;
-	return (out + 1);
 }

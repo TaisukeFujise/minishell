@@ -82,10 +82,6 @@ typedef struct s_exec_params
 /* execute.c */
 t_status	execute(t_node *node, t_ctx *ctx);
 t_status	execute_internal(t_node *node, t_ctx *ctx, t_exec_mode mode);
-int			count_stages(t_node *node);
-t_node		**collect_stages(t_node *node, t_node **out);
-/* status.c */
-t_status	set_exit_code(t_ctx *ctx, t_status status);
 
 // <dispatch>
 /* exec_builtin.c */
@@ -96,6 +92,11 @@ t_status	exec_complete(t_node *node, t_ctx *ctx);
 t_status	exec_andor(t_node *node, t_ctx *ctx);
 /* exec_pipeline.c */
 t_status	exec_pipeline(t_node *node, t_ctx *ctx);
+/* pipeline_stages.c */
+int			count_stages(t_node *node);
+t_node		**collect_stages(t_node *node, t_node **out);
+/* exec_status.c */
+t_status	set_exit_code(t_ctx *ctx, t_status status);
 /* exec_disk.c */
 t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx,
 				t_exec_mode mode);

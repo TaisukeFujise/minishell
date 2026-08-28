@@ -54,11 +54,12 @@ SRCS:=main.c\
 	  builtin/pwd_cmd.c\
 	  builtin/unset_cmd.c\
 	  execute/execute.c\
-	  execute/status.c\
 	  execute/dispatch/exec_builtin.c\
 	  execute/dispatch/exec_connection.c\
 	  execute/dispatch/exec_disk.c\
 	  execute/dispatch/exec_pipeline.c\
+	  execute/dispatch/exec_status.c\
+	  execute/dispatch/pipeline_stages.c\
 	  execute/dispatch/exec_simple.c\
 	  execute/dispatch/exec_subshell.c\
 	  execute/env/env_assign.c\
