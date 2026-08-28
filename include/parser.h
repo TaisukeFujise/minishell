@@ -30,6 +30,12 @@
 # define PARSER_MSG_HD_EOF_SUFFIX "')"
 # define PARSER_MSG_HD_MAX "maximum here-document count exceeded"
 # define HEREDOC_MAX 16
+/*
+	What a shell leaves behind when it is asked for more here-documents
+	than it holds: bash reports the syntax error and ends the session with
+	EX_BADUSAGE. [bash parse.y push_heredoc(), shell.h]
+*/
+# define EXIT_BADUSAGE 2
 
 typedef enum e_node_kind
 {

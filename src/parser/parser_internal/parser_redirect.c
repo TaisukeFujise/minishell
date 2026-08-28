@@ -46,7 +46,11 @@ void	register_heredoc(t_parser_state *ps, t_redirect *redir)
 	t_hd_item	*item;
 
 	if (ps->hd_count >= HEREDOC_MAX)
-		return (parser_fail(ps, ST_FATAL, PARSER_MSG_HD_MAX));
+	{
+		parser_fail(ps, ST_FATAL, PARSER_MSG_HD_MAX);
+		ps->ctx->err.exit_code = EXIT_BADUSAGE;
+		return ;
+	}
 	item = ft_arena_calloc(&ps->arenas->ast, 1, sizeof(t_hd_item));
 	if (!item)
 		return (parser_fail(ps, ST_FATAL, NULL));
