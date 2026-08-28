@@ -266,6 +266,12 @@ run_case heredoc_delim_mid_quoted 'V=x
 cat << E"O"F
 v=$V
 EOF'
+# The here-document file cannot live in the working directory: a shell has
+# to read one from a directory it is not allowed to write to.
+run_case heredoc_unwritable_cwd 'cd /
+cat << EOF
+body
+EOF'
 # bash warns and runs the command with what it read; the parser here makes
 # it a syntax error instead. The subject does not say which.
 run_case heredoc_unclosed 'cat << EOF

@@ -3,15 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_tmpfile.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 09:09:35 by tafujise          #+#    #+#             */
-/*   Updated: 2026/05/10 18:48:24 by fujisetaisuke    ###   ########.fr       */
+/*   Updated: 2026/08/27 20:34:08 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/execute.h"
 
+/*
+	The file goes under /tmp, not the working directory: a shell must be
+	able to read a here-document from a directory it cannot write to, and
+	the name is not the user's to collide with. getpid() is not a function
+	this project may call, so uniqueness comes from the counter and the
+	O_EXCL open below, which retries when a name is already taken.
+*/
 char	*create_tmp_filename(void)
 {
 	static unsigned int	i = 0;
@@ -23,7 +30,7 @@ char	*create_tmp_filename(void)
 	num = ft_itoa(i);
 	if (num == NULL)
 		return (NULL);
-	filename = ft_strjoin("tmp_", num);
+	filename = ft_strjoin("/tmp/.minishell_hd_", num);
 	free(num);
 	if (filename == NULL)
 		return (NULL);
@@ -42,7 +49,7 @@ static int	open_tmp_write_fd(char **filename)
 		*filename = create_tmp_filename();
 		if (*filename == NULL)
 			return (-1);
-		fd = open(*filename, O_WRONLY | O_CREAT | O_EXCL, 0644);
+		fd = open(*filename, O_WRONLY | O_CREAT | O_EXCL, 0600);
 		if (fd < 0 && errno != EEXIST)
 			return (free(*filename), *filename = NULL, -1);
 	}
