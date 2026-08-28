@@ -70,11 +70,15 @@ the place to look for any behaviour is the stage that decides it.
 | **Expander** | [src/expand/](src/expand/) | Final argument lists. Parameter expansion, then field splitting, then wildcards — each suppressed where quoting says it should be. |
 | **Executor** | [src/execute/](src/execute/) | Processes. Builtins run in the shell, external commands through `fork` + `execve`, with redirections applied per command and undone after. |
 
+Around those four, [src/shell/](src/shell/) is the shell's own life: bring the
+variable tables up, read a line, run everything on it, and give the tables back.
+[main.c](src/main.c) is the loop and nothing else.
+
 Supporting code: [src/builtin/](src/builtin/) for the seven builtins,
 [src/hashmap/](src/hashmap/) for the environment table,
 [src/signal/](src/signal/) for the handlers, and [src/strutil/](src/strutil/)
 for the growable buffer and the error messages. The public interfaces are in
-[include/](include/), one header per stage.
+[include/](include/), one header per module.
 
 Three decisions worth knowing before reading the code:
 
@@ -154,7 +158,7 @@ blocks are *still reachable*, not lost: the child holds every pointer to them,
 and calling `exit` hands the whole copy back to the kernel at once. `bash` does
 the same, and more of it: under the same session `bash` leaves 53,677 bytes
 still reachable in the shell and 53,718 in the forked child, against 0 and
-11,361 here.
+11,339 here.
 
 The number that decides whether the shell leaks is not the size of that copy but
 whether anything accumulates as it runs. It does not: over a session of a
@@ -183,6 +187,15 @@ required."*
   `bash` abandons the whole script instead.
 - **`env` and `export` list in their own order.** `export` sorts, as `bash`
   does; `env` prints in hash-table order, which the subject does not constrain.
+- **`export` always quotes a value with `"…"`.** bash 5.3 writes `$'…'` instead
+  when a value holds an unprintable character, but it decides "unprintable" per
+  character, handing anything non-ASCII to `mbstowcs` and `iswprint`. Neither is
+  a function this project may call, so the same test here could only ever run
+  per byte — and every byte of a UTF-8 character fails it, which turned
+  `こんにちは` into a row of octal escapes. Writing the bytes through inside
+  double quotes is what bash 5.1 does for every value, and what 5.3 does for
+  every value this shell can be given: without `$'…'` of its own, nothing can
+  put a control character in a variable except the environment it inherited.
 
 ## Resources
 
