@@ -1,0 +1,82 @@
+# Valgrind suppressions for minishell.
+#
+# usage:
+#   valgrind --leak-check=full --show-leak-kinds=all \
+#            --suppressions=readline.supp ./minishell
+#
+# The subject says: "The readline() function may cause memory leaks, but you
+# are not required to fix them. However, this does not mean your own code,
+# yes the code you wrote, can have memory leaks."
+#
+# readline keeps its line buffers, its history and its terminal description
+# for the life of the process and never hands them back, so they are still
+# reachable when the shell exits. Nothing here suppresses an allocation made
+# by minishell: every stanza requires a frame inside libreadline, libhistory
+# or libtinfo, so a block that only ever passed through minishell's own code
+# is still reported.
+
+{
+   readline: line editor state, alive until the process ends
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   obj:*/libreadline.so*
+   ...
+}
+
+{
+   readline: history list kept by add_history()
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   obj:*/libhistory.so*
+   ...
+}
+
+{
+   readline: terminal description read through the termcap database
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   obj:*/libtinfo.so*
+   ...
+}
+
+{
+   readline: terminal description, ncurses build of the same database
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   obj:*/libncurses*.so*
+   ...
+}
+
+# Some builds resolve the entry points by name rather than by object, for
+# instance when readline is linked statically into the binary.
+
+{
+   readline: entry point, linked statically
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:readline
+   ...
+}
+
+{
+   readline: history entry point, linked statically
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:add_history
+   ...
+}
+
+{
+   readline: terminal setup, linked statically
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:tgetent
+   ...
+}
