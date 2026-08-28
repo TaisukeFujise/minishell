@@ -255,6 +255,17 @@ EOF'
 run_case heredoc_pipe 'cat << EOF | cat
 body
 EOF'
+# A delimiter counts as quoted when any part of it is, not only when it
+# opens with a quote. The word is a chain of parts and only the first one
+# was looked at, so <<EOF"" and <<E"O"F still expanded the body.
+run_case heredoc_delim_tail_quoted 'V=x
+cat << EOF""
+v=$V
+EOF'
+run_case heredoc_delim_mid_quoted 'V=x
+cat << E"O"F
+v=$V
+EOF'
 # bash warns and runs the command with what it read; the parser here makes
 # it a syntax error instead. The subject does not say which.
 run_case heredoc_unclosed 'cat << EOF

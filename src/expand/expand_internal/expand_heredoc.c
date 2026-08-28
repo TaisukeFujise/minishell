@@ -39,6 +39,23 @@ static t_status	store_body(t_expand *exp, t_redirect *redir)
 	return (ST_OK);
 }
 
+/*
+	A delimiter counts as quoted when any part of it was. The word is held
+	as a chain of parts, and a quote anywhere in it takes the whole
+	here-document literally: <<EOF'' and <<E"O"F suppress expansion just
+	as <<'EOF' does.
+*/
+static bool	delimiter_quoted(t_word *target)
+{
+	while (target)
+	{
+		if ((target->flag & (W_SQ | W_DQ)) != 0)
+			return (true);
+		target = target->next;
+	}
+	return (false);
+}
+
 t_status	expand_heredoc_body(t_expand *exp, t_redirect *redir)
 {
 	char	*body;
@@ -46,7 +63,7 @@ t_status	expand_heredoc_body(t_expand *exp, t_redirect *redir)
 
 	if (!exp || !redir || !redir->hd.raw_str.str)
 		return (ST_FATAL);
-	if ((redir->target.flag & (W_SQ | W_DQ)) != 0)
+	if (delimiter_quoted(&redir->target))
 		return (ST_OK);
 	expand_buf_reset(&exp->buf);
 	body = redir->hd.raw_str.str;
