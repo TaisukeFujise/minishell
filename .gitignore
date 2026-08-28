@@ -2,3 +2,6 @@ CLAUDE.md
 compile_commands.json
 .cache/
 obj/
+libft/*.o
+libft/libft.a
+minishell
