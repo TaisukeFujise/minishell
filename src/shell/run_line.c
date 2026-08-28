@@ -18,6 +18,8 @@
 void	dispose_shell(char *user_input, t_ctx *ctx)
 {
 	free(user_input);
+	free(ctx->cwd);
+	ctx->cwd = NULL;
 	if (ctx->env_table != NULL)
 	{
 		hash_flush(ctx->env_table, NULL);

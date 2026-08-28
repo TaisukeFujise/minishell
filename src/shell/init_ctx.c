@@ -14,6 +14,9 @@
 #include "../../include/shell.h"
 
 static int	_load_envp_to_table(t_hashtable *env_table, char **envp);
+static int	_load_env_entry(t_hashtable *env_table, char *entry);
+static char	*_extract_key_from_envp(char *entry);
+static char	*_extract_value_from_envp(char *entry);
 
 int	init_ctx(t_ctx *ctx, char **envp)
 {
@@ -25,7 +28,7 @@ int	init_ctx(t_ctx *ctx, char **envp)
 		return (FAILURE);
 	ctx->tmp_table = hash_create(BUCKET_SIZE);
 	if (ctx->tmp_table == NULL || _load_envp_to_table(ctx->env_table,
-			envp) == FAILURE || init_shell_vars(ctx->env_table) == FAILURE)
+			envp) == FAILURE || init_shell_vars(ctx) == FAILURE)
 	{
 		hash_flush(ctx->env_table, NULL);
 		hash_dispose(ctx->env_table);
@@ -35,37 +38,52 @@ int	init_ctx(t_ctx *ctx, char **envp)
 	return (SUCCESS);
 }
 
-// envp is reliable value, so we ignore the entry if the *envp doesn't have "="
+/*
+	An environment string is name=value, so a string without an "=" and
+	one whose name is empty are not variables at all; bash walks past
+	both rather than starting without them.
+	[bash-5.3 variables.c initialize_shell_variables()]
+*/
 static int	_load_envp_to_table(t_hashtable *env_table, char **envp)
 {
-	char				*key;
-	char				*value;
-	t_bucket_contents	*item;
-
 	if (envp == NULL)
 		return (FAILURE);
 	while (*envp != NULL)
 	{
-		key = _extract_key_from_envp(*envp);
-		if (key == NULL)
-			return (FAILURE);
-		item = hash_insert(key, env_table);
-		free(key);
-		if (item == NULL)
-			return (FAILURE);
-		value = _extract_value_from_envp(*envp);
-		if (value == NULL)
-			return (FAILURE);
-		if (!hash_set_value(item, value))
-			return (free(value), FAILURE);
-		free(value);
-		item->data.exported = true;
+		if (**envp != '=' && ft_strchr(*envp, '=') != NULL)
+		{
+			if (_load_env_entry(env_table, *envp) == FAILURE)
+				return (FAILURE);
+		}
 		envp++;
 	}
 	return (SUCCESS);
 }
 
-char	*_extract_key_from_envp(char *entry)
+static int	_load_env_entry(t_hashtable *env_table, char *entry)
+{
+	char				*key;
+	char				*value;
+	t_bucket_contents	*item;
+
+	key = _extract_key_from_envp(entry);
+	if (key == NULL)
+		return (FAILURE);
+	item = hash_insert(key, env_table);
+	free(key);
+	if (item == NULL)
+		return (FAILURE);
+	value = _extract_value_from_envp(entry);
+	if (value == NULL)
+		return (FAILURE);
+	if (!hash_set_value(item, value))
+		return (free(value), FAILURE);
+	free(value);
+	item->data.exported = true;
+	return (SUCCESS);
+}
+
+static char	*_extract_key_from_envp(char *entry)
 {
 	int	i;
 
@@ -77,7 +95,7 @@ char	*_extract_key_from_envp(char *entry)
 	return (ft_strndup(entry, i));
 }
 
-char	*_extract_value_from_envp(char *entry)
+static char	*_extract_value_from_envp(char *entry)
 {
 	int	i;
 

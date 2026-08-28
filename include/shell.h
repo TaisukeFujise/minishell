@@ -24,9 +24,7 @@
 # include "./parser.h"
 
 int		init_ctx(t_ctx *ctx, char **envp);
-int		init_shell_vars(t_hashtable *env_table);
-char	*_extract_key_from_envp(char *entry);
-char	*_extract_value_from_envp(char *entry);
+int		init_shell_vars(t_ctx *ctx);
 
 char	*shell_read_line(char *prompt);
 void	parse_and_execute(char *input, t_node *ast, t_ctx *ctx);

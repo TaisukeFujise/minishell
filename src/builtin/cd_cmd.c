@@ -15,7 +15,8 @@
 #include "../../include/parser.h"
 
 static t_status	set_var(t_hashtable *table, char *key, char *value);
-t_status		update_pwd(t_hashtable *tmp_table, t_hashtable *env_table);
+static t_status	update_pwd(t_ctx *ctx);
+static t_status	cd_move(char *target, t_ctx *ctx);
 
 /*
 	Where cd is asked to go. Without an operand it is HOME, and an empty
@@ -44,6 +45,42 @@ static char	*cd_destination(t_word_list *args, t_ctx *ctx)
 }
 
 /*
+	The move, and the name the shell will know the place by. "." and
+	".." are resolved in the name before chdir() sees it, so "cd
+	link/.." goes back to where the name was written and not to the
+	physical parent of the link, as bash, dash and zsh all do. The
+	shell's own path is the base: a PWD a command overwrote does not
+	steer it. [bash-5.3 builtins/cd.def change_to_directory()]
+*/
+static t_status	cd_move(char *target, t_ctx *ctx)
+{
+	char	*path;
+	int		moved;
+
+	path = NULL;
+	if (ctx->cwd != NULL || *target == '/')
+	{
+		path = path_canon(path_absolute(ctx->cwd, target));
+		if (path == NULL)
+			return (ST_FATAL);
+		moved = chdir(path);
+	}
+	else
+		moved = chdir(target);
+	if (moved < 0)
+	{
+		print_error_at("cd", target, strerror(errno));
+		return (free(path), ST_FAILURE);
+	}
+	if (path != NULL)
+	{
+		free(ctx->cwd);
+		ctx->cwd = path;
+	}
+	return (ST_OK);
+}
+
+/*
 	cd [directory]
 	"cd" change current working directory, and update the ctx->exit_code.
 	If no parameters, change the current working directory to $HOME.
@@ -56,7 +93,8 @@ static char	*cd_destination(t_word_list *args, t_ctx *ctx)
 */
 t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 {
-	char	*target;
+	char		*target;
+	t_status	status;
 
 	if (args != NULL && args->next != NULL)
 	{
@@ -66,39 +104,27 @@ t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 	target = cd_destination(args, ctx);
 	if (target == NULL)
 		return (ST_FAILURE);
-	if (chdir(target) < 0)
-	{
-		print_error_at("cd", target, strerror(errno));
-		return (ST_FAILURE);
-	}
-	return (update_pwd(ctx->tmp_table, ctx->env_table));
+	status = cd_move(target, ctx);
+	if (status != ST_OK)
+		return (status);
+	return (update_pwd(ctx));
 }
 
 /*
-	OLDPWD becomes the value PWD had, and empty when it had none, as bash
-	leaves it. PWD is asked of getcwd() after the move: the operand may
-	be relative, and PWD has to be a path whichever way the shell got
-	here. Neither string is owned here, the table copies what it is
-	given. [review D37-24]
+	OLDPWD becomes the value PWD had, and empty when it had none, as
+	bash leaves it. PWD is the name the move settled on, so it tells
+	the place the way the operand did. Neither string is owned here,
+	the table copies what it is given. [review D37-24]
 */
-t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table)
+static t_status	update_pwd(t_ctx *ctx)
 {
-	char		*cwd;
 	t_status	status;
 
-	status = set_var(env_table, "OLDPWD",
-			env_lookup(tmp_table, env_table, "PWD"));
+	status = set_var(ctx->env_table, "OLDPWD",
+			env_lookup(ctx->tmp_table, ctx->env_table, "PWD"));
 	if (status != ST_OK)
 		return (status);
-	cwd = getcwd(NULL, 0);
-	if (cwd == NULL)
-	{
-		print_error("cd", strerror(errno));
-		return (ST_FAILURE);
-	}
-	status = set_var(env_table, "PWD", cwd);
-	free(cwd);
-	return (status);
+	return (set_var(ctx->env_table, "PWD", ctx->cwd));
 }
 
 static t_status	set_var(t_hashtable *table, char *key, char *value)

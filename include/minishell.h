@@ -57,8 +57,13 @@ typedef struct s_ctx
 	bool						interactive;
 	// whether a terminal drives the shell. Decided once at startup, and
 	// cleared in a forked child: a subshell is never the interactive one.
+	char						*cwd;
+	// where the shell is, by the name it got there under. Kept apart
+	// from PWD, which a command is free to overwrite.
 }								t_ctx;
 
+char							*path_absolute(char *base, char *arg);
+char							*path_canon(char *path);
 bool							write_all(int fd, const char *s, size_t len);
 void							print_error(const char *name,
 									const char *reason);
