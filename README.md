@@ -2,8 +2,6 @@
 
 # minishell
 
-![image](./images/image.png)
-
 ## Description
 
 minishell is a small POSIX-style command interpreter written in C, built as part
@@ -68,41 +66,29 @@ the place to look for any behaviour is the stage that decides it.
 | Stage | Directory | What it produces |
 |---|---|---|
 | **Lexer** | [src/lexer/](src/lexer/) | Tokens. A word is kept as a chain of parts, one per quoting context, so `a"b"c` stays one word while remembering which piece was quoted. |
-| **Parser** | [src/parser/](src/parser/) | A syntax tree, following the grammar in [grammar_ebnf.md](grammar_ebnf.md). Here-document bodies are collected here, unexpanded. |
+| **Parser** | [src/parser/](src/parser/) | A syntax tree, built by recursive descent over a grammar derived from the POSIX shell grammar. Here-document bodies are collected here, unexpanded. |
 | **Expander** | [src/expand/](src/expand/) | Final argument lists. Parameter expansion, then field splitting, then wildcards — each suppressed where quoting says it should be. |
 | **Executor** | [src/execute/](src/execute/) | Processes. Builtins run in the shell, external commands through `fork` + `execve`, with redirections applied per command and undone after. |
 
 Supporting code: [src/builtin/](src/builtin/) for the seven builtins,
 [src/hashmap/](src/hashmap/) for the environment table,
 [src/signal/](src/signal/) for the handlers, and [src/strutil/](src/strutil/)
-for the growable buffer and the error messages.
+for the growable buffer and the error messages. The public interfaces are in
+[include/](include/), one header per stage.
 
-Two decisions worth knowing before reading the code:
+Three decisions worth knowing before reading the code:
 
 - **The shell never uses `stdio` for its own output.** Everything goes through
   `write_all()` in [src/strutil/msg.c](src/strutil/msg.c). A buffer that
   survives a `fork`, or a restored redirection, would otherwise write to the
   wrong place.
 - **The tree and the words live in arenas**, reset once per command line
-  ([libft/ft_arena_*.c](libft/)). Nothing in the tree is freed one node at a
+  (`ft_arena_*` in [libft/](libft/)). Nothing in the tree is freed one node at a
   time, which is why the parser can fail anywhere without leaking.
-
-Only one global exists, as the subject demands: `g_signum` in
-[src/signal/signal_handle.c](src/signal/signal_handle.c). It is a
-`volatile sig_atomic_t` holding a signal number and nothing else; the handler's
-whole body is one assignment.
-
-## Testing
-
-```bash
-sh test/diff_test/run.sh      # run ~80 cases against bash and compare
-norminette src include libft  # style
-```
-
-`test/diff_test/run.sh` runs each case in its own empty directory under both
-minishell and `bash`, and compares standard output, exit status, and the files
-left behind. A case that is known to differ is listed in `EXPECTED_FAIL` and
-reported as `XFAIL`.
+- **Only one global exists**, as the subject demands: `g_signum` in
+  [src/signal/signal_handle.c](src/signal/signal_handle.c). It is a
+  `volatile sig_atomic_t` holding a signal number and nothing else; the
+  handler's whole body is one assignment.
 
 ## Checking for memory leaks
 
@@ -112,9 +98,38 @@ yes the code you wrote, can have memory leaks."* readline keeps its line buffer,
 its history and its terminal description until the process ends, so those blocks
 are still reachable at exit and would otherwise bury the interesting output.
 
-[readline.supp](readline.supp) suppresses exactly those and nothing else — every
-stanza requires a frame inside `libreadline`, `libhistory` or `libtinfo`, so a
-block that only passed through minishell's own code is still reported:
+Saving the stanzas below as `readline.supp` suppresses exactly those and nothing
+else. Every one of them requires a frame inside `libreadline`, `libhistory` or
+`libtinfo`, so a block that only passed through minishell's own code is still
+reported — verified by adding a deliberate `malloc` to a builtin and watching it
+appear as *definitely lost* with these active.
+
+```
+{
+   readline: line editor state, alive until the process ends
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   obj:*/libreadline.so*
+   ...
+}
+{
+   readline: history list kept by add_history()
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   obj:*/libhistory.so*
+   ...
+}
+{
+   readline: terminal description read through the termcap database
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   obj:*/libtinfo.so*
+   ...
+}
+```
 
 ```bash
 valgrind --leak-check=full --show-leak-kinds=all \
@@ -168,30 +183,33 @@ required."*
 - **Bash Reference Manual** — https://www.gnu.org/software/bash/manual/bash.html
 - **POSIX Shell Command Language** — https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html
 - **GNU Readline Library** — https://tiswww.case.edu/php/chet/readline/rltop.html
-- The sources of `bash` and `dash`, read for the questions the manual leaves
+- The sources of `bash` and `dash`, read for the questions the manuals leave
   open: where a status comes from when a signal ends a command, and what a shell
   does when a line asks for more here-documents than it holds.
 
 ### Use of AI
 
-AI was used as a research and review assistant, not as an author of the design.
-Specifically:
+The shell was written by us, and AI was used alongside that work in four roles.
+The last of them means parts of the source were produced by a model rather than
+typed by us, so it is listed with the rest rather than left implied.
 
 - **Research.** Clarifying POSIX and `bash` behaviour in the corners the manuals
   state briefly — quoting and field splitting, expansion order, and the exit
   status a signalled command produces.
-- **Review.** Reading finished branches for defects, and cross-checking the
-  lexer, parser and expander specifications against each other for
-  contradictions before they were implemented. The findings were reviewed by
-  hand and applied by us.
-- **Verification.** Running the implementation against `bash` over large sets of
-  generated cases, and helping interpret `valgrind` and `scan-build` output.
-  Several defects were found this way — a saved file descriptor that could land
-  on `stderr`, a here-document delimiter whose quoting was only checked on its
-  first part, and a here-document temporary file that could not be created in a
-  read-only directory — and the regression cases that guard them are in
-  `test/diff_test/run.sh`.
+- **Specification review.** Cross-checking the lexer, parser and expander
+  specifications against each other for contradictions before they were
+  implemented, and reading finished branches for defects. The findings were
+  judged and applied by us.
+- **Verification.** Running the shell against `bash` over large sets of
+  generated cases, and interpreting `valgrind` and `scan-build` output. Defects
+  found this way include a saved file descriptor that could land on `stderr`
+  when the shell was started with it closed, a here-document delimiter whose
+  quoting was only checked on its first part, and a here-document temporary file
+  that could not be created in a read-only working directory.
+- **Mechanical edits.** Changes whose form is fixed by the surrounding code or
+  by the reference behaviour, and which come out the same whoever makes them:
+  norm-conforming file headers, freeing a pointer on an error path, correcting
+  an exit status to the one `bash` returns, and the local fixes for the defects
+  above.
 
-Commits that were written with that assistance carry a `Co-Authored-By` trailer,
-so `git log` shows exactly which ones. The architecture, the grammar, and the
-implementation are ours, and we can explain any part of them.
+Everything here is ours to answer for, and we can explain any part of it.
