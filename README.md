@@ -149,11 +149,19 @@ indirectly lost: 0 bytes in 0 blocks
 **A second summary after a subshell or a builtin in a pipeline is expected.**
 Those are the only children that leave without `execve`, and valgrind follows
 them. What they report — around 11 KB — is the parent's memory, inherited
-through `fork`: the environment table, the arenas, readline's buffers. A child
-that is about to `_exit` does not free a copy nobody will read again. `bash`
-does the same, and more of it: under the same session `bash` leaves 53,677 bytes
+through `fork`: the environment table, the arenas, readline's buffers. Those
+blocks are *still reachable*, not lost: the child holds every pointer to them,
+and calling `exit` hands the whole copy back to the kernel at once. `bash` does
+the same, and more of it: under the same session `bash` leaves 53,677 bytes
 still reachable in the shell and 53,718 in the forked child, against 0 and
 11,361 here.
+
+The number that decides whether the shell leaks is not the size of that copy but
+whether anything accumulates as it runs. It does not: over a session of a
+thousand commands the shell makes 27,359 allocations and 27,358 frees, one block
+outstanding — the same one block as after ten commands, readline's history list.
+Five hundred subshells and five hundred pipelines leave the parent at one block
+too. Nothing grows per command, which is what a leak would do.
 
 ## Notes on behaviour
 
