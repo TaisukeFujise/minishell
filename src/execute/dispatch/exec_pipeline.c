@@ -16,32 +16,10 @@
 #include "../../../include/parser.h"
 
 /*
-	The process boundary of a pipeline stage. It closes the end of the
-	new pipe it does not use, takes the end it reads from as its stdin
-	and the one it writes into as its stdout, then runs the node it was
-	forked for. The node has this process to itself, so it never forks
-	again. It never returns: the status of that node is its own.
-*/
-static void	stage_child(t_node *node, t_ctx *ctx, int prevfd, int *pipefd)
-{
-	reset_signals();
-	ctx->interactive = false;
-	if (pipefd[0] != NO_PIPE)
-		close(pipefd[0]);
-	if (prevfd != NO_PIPE && move_fd(prevfd, STDIN_FILENO) != ST_OK)
-		exit(EXIT_FAILURE);
-	if (pipefd[1] != NO_PIPE && move_fd(pipefd[1], STDOUT_FILENO) != ST_OK)
-		exit(EXIT_FAILURE);
-	execute_internal(node, ctx, EXEC_NO_FORK);
-	exit(ctx->err.exit_code);
-}
-
-/*
-	Every stage of a pipeline runs in its own process, so the coordinator
-	forks them itself instead of letting a leaf guess that it is one.
-	An endpoint is closed as soon as the stage that needs it has been
-	started, so a child inherits at most the end it reads from and the
-	pipe it writes into, and it closes the one it does not want by name.
+	Start one stage. The pipe it writes into is made first, then the fork;
+	in the child everything below "pid == 0" runs on a process that exists
+	only for this node, so it wires the ends it was given onto stdin and
+	stdout, closes the one it does not want by name, and never comes back.
 	Nothing has to track a set of inherited fds. [dash evalpipe()]
 */
 static pid_t	fork_stage(t_node **stages, t_ctx *ctx, int prevfd, int *pipefd)
@@ -54,7 +32,18 @@ static pid_t	fork_stage(t_node **stages, t_ctx *ctx, int prevfd, int *pipefd)
 		return (-1);
 	pid = fork();
 	if (pid == 0)
-		stage_child(*stages, ctx, prevfd, pipefd);
+	{
+		reset_signals();
+		ctx->interactive = false;
+		if (pipefd[0] != NO_PIPE)
+			close(pipefd[0]);
+		if (prevfd != NO_PIPE && move_fd(prevfd, STDIN_FILENO) != ST_OK)
+			exit(EXIT_FAILURE);
+		if (pipefd[1] != NO_PIPE && move_fd(pipefd[1], STDOUT_FILENO) != ST_OK)
+			exit(EXIT_FAILURE);
+		execute_internal(*stages, ctx, EXEC_NO_FORK);
+		exit(ctx->err.exit_code);
+	}
 	return (pid);
 }
 
@@ -78,6 +67,33 @@ static t_status	start_stages(t_node **stages, t_ctx *ctx, t_procs *procs)
 		stages++;
 	}
 	return (ST_OK);
+}
+
+/*
+	How many processes a pipeline starts, counted before the first fork
+	so that the process set is allocated once. [review PROC-01]
+*/
+static int	count_stages(t_node *node)
+{
+	if (node != NULL && node->node_kind == NODE_PIPE)
+		return (count_stages(node->left) + count_stages(node->right));
+	return (1);
+}
+
+/*
+	The stages of a pipeline in the order they are written. The parse
+	tree nests them to the left; the coordinator wants a flat list, the
+	way dash keeps them in the node itself.
+*/
+static t_node	**collect_stages(t_node *node, t_node **out)
+{
+	if (node != NULL && node->node_kind == NODE_PIPE)
+	{
+		out = collect_stages(node->left, out);
+		return (collect_stages(node->right, out));
+	}
+	*out = node;
+	return (out + 1);
 }
 
 /*
