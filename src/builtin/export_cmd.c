@@ -13,48 +13,53 @@
 #include "../../include/builtin.h"
 
 /*
-	The name that comes after the one just printed, or NULL when there is
-	none left. export lists its names in order; walking the table again
-	for each name costs nothing at this size and needs no array to sort.
+	The value between double quotes, escaping the four characters the
+	shell would otherwise read again. Every other byte stands as it is,
+	which is what keeps a value the terminal shows as text -- a name in
+	Japanese, an emoji -- readable here too: bash writes those bytes
+	through as well. What needs no escape is written in one go, so a long
+	value costs one write and not one per character.
+	[bash-5.1 builtins/setattr.def, lib/sh/shquote.c sh_double_quote()]
 */
-static t_bucket_contents	*next_in_order(t_hashtable *table, char *prev)
+static bool	put_value(char *str)
 {
-	t_bucket_contents	*item;
-	t_bucket_contents	*best;
-	int					i;
+	char	*run;
 
-	best = NULL;
-	i = 0;
-	while (i < table->bucket_size)
+	if (!write_all(STDOUT_FILENO, "\"", 1))
+		return (false);
+	while (*str)
 	{
-		item = hash_items(i, table);
-		while (item != NULL)
-		{
-			if (item->data.exported
-				&& (prev == NULL || ft_strcmp(item->key, prev) > 0)
-				&& (best == NULL || ft_strcmp(item->key, best->key) < 0))
-				best = item;
-			item = item->next;
-		}
-		i++;
+		run = str;
+		while (*str && ft_strchr("\"\\$`", *str) == NULL)
+			str++;
+		if (!write_all(STDOUT_FILENO, run, (size_t)(str - run)))
+			return (false);
+		if (*str && !write_all(STDOUT_FILENO, "\\", 1))
+			return (false);
+		if (*str && !write_all(STDOUT_FILENO, str++, 1))
+			return (false);
 	}
-	return (best);
+	return (write_all(STDOUT_FILENO, "\"", 1));
 }
 
-static t_status	print_exported(t_hashtable *table)
+/*
+	"declare -x NAME", then the value when the name has one.
+	Returns the value hash_walk reads: below zero stops the walk.
+*/
+int	print_export(t_bucket_contents *item)
 {
-	t_bucket_contents	*item;
+	bool	ok;
 
-	if (table == NULL)
-		return (ST_OK);
-	item = next_in_order(table, NULL);
-	while (item != NULL)
-	{
-		if (print_export(item) < 0)
-			return (ST_FAILURE);
-		item = next_in_order(table, item->key);
-	}
-	return (ST_OK);
+	if (!item->data.exported)
+		return (0);
+	ok = write_all(STDOUT_FILENO, "declare -x ", 11)
+		&& write_all(STDOUT_FILENO, item->key, ft_strlen(item->key));
+	if (ok && item->data.value != NULL)
+		ok = write_all(STDOUT_FILENO, "=", 1)
+			&& put_value(item->data.value);
+	if (!ok || !write_all(STDOUT_FILENO, "\n", 1))
+		return (-1);
+	return (0);
 }
 
 /*
@@ -128,8 +133,10 @@ t_status	export_cmd(t_word_list *args, t_ctx *ctx)
 	t_status	arg_status;
 	t_status	status;
 
+	if (!args && hash_walk_ordered(ctx->env_table, print_export) < 0)
+		return (ST_FAILURE);
 	if (!args)
-		return (print_exported(ctx->env_table));
+		return (ST_OK);
 	status = ST_OK;
 	while (args)
 	{

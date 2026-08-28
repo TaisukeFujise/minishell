@@ -73,7 +73,7 @@ typedef int							t_hash_wfunc(t_bucket_contents *);
 unsigned int						hash_string(const char *s);
 int									hash_bucket(unsigned int hash_value,
 										t_hashtable *table);
-void								hash_walk(t_hashtable *table,
+int									hash_walk_ordered(t_hashtable *table,
 										t_hash_wfunc *func);
 t_bucket_contents					*hash_items(int bucket, t_hashtable *table);
 // hash value to index in table
