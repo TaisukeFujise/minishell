@@ -92,7 +92,7 @@ t_status	exec_complete(t_node *node, t_ctx *ctx);
 t_status	exec_andor(t_node *node, t_ctx *ctx);
 /* exec_pipeline.c */
 t_status	exec_pipeline(t_node *node, t_ctx *ctx);
-/* pipeline_stages.c */
+/* exec_pipeline_stages.c */
 int			count_stages(t_node *node);
 t_node		**collect_stages(t_node *node, t_node **out);
 /* exec_status.c */
@@ -117,9 +117,6 @@ t_status	apply_assign(t_assign *assign, t_hashtable *table, t_ctx *ctx,
 				t_tabletype type);
 
 // <process>
-/* pipe_utils.c */
-void		close_fd(int fd);
-t_status	move_fd(int source, int target);
 /* procs.c */
 bool		procs_init(t_procs *procs, int capacity);
 t_status	procs_add(t_procs *procs, pid_t pid);
@@ -133,18 +130,18 @@ t_status	procs_wait(t_procs *procs, t_ctx *ctx);
 t_status	apply_redirects(t_redirect *redirects, t_redir_mode mode);
 t_status	undo_redirects(t_redirect *redirects);
 /* heredoc_tmpfile.c */
-char		*create_tmp_filename(void);
 int			open_heredoc_fd(t_redirect *redirect);
 
 // <utils>
+/* fd_utils.c */
+void		close_fd(int fd);
+t_status	move_fd(int source, int target);
 /* args_utils.c */
-int			count_args(t_word_list *args);
 int			build_exec_params(t_exec_params *exec_params, t_word_list *args,
 				t_hashtable *tmp_table, t_hashtable *env_table);
 void		free_exec_params(char **argv, char **envp);
 /* path_utils.c */
 bool		has_slash(char *str);
-char		*next_path_candidate(char **scan, char *name);
 void		set_underscore(char **envp, char *pathname);
 int			search_path(char *path, char **argv, char **envp);
 

@@ -78,6 +78,4 @@ void								hash_walk(t_hashtable *table,
 t_bucket_contents					*hash_items(int bucket, t_hashtable *table);
 // hash value to index in table
 
-void								free_item(t_bucket_contents **item);
-
 #endif

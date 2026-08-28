@@ -57,13 +57,3 @@ void	hash_dispose(t_hashtable *table)
 	free(table->bucket_array);
 	free(table);
 }
-
-void	free_item(t_bucket_contents **item)
-{
-	if (item == NULL)
-		return ;
-	free((*item)->data.value);
-	free((*item)->key);
-	free(*item);
-	*item = NULL;
-}

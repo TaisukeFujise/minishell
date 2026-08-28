@@ -59,12 +59,13 @@ SRCS:=main.c\
 	  execute/dispatch/exec_disk.c\
 	  execute/dispatch/exec_pipeline.c\
 	  execute/dispatch/exec_status.c\
-	  execute/dispatch/pipeline_stages.c\
+	  execute/dispatch/exec_pipeline_stages.c\
 	  execute/dispatch/exec_simple.c\
 	  execute/dispatch/exec_subshell.c\
 	  execute/env/env_assign.c\
 	  execute/env/env_lookup.c\
-	  execute/process/pipe_utils.c\
+	  execute/env/envp_array.c\
+	  execute/utils/fd_utils.c\
 	  execute/process/procs.c\
 	  execute/process/wait_children.c\
 	  execute/redirect/apply_redirect.c\

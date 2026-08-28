@@ -19,7 +19,7 @@
 	this project may call, so uniqueness comes from the counter and the
 	O_EXCL open below, which retries when a name is already taken.
 */
-char	*create_tmp_filename(void)
+static char	*create_tmp_filename(void)
 {
 	static unsigned int	i = 0;
 	char				*num;

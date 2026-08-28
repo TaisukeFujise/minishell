@@ -14,7 +14,7 @@
 #include "../../../include/hashmap.h"
 #include "../../../include/parser.h"
 
-int	count_args(t_word_list *args)
+static int	count_args(t_word_list *args)
 {
 	int	count;
 

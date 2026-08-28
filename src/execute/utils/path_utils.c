@@ -38,7 +38,7 @@ bool	has_slash(char *str)
 	value is exhausted. An empty element means the current directory.
 	[POSIX.1-2024 XCU 2.9.1.1 Command Search and Execution]
 */
-char	*next_path_candidate(char **scan, char *name)
+static char	*next_path_candidate(char **scan, char *name)
 {
 	char	*end;
 	char	*dir;
@@ -61,37 +61,6 @@ char	*next_path_candidate(char **scan, char *name)
 	return (ft_strjoin_free(dir, name, 1 << 0));
 }
 
-/*
-	Set _ to the pathname the command is about to become, in the
-	environment that command gets. Without this a command reads the value
-	the shell itself was started with. [review D37-21]
-	build_envp() leaves one free slot for this entry.
-*/
-void	set_underscore(char **envp, char *pathname)
-{
-	char	*entry;
-	int		i;
-
-	entry = make_env_entry("_", pathname);
-	if (entry == NULL)
-		return ;
-	i = 0;
-	while (envp[i] != NULL && (envp[i][0] != '_' || envp[i][1] != '='))
-		i++;
-	if (envp[i] == NULL)
-		envp[i + 1] = NULL;
-	else
-		free(envp[i]);
-	envp[i] = entry;
-}
-
-/*
-	Whether the candidate is a file that could have been run at all.
-	execve() answers EACCES for a directory as well as for a file that
-	may not be run, and only the second is worth reporting: bash leaves
-	anything that is not a regular file out of the search, so "cd .."
-	as a command ends as not found and not as a refusal.
-*/
 static bool	is_regular(char *pathname)
 {
 	struct stat	info;
