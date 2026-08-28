@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   apply_redirect.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 12:31:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/05/10 21:50:52 by fujisetaisuke    ###   ########.fr       */
+/*   Updated: 2026/08/27 20:33:57 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,16 @@ static int	dup_above(int fd, int floor)
 
 /*
 	The backup of an io number must sit above every io number this command
-	redirects, or one of them overwrites it.
+	redirects, or one of them overwrites it. It has to clear the standard
+	fds too: one of them can already be closed when the shell is started,
+	and a backup that takes fd 2 makes the shell report its errors down
+	the output of the command.
 */
 static int	backup_floor(t_redirect *redirects)
 {
 	int	floor;
 
-	floor = 0;
+	floor = STDERR_FILENO + 1;
 	while (redirects)
 	{
 		if (redirects->io_number >= floor)
