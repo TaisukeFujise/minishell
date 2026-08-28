@@ -79,15 +79,13 @@ typedef struct s_exec_params
 	char	**envp;
 }			t_exec_params;
 
-/* init.c */
-int			init_ctx(t_ctx *ctx, char **envp);
-/* init_env.c */
-int			init_shell_vars(t_hashtable *env_table);
 /* execute.c */
 t_status	execute(t_node *node, t_ctx *ctx);
 t_status	execute_internal(t_node *node, t_ctx *ctx, t_exec_mode mode);
 int			count_stages(t_node *node);
 t_node		**collect_stages(t_node *node, t_node **out);
+/* status.c */
+t_status	set_exit_code(t_ctx *ctx, t_status status);
 
 // <dispatch>
 /* exec_builtin.c */
@@ -103,15 +101,19 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx,
 				t_exec_mode mode);
 /* exec_simple.c */
 t_status	exec_simple(t_node *node, t_ctx *ctx, t_exec_mode mode);
-t_status	set_exit_code(t_ctx *ctx, t_status status);
 /* exec_subshell.c */
 t_status	exec_subshell(t_node *node, t_ctx *ctx, t_exec_mode mode);
 
-// <expansion>
-/* assigns.c */
+// <env>
+/* env_lookup.c */
+char		*env_lookup(t_hashtable *tmp_table, t_hashtable *env_table,
+				char *name);
+char		*make_env_entry(char *key, char *value);
+char		**build_envp(t_hashtable *tmp_table, t_hashtable *env_table);
+void		free_envp(char **envp);
+/* env_assign.c */
 t_status	apply_assign(t_assign *assign, t_hashtable *table, t_ctx *ctx,
 				t_tabletype type);
-/* expand.c */
 
 // <process>
 /* pipe_utils.c */
@@ -144,11 +146,5 @@ bool		has_slash(char *str);
 char		*next_path_candidate(char **scan, char *name);
 void		set_underscore(char **envp, char *pathname);
 int			search_path(char *path, char **argv, char **envp);
-/* envp_utils.c */
-char		*env_lookup(t_hashtable *tmp_table, t_hashtable *env_table,
-				char *name);
-char		*make_env_entry(char *key, char *value);
-char		**build_envp(t_hashtable *tmp_table, t_hashtable *env_table);
-void		free_envp(char **envp);
 
 #endif

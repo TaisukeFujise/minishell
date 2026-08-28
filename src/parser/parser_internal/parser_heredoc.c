@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "parser_internal.h"
+#include "../../../include/shell.h"
 
 static bool	word_buf_size(t_word *word, size_t *size)
 {

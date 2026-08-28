@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/execute.h"
 #include "../../include/hashmap.h"
+#include "../../include/shell.h"
 
 /*
 	SHLVL counts how deep this shell is. bash adds one to the value it

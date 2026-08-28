@@ -14,7 +14,10 @@ NAME:=minishell
 
 SRCDIR:=src
 SRCS:=main.c\
+	  shell/init_ctx.c\
+	  shell/init_env.c\
 	  shell/input.c\
+	  shell/run_line.c\
 	  signal/signal_handle.c\
 	  strutil/name.c\
 	  strutil/msg.c\
@@ -51,15 +54,15 @@ SRCS:=main.c\
 	  builtin/pwd_cmd.c\
 	  builtin/unset_cmd.c\
 	  execute/execute.c\
-	  execute/init_ctx.c\
-	  execute/init_env.c\
+	  execute/status.c\
 	  execute/dispatch/exec_builtin.c\
 	  execute/dispatch/exec_connection.c\
 	  execute/dispatch/exec_disk.c\
 	  execute/dispatch/exec_pipeline.c\
 	  execute/dispatch/exec_simple.c\
 	  execute/dispatch/exec_subshell.c\
-	  execute/expansion/assigns.c\
+	  execute/env/env_assign.c\
+	  execute/env/env_lookup.c\
 	  execute/process/pipe_utils.c\
 	  execute/process/procs.c\
 	  execute/process/wait_children.c\
@@ -67,13 +70,13 @@ SRCS:=main.c\
 	  execute/redirect/heredoc_tmpfile.c\
 	  execute/utils/args_utils.c\
 	  execute/utils/path_utils.c\
-	  execute/utils/envp_utils.c\
 	  hashmap/hashmap_crud.c\
 	  hashmap/hashmap_free.c\
 	  hashmap/hashmap_utils.c
 
 HEADDIR:=include
 HEADERS:=minishell.h\
+		 shell.h\
 		 signal_handle.h\
 		 lexer.h\
 		 expand.h\

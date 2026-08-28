@@ -10,11 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/execute.h"
 #include "../../include/hashmap.h"
+#include "../../include/shell.h"
 
-char		*_extract_key_from_envp(char *entry);
-char		*_extract_value_from_envp(char *entry);
 static int	_load_envp_to_table(t_hashtable *env_table, char **envp);
 
 int	init_ctx(t_ctx *ctx, char **envp)
