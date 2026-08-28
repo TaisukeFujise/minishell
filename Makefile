@@ -58,8 +58,8 @@ SRCS:=main.c\
 	  execute/dispatch/exec_connection.c\
 	  execute/dispatch/exec_disk.c\
 	  execute/dispatch/exec_pipeline.c\
-	  execute/dispatch/exec_status.c\
-	  execute/dispatch/exec_pipeline_stages.c\
+	  execute/utils/exit_status.c\
+	  execute/utils/pipeline_stages.c\
 	  execute/dispatch/exec_simple.c\
 	  execute/dispatch/exec_subshell.c\
 	  execute/env/env_assign.c\

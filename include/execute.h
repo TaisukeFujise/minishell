@@ -92,11 +92,6 @@ t_status	exec_complete(t_node *node, t_ctx *ctx);
 t_status	exec_andor(t_node *node, t_ctx *ctx);
 /* exec_pipeline.c */
 t_status	exec_pipeline(t_node *node, t_ctx *ctx);
-/* exec_pipeline_stages.c */
-int			count_stages(t_node *node);
-t_node		**collect_stages(t_node *node, t_node **out);
-/* exec_status.c */
-t_status	set_exit_code(t_ctx *ctx, t_status status);
 /* exec_disk.c */
 t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx,
 				t_exec_mode mode);
@@ -133,6 +128,11 @@ t_status	undo_redirects(t_redirect *redirects);
 int			open_heredoc_fd(t_redirect *redirect);
 
 // <utils>
+/* pipeline_stages.c */
+int			count_stages(t_node *node);
+t_node		**collect_stages(t_node *node, t_node **out);
+/* exit_status.c */
+t_status	set_exit_code(t_ctx *ctx, t_status status);
 /* fd_utils.c */
 void		close_fd(int fd);
 t_status	move_fd(int source, int target);
