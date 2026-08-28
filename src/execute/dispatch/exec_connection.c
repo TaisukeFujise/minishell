@@ -29,12 +29,12 @@ t_status	exec_complete(t_node *node, t_ctx *ctx)
 {
 	t_status	result;
 
-	result = execute_internal(node->left, ctx, EXEC_SHELL_PROCESS);
+	result = execute_internal(node->left, ctx, EXEC_MAY_FORK);
 	if (result == ST_EXIT || result == ST_FATAL)
 		return (result);
 	if (node->right == NULL)
 		return (result);
-	return (execute_internal(node->right, ctx, EXEC_SHELL_PROCESS));
+	return (execute_internal(node->right, ctx, EXEC_MAY_FORK));
 }
 
 /*
@@ -46,12 +46,12 @@ t_status	exec_andor(t_node *node, t_ctx *ctx)
 {
 	t_status	result;
 
-	result = execute_internal(node->left, ctx, EXEC_SHELL_PROCESS);
+	result = execute_internal(node->left, ctx, EXEC_MAY_FORK);
 	if (result == ST_EXIT || result == ST_FATAL)
 		return (result);
 	if (node->u_node.and_or.op == CONNECT_AND_IF && ctx->err.exit_code != 0)
 		return (result);
 	if (node->u_node.and_or.op == CONNECT_OR_IF && ctx->err.exit_code == 0)
 		return (result);
-	return (execute_internal(node->right, ctx, EXEC_SHELL_PROCESS));
+	return (execute_internal(node->right, ctx, EXEC_MAY_FORK));
 }

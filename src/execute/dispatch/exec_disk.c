@@ -22,9 +22,9 @@ int			report_exec_error(char *name, int reason);
 
 /*
 	execute disk command(external command), like ls.
-	- EXEC_OWN_PROCESS: this process is only for this command, so take
+	- EXEC_NO_FORK: this process is only for this command, so take
 	  it over
-	- EXEC_SHELL_PROCESS: fork, run it in the child and wait for it
+	- EXEC_MAY_FORK: fork, run it in the child and wait for it
 */
 t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, t_exec_mode mode)
 {
@@ -34,7 +34,7 @@ t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, t_exec_mode mode)
 	if (build_exec_params(&params, cmd->args, ctx->tmp_table,
 			ctx->env_table) == FAILURE)
 		return (ST_FATAL);
-	if (mode == EXEC_OWN_PROCESS)
+	if (mode == EXEC_NO_FORK)
 		run_in_place(cmd, ctx, params);
 	pid = fork();
 	if (pid < 0)

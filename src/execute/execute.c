@@ -22,7 +22,7 @@ t_status	execute(t_node *root, t_ctx *ctx)
 {
 	if (root == NULL)
 		return (ST_OK);
-	return (execute_internal(root, ctx, EXEC_SHELL_PROCESS));
+	return (execute_internal(root, ctx, EXEC_MAY_FORK));
 }
 
 /*

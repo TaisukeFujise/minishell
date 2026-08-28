@@ -32,7 +32,7 @@ static void	stage_child(t_node *node, t_ctx *ctx, int prevfd, int *pipefd)
 		exit(EXIT_FAILURE);
 	if (pipefd[1] != NO_PIPE && move_fd(pipefd[1], STDOUT_FILENO) != ST_OK)
 		exit(EXIT_FAILURE);
-	execute_internal(node, ctx, EXEC_OWN_PROCESS);
+	execute_internal(node, ctx, EXEC_NO_FORK);
 	exit(ctx->err.exit_code);
 }
 

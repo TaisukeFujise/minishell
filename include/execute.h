@@ -48,16 +48,17 @@ typedef enum s_tabletype
 }			t_tabletype;
 
 /*
-	Which process a node is evaluated on. EXEC_SHELL_PROCESS is the
-	shell itself: it outlives the node and forks what needs a process of
-	its own. EXEC_OWN_PROCESS is a pipeline stage, or a subshell that
-	was one: it never forks again and its caller exits when it returns.
-	[dash EV_EXIT, bash CMD_NO_FORK]
+	Whether this node may still be given a process of its own. The shell
+	may fork; a pipeline stage, and a subshell running as one, was forked
+	for this node already and runs it here. Neither says whether the call
+	returns: an execve does not come back, a subshell body does, so the
+	fork site is what ends the process.
+	[bash CMD_NO_FORK "Don't fork; just call execve"; dash EV_EXIT]
 */
 typedef enum e_exec_mode
 {
-	EXEC_SHELL_PROCESS,
-	EXEC_OWN_PROCESS,
+	EXEC_MAY_FORK,
+	EXEC_NO_FORK,
 }			t_exec_mode;
 
 /*
