@@ -41,6 +41,7 @@ SRCS := ft_isalpha.c\
 		ft_calloc.c\
 		ft_realloc.c\
 		ft_strdup.c\
+		ft_strndup.c\
 		ft_substr.c\
 		ft_strjoin.c\
 		ft_strjoin_free.c\
