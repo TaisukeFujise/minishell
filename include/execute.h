@@ -88,9 +88,9 @@ t_status	set_exit_code(t_ctx *ctx, t_status status);
 /* exec_builtin.c */
 t_status	exec_builtin(t_simple_cmd *cmd, t_ctx *ctx);
 /* exec_connection.c */
-t_status	exec_connection(t_node *node, t_ctx *ctx);
-t_status	exec_complete(t_node *node, t_ctx *ctx);
-t_status	exec_andor(t_node *node, t_ctx *ctx);
+t_status	exec_connection(t_node *node, t_ctx *ctx, t_exec_mode mode);
+t_status	exec_complete(t_node *node, t_ctx *ctx, t_exec_mode mode);
+t_status	exec_andor(t_node *node, t_ctx *ctx, t_exec_mode mode);
 /* exec_pipeline.c */
 t_status	exec_pipeline(t_node *node, t_ctx *ctx);
 /* exec_disk.c */

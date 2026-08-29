@@ -31,7 +31,7 @@ static t_status	subshell_body(t_node *node, t_ctx *ctx)
 		|| apply_redirects(node->u_node.subshell.redirects,
 			REDIR_KEEP) != ST_OK)
 		exit(EXIT_FAILURE);
-	return (execute_internal(node->left, ctx, EXEC_MAY_FORK));
+	return (execute_internal(node->left, ctx, EXEC_NO_FORK));
 }
 
 t_status	exec_subshell(t_node *node, t_ctx *ctx, t_exec_mode mode)

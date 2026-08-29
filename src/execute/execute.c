@@ -46,7 +46,7 @@ t_status	execute_internal(t_node *node, t_ctx *ctx, t_exec_mode mode)
 		return (exec_simple(node, ctx, mode));
 	if (node->node_kind == NODE_COMPLETE || node->node_kind == NODE_ANDOR
 		|| node->node_kind == NODE_PIPE)
-		return (exec_connection(node, ctx));
+		return (exec_connection(node, ctx, mode));
 	return (ST_FATAL);
 }
 

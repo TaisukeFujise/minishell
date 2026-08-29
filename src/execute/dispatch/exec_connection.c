@@ -14,27 +14,27 @@
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
-t_status	exec_connection(t_node *node, t_ctx *ctx)
+t_status	exec_connection(t_node *node, t_ctx *ctx, t_exec_mode mode)
 {
 	if (node->node_kind == NODE_COMPLETE)
-		return (exec_complete(node, ctx));
+		return (exec_complete(node, ctx, mode));
 	if (node->node_kind == NODE_ANDOR)
-		return (exec_andor(node, ctx));
+		return (exec_andor(node, ctx, mode));
 	if (node->node_kind == NODE_PIPE)
 		return (exec_pipeline(node, ctx));
 	return (ST_FATAL);
 }
 
-t_status	exec_complete(t_node *node, t_ctx *ctx)
+t_status	exec_complete(t_node *node, t_ctx *ctx, t_exec_mode mode)
 {
 	t_status	result;
 
+	if (node->right == NULL)
+		return (execute_internal(node->left, ctx, mode));
 	result = execute_internal(node->left, ctx, EXEC_MAY_FORK);
 	if (result == ST_EXIT || result == ST_FATAL)
 		return (result);
-	if (node->right == NULL)
-		return (result);
-	return (execute_internal(node->right, ctx, EXEC_MAY_FORK));
+	return (execute_internal(node->right, ctx, mode));
 }
 
 /*
@@ -42,7 +42,7 @@ t_status	exec_complete(t_node *node, t_ctx *ctx)
 	number it left in ctx->err.exit_code. A t_status only says whether
 	the shell can go on.
 */
-t_status	exec_andor(t_node *node, t_ctx *ctx)
+t_status	exec_andor(t_node *node, t_ctx *ctx, t_exec_mode mode)
 {
 	t_status	result;
 
@@ -53,5 +53,5 @@ t_status	exec_andor(t_node *node, t_ctx *ctx)
 		return (result);
 	if (node->u_node.and_or.op == CONNECT_OR_IF && ctx->err.exit_code == 0)
 		return (result);
-	return (execute_internal(node->right, ctx, EXEC_MAY_FORK));
+	return (execute_internal(node->right, ctx, mode));
 }
