@@ -24,7 +24,7 @@ int	handle_readline_signal(void)
 {
 	if (g_signum == SIGINT)
 	{
-		write(1, "^C", 2);
+		write(STDERR_FILENO, "^C", 2);
 		rl_replace_line("", 0);
 		rl_done = 1;
 	}

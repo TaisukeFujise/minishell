@@ -42,10 +42,20 @@ static char	*read_script_line(void)
 	One line of input, with a prompt and history when a terminal is
 	reading it. The heredoc reader asks for its lines here too, so that
 	both take them from the same place.
+
+	readline writes the prompt and the echo of what is typed to
+	rl_outstream, which is stdout until told otherwise. That is the
+	wrong place: "./minishell > file" would collect prompts instead of
+	output. bash points it at stderr for the same reason, and stderr is
+	never fully buffered, so nothing of ours can survive a fork in it.
+	[bash-5.3 bashline.c initialize_readline()]
 */
 char	*shell_read_line(char *prompt)
 {
 	if (isatty(STDIN_FILENO) == 1)
+	{
+		rl_outstream = stderr;
 		return (readline(prompt));
+	}
 	return (read_script_line());
 }
