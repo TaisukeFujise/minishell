@@ -49,7 +49,6 @@ typedef enum e_node_kind
 typedef struct s_heredoc
 {
 	t_word	raw_str;
-	int		content_fd; // init value is -1
 }	t_heredoc;
 
 typedef struct s_redirect	t_redirect;
@@ -97,6 +96,6 @@ struct s_node
 };
 
 t_status	parse(char **cursor, t_node *ast, t_ctx *ctx, t_arenas *arenas);
-void		close_heredocs(t_node *node);
+void		free_heredocs(t_node *node);
 
 #endif

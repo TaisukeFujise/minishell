@@ -64,7 +64,7 @@ t_node	*parse_simple(t_parser_state *ps)
 		parser_fail(ps, ST_FAILURE, unexpected_token_msg(ps, peek(ps)));
 	if (ps->status == ST_OK)
 		return (node);
-	close_heredocs(node);
+	free_heredocs(node);
 	return (NULL);
 }
 
@@ -99,7 +99,7 @@ t_node	*parse_subshell(t_parser_state *ps)
 		add_redir(ps, &node->u_node.subshell.redirects);
 	if (ps->status == ST_OK)
 		return (node);
-	close_heredocs(node);
+	free_heredocs(node);
 	return (NULL);
 }
 
@@ -117,13 +117,13 @@ t_node	*parse_compound_list(t_parser_state *ps)
 	child = parse_andor(ps);
 	if (ps->status != ST_OK || !child)
 	{
-		close_heredocs(child);
+		free_heredocs(child);
 		return (NULL);
 	}
 	head = new_node(ps, NODE_COMPLETE);
 	if (!head)
 	{
-		close_heredocs(child);
+		free_heredocs(child);
 		return (NULL);
 	}
 	head->left = child;

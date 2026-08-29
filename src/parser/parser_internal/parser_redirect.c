@@ -92,7 +92,6 @@ void	add_redir(t_parser_state *ps, t_redirect **list)
 		return (parser_fail(ps, ST_FATAL, NULL));
 	redir->op = op;
 	redir->io_number = fd;
-	redir->hd.content_fd = -1;
 	redir->target = *consume(ps).u_token.wd;
 	if (op == REDIR_DLESS)
 		register_heredoc(ps, redir);

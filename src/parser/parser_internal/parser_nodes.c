@@ -57,8 +57,8 @@ t_node	*make_binary(t_parser_state *ps, t_op_connect op, t_node *left,
 
 	if (ps->status != ST_OK || !left || !right)
 	{
-		close_heredocs(left);
-		close_heredocs(right);
+		free_heredocs(left);
+		free_heredocs(right);
 		return (NULL);
 	}
 	kind = NODE_ANDOR;
@@ -67,8 +67,8 @@ t_node	*make_binary(t_parser_state *ps, t_op_connect op, t_node *left,
 	node = new_node(ps, kind);
 	if (!node)
 	{
-		close_heredocs(left);
-		close_heredocs(right);
+		free_heredocs(left);
+		free_heredocs(right);
 		return (NULL);
 	}
 	node->u_node.and_or.op = op;

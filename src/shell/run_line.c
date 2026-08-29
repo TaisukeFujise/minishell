@@ -37,8 +37,9 @@ void	dispose_shell(char *user_input, t_ctx *ctx)
 
 /*
 	One parse unit: parse it, run what came out, then give back the
-	arenas it was built in. The here-documents are closed here too,
-	because the tree that names them is about to go.
+	arenas it was built in. The here-document bodies are freed here
+	too: they are the one thing the tree holds that is not arena
+	memory, and the tree that names them is about to go.
 */
 static t_status	run_command(char **cursor, t_node *ast, t_ctx *ctx,
 		t_arenas *arenas)
@@ -48,7 +49,7 @@ static t_status	run_command(char **cursor, t_node *ast, t_ctx *ctx,
 	status = parse(cursor, ast, ctx, arenas);
 	if (status == ST_OK)
 		status = execute(ast, ctx);
-	close_heredocs(ast->left);
+	free_heredocs(ast->left);
 	ast->left = NULL;
 	ctx->arenas = NULL;
 	ft_arena_destroy(&arenas->tmp);
