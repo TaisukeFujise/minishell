@@ -60,18 +60,16 @@ static bool	glob_insert(t_expand *exp, t_word_list **list, const char *name)
 }
 
 /*
-	A leading dot has to be matched by a literal dot in the pattern, and even
-	then "." and ".." are never produced.
+	A leading dot has to be matched by a literal dot in the pattern, so
+	"*" does not reach a hidden name. "." and ".." are ordinary entries
+	here and ".*" produces them, as bash does: bash drops them only once
+	GLOBIGNORE is set or dotglob is on, and neither exists here.
+	[POSIX XCU 2.13.3, bash-5.3 pathexp.c]
 */
 static bool	glob_keep(const char *pat, const char *mask, const char *name)
 {
-	if (name[0] == '.')
-	{
-		if (pat[0] != '.')
-			return (false);
-		if (name[1] == '\0' || (name[1] == '.' && name[2] == '\0'))
-			return (false);
-	}
+	if (name[0] == '.' && pat[0] != '.')
+		return (false);
 	return (glob_match(pat, mask, name));
 }
 
