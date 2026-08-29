@@ -3,84 +3,96 @@
 /*                                                        :::      ::::::::   */
 /*   export_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 20:40:50 by tafujise          #+#    #+#             */
-/*   Updated: 2026/05/10 17:14:08 by fendo            ###   ########.fr       */
+/*   Updated: 2026/08/16 23:35:06 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/builtin.h"
 
-#define EXPORT_CTRL "\033\a\b\t\n\v\f\r"
-#define EXPORT_ESC "Eabtnvfr"
-
-static void	print_quoted_value(char *s, char quote)
+/*
+	The value between double quotes, escaping the four characters the
+	shell would otherwise read again. Every other byte stands as it is,
+	which is what keeps a value the terminal shows as text -- a name in
+	Japanese, an emoji -- readable here too: bash writes those bytes
+	through as well. What needs no escape is written in one go, so a long
+	value costs one write and not one per character.
+	[bash-5.1 builtins/setattr.def, lib/sh/shquote.c sh_double_quote()]
+*/
+static bool	put_value(char *str)
 {
-	char	*esc;
+	char	*run;
 
-	printf("%c", quote);
-	while (*s)
+	if (!write_all(STDOUT_FILENO, "\"", 1))
+		return (false);
+	while (*str)
 	{
-		esc = ft_strchr(EXPORT_CTRL, *s);
-		if (quote == '"' && ft_strchr("\"\\$`", *s))
-			printf("\\%c", *s);
-		else if (quote == '\'' && esc)
-			printf("\\%c", EXPORT_ESC[esc - EXPORT_CTRL]);
-		else if (quote == '\'' && !ft_isprint((unsigned char)*s))
-			printf("\\%03o", (unsigned char)*s);
-		else if (quote == '\'' && (*s == '\\' || *s == '\''))
-			printf("\\%c", *s);
-		else
-			printf("%c", *s);
-		s++;
+		run = str;
+		while (*str && ft_strchr("\"\\$`", *str) == NULL)
+			str++;
+		if (!write_all(STDOUT_FILENO, run, (size_t)(str - run)))
+			return (false);
+		if (*str && !write_all(STDOUT_FILENO, "\\", 1))
+			return (false);
+		if (*str && !write_all(STDOUT_FILENO, str++, 1))
+			return (false);
 	}
-	printf("%c", quote);
+	return (write_all(STDOUT_FILENO, "\"", 1));
 }
 
-static int	print_export(t_bucket_contents *item)
+/*
+	"declare -x NAME", then the value when the name has one.
+	Returns the value hash_walk reads: below zero stops the walk.
+*/
+int	print_export(t_bucket_contents *item)
 {
-	char	*p;
+	bool	ok;
 
 	if (!item->data.exported)
 		return (0);
-	printf("declare -x %s", item->key);
-	if (item->data.value)
-	{
-		p = item->data.value;
-		while (*p && ft_isprint((unsigned char)*p))
-			p++;
-		if (*p)
-		{
-			printf("=$");
-			print_quoted_value(item->data.value, '\'');
-		}
-		else
-		{
-			printf("=");
-			print_quoted_value(item->data.value, '"');
-		}
-	}
-	printf("\n");
+	ok = write_all(STDOUT_FILENO, "declare -x ", 11)
+		&& write_all(STDOUT_FILENO, item->key, ft_strlen(item->key));
+	if (ok && item->data.value != NULL)
+		ok = write_all(STDOUT_FILENO, "=", 1)
+			&& put_value(item->data.value);
+	if (!ok || !write_all(STDOUT_FILENO, "\n", 1))
+		return (-1);
 	return (0);
 }
 
-static t_status	set_export_value(t_word *wd, t_bucket_contents *item)
+/*
+	"export name" keeps the value the name has in the current command,
+	so "A=one export A" leaves A set to one.
+*/
+static t_status	set_export_value(t_export_arg *arg, t_bucket_contents *item,
+		t_ctx *ctx)
 {
-	char	*value;
+	t_bucket_contents	*tmp;
+	char				*value;
 
-	value = ft_strndup(wd->eq_ptr + 1,
-			wd->len - (int)(wd->eq_ptr + 1 - wd->str));
+	if (arg->value_pos == 0)
+	{
+		tmp = hash_search(arg->word->str, ctx->tmp_table);
+		if (tmp == NULL)
+			return (ST_OK);
+		if (!hash_set_value(item, tmp->data.value))
+			return (ST_FATAL);
+		return (ST_OK);
+	}
+	value = ft_strdup(arg->word->str + arg->value_pos);
 	if (!value)
 		return (ST_FATAL);
-	if ((wd->flag & W_APPEND) && item->data.value)
+	if (arg->append && item->data.value)
 	{
 		value = ft_strjoin_free(item->data.value, value, 1 << 1);
 		if (!value)
 			return (ST_FATAL);
 	}
-	free(item->data.value);
-	item->data.value = value;
+	if (!hash_set_value(item, value))
+		return (free(value), ST_FATAL);
+	free(value);
 	return (ST_OK);
 }
 
@@ -88,12 +100,16 @@ static t_status	put_export(t_word *wd, t_ctx *ctx)
 {
 	t_bucket_contents	*item;
 	char				*key;
-	int					len;
+	t_export_arg		arg;
 
-	len = wd->len;
-	if (wd->flag & (W_ASSIGN | W_APPEND))
-		len = wd->eq_ptr - wd->str - ((wd->flag & W_APPEND) != 0);
-	key = ft_strndup(wd->str, len);
+	arg.word = wd;
+	arg.key_len = str_name_len(wd->str);
+	arg.value_pos = str_assign_pos(wd->str, &arg.append);
+	if (!arg.key_len || (!arg.value_pos && wd->str[arg.key_len]))
+		return (ST_FAILURE);
+	if (arg.value_pos)
+		arg.value_pos++;
+	key = ft_strndup(wd->str, arg.key_len);
 	if (!key)
 		return (ST_FATAL);
 	item = hash_insert(key, ctx->env_table);
@@ -101,9 +117,7 @@ static t_status	put_export(t_word *wd, t_ctx *ctx)
 	if (!item)
 		return (ST_FATAL);
 	item->data.exported = true;
-	if (wd->flag & (W_ASSIGN | W_APPEND))
-		return (set_export_value(wd, item));
-	return (ST_OK);
+	return (set_export_value(&arg, item, ctx));
 }
 
 /*
@@ -116,23 +130,24 @@ static t_status	put_export(t_word *wd, t_ctx *ctx)
 */
 t_status	export_cmd(t_word_list *args, t_ctx *ctx)
 {
+	t_status	arg_status;
 	t_status	status;
 
+	if (!args && hash_walk_ordered(ctx->env_table, print_export) < 0)
+		return (ST_FAILURE);
 	if (!args)
-	{
-		hash_walk(ctx->env_table, print_export);
 		return (ST_OK);
-	}
 	status = ST_OK;
 	while (args)
 	{
-		if (!(args->wd->flag & (W_ID | W_ASSIGN | W_APPEND)))
+		arg_status = put_export(args->wd, ctx);
+		if (arg_status == ST_FAILURE)
 		{
-			ft_putendl_fd("minishell: export: not a valid identifier",
-				STDERR_FILENO);
+			print_error_name("export", args->wd->str,
+				"not a valid identifier");
 			status = ST_FAILURE;
 		}
-		else if (put_export(args->wd, ctx) == ST_FATAL)
+		else if (arg_status == ST_FATAL)
 			return (ST_FATAL);
 		args = args->next;
 	}

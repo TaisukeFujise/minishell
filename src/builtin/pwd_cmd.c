@@ -10,28 +10,32 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../include/minishell.h"
 #include "../../include/parser.h"
 
 // #include "../../include/builtin.h"
 
 /*
 	pwd
-	"pwd" invoke getcwd(), and update the ctx->exit_code.
-	It returns always physical path. It's different from "pwd" in bash.
+	"pwd" tells where the shell is, and updates the ctx->exit_code. The
+	answer is the shell's own path, so it survives a directory that was
+	renamed underneath it, as bash's does. Operands are ignored, as bash
+	ignores them: the subject asks for "pwd with no options", which is
+	about options, not about operands.
 */
 t_status	pwd_cmd(t_word_list *args, t_ctx *ctx)
 {
-	char	*path;
+	bool	ok;
 
-	(void)ctx;
-	if (args != NULL)
-		return (ST_FAILURE); // pwd: too many arguments.
-	path = getcwd(NULL, 0);
-	if (path == NULL)
+	(void)args;
+	if (ctx->cwd == NULL)
 	{
-		perror("minishell: pwd");
+		print_error("pwd", strerror(ENOENT));
 		return (ST_FAILURE);
 	}
-	printf("%s\n", path);
+	ok = write_all(STDOUT_FILENO, ctx->cwd, ft_strlen(ctx->cwd))
+		&& write_all(STDOUT_FILENO, "\n", 1);
+	if (!ok)
+		return (ST_FAILURE);
 	return (ST_OK);
 }

@@ -21,13 +21,11 @@ static void	init_arenas(t_arenas *arenas)
 {
 	ft_arena_init(&arenas->ast, ARENA_DEFAULT_CHUNK_SIZE);
 	ft_arena_init(&arenas->tmp, ARENA_DEFAULT_CHUNK_SIZE);
-	ft_arena_init(&arenas->heredoc, ARENA_DEFAULT_CHUNK_SIZE);
 }
 
 static void	destroy_arenas(t_arenas *arenas)
 {
 	ft_arena_destroy(&arenas->tmp);
-	ft_arena_destroy(&arenas->heredoc);
 	ft_arena_destroy(&arenas->ast);
 }
 
@@ -103,7 +101,7 @@ int	main(int argc, char **argv)
 		{
 			printf(" command=\"");
 			print_escaped_segment(begin, cursor);
-			printf("\" err=\"%s\"\n", ctx.err.err_msg);
+			printf("\" exit_code=%d\n", ctx.err.exit_code);
 			if (status != ST_FAILURE)
 			{
 				destroy_arenas(&arenas);

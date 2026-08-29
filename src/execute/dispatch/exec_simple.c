@@ -3,49 +3,58 @@
 /*                                                        :::      ::::::::   */
 /*   exec_simple.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:09:15 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 02:59:54 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/08/27 20:37:27 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../../include/builtin.h"
 #include "../../../include/execute.h"
+#include "../../../include/expand.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
-
-bool		find_builtin(char *str);
 
 /*
 	Todo
 	- Create tmp_env_table from "t_word_list *assigns"
-	- Expand Environment Variable
 	- Set Redirect from "t_redirect *redirects"
 	- Execute cmd, which is "built-in" or "execve",
 		using executor->input_fd and executor->output_fd.
 	- Update last_pid in ctx in order to waitpid.
 */
-t_status	exec_simple(t_node *node, t_ctx *ctx, int pipe_in, int pipe_out)
+/*
+	Whether this command runs inside the shell. env is a builtin only
+	without operands: bash has no env builtin at all, so "env cmd" and
+	"env -i" have to reach the env of the system through PATH.
+	[plan 15.2]
+*/
+static bool	runs_as_builtin(t_word_list *args)
 {
-	ctx->already_forked = 0;
-	if (expand_words(node->u_node.simple_command, ctx) != ST_OK)
-		return (ST_FAILURE);
-	if (node->u_node.simple_command.args == 0)
-		return (exec_null_command(&node->u_node.simple_command, ctx, pipe_in,
-				pipe_out));
-	if (find_builtin(node->u_node.simple_command.args->wd->str))
-		return (exec_builtin(&node->u_node.simple_command, ctx, pipe_in,
-				pipe_out));
-	return (exec_disk_command(&node->u_node.simple_command, ctx, pipe_in,
-			pipe_out));
+	if (find_builtin(args->wd->str) == NULL)
+		return (false);
+	if (args->next != NULL && ft_strcmp(args->wd->str, "env") == 0)
+		return (false);
+	return (true);
 }
 
-bool	find_builtin(char *str)
+t_status	exec_simple(t_node *node, t_ctx *ctx, t_exec_mode mode)
 {
-	if ((ft_strcmp(str, "echo") == 0) || (ft_strcmp(str, "cd") == 0)
-		|| (ft_strcmp(str, "pwd") == 0) || (ft_strcmp(str, "export") == 0)
-		|| (ft_strcmp(str, "export") == 0) || (ft_strcmp(str, "unset") == 0)
-		|| (ft_strcmp(str, "env") == 0) || (ft_strcmp(str, "exit") == 0))
-		return (true);
-	return (false);
+	t_simple_cmd	*cmd;
+	t_status		status;
+
+	hash_flush(ctx->tmp_table, NULL);
+	status = expand_command(node, ctx, ctx->arenas);
+	cmd = &node->u_node.simple_command;
+	if (status == ST_OK)
+	{
+		if (cmd->args != NULL && !runs_as_builtin(cmd->args))
+			status = exec_disk_command(cmd, ctx, mode);
+		else
+			status = exec_builtin(cmd, ctx);
+	}
+	if (status == ST_OK)
+		return (ST_OK);
+	return (set_exit_code(ctx, status));
 }

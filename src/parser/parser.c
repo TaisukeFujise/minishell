@@ -12,6 +12,15 @@
 
 #include "parser_internal/parser_internal.h"
 
+static void	free_heredoc_body(t_redirect *redir)
+{
+	if (redir->op != REDIR_DLESS)
+		return ;
+	free(redir->hd.raw_str.str);
+	redir->hd.raw_str.str = NULL;
+	redir->hd.raw_str.len = 0;
+}
+
 static void	init_parser(char **cursor, t_parser_state *ps,
 									t_ctx *ctx, t_arenas *arenas)
 {
@@ -32,14 +41,14 @@ static void	clear_parse_ephemeral(t_parser_state *ps)
 		free_token(&ps->lookahead);
 }
 
-void	close_heredocs(t_node *node)
+void	free_heredocs(t_node *node)
 {
 	t_redirect	*redir;
 
 	if (!node)
 		return ;
-	close_heredocs(node->left);
-	close_heredocs(node->right);
+	free_heredocs(node->left);
+	free_heredocs(node->right);
 	redir = NULL;
 	if (node->node_kind == NODE_SIMPLE)
 		redir = node->u_node.simple_command.redirects;
@@ -47,13 +56,7 @@ void	close_heredocs(t_node *node)
 		redir = node->u_node.subshell.redirects;
 	while (redir)
 	{
-		if (redir->op == REDIR_DLESS)
-			redir->hd.raw_str.str = NULL;
-		if (redir->hd.content_fd >= 0)
-		{
-			close(redir->hd.content_fd);
-			redir->hd.content_fd = -1;
-		}
+		free_heredoc_body(redir);
 		redir = redir->next;
 	}
 }
@@ -88,7 +91,7 @@ t_status	parse(char **cursor, t_node *ast, t_ctx *ctx, t_arenas *arenas)
 		&& peek(&ps)->token_kind != TK_EOF)
 		parser_fail(&ps, ST_FAILURE, unexpected_token_msg(&ps, peek(&ps)));
 	if (ps.status != ST_OK)
-		close_heredocs(ast->left);
+		free_heredocs(ast->left);
 	if (ps.status == ST_FAILURE)
 		sync_next_line(&ps.lex);
 	*cursor = ps.lex.line;

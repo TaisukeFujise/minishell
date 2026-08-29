@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_redirect.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/25 19:35:53 by fendo             #+#    #+#             */
+/*   Updated: 2026/08/25 19:35:54 by fendo            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser_internal.h"
 
 /*
@@ -34,7 +46,11 @@ void	register_heredoc(t_parser_state *ps, t_redirect *redir)
 	t_hd_item	*item;
 
 	if (ps->hd_count >= HEREDOC_MAX)
-		return (parser_fail(ps, ST_FATAL, PARSER_MSG_HD_MAX));
+	{
+		parser_fail(ps, ST_FATAL, PARSER_MSG_HD_MAX);
+		ps->ctx->err.exit_code = EXIT_BADUSAGE;
+		return ;
+	}
 	item = ft_arena_calloc(&ps->arenas->ast, 1, sizeof(t_hd_item));
 	if (!item)
 		return (parser_fail(ps, ST_FATAL, NULL));
@@ -76,7 +92,6 @@ void	add_redir(t_parser_state *ps, t_redirect **list)
 		return (parser_fail(ps, ST_FATAL, NULL));
 	redir->op = op;
 	redir->io_number = fd;
-	redir->hd.content_fd = -1;
 	redir->target = *consume(ps).u_token.wd;
 	if (op == REDIR_DLESS)
 		register_heredoc(ps, redir);

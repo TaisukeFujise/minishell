@@ -6,146 +6,92 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 00:49:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 03:02:46 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/04/19 22:24:13 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/execute.h"
+#include <sys/stat.h>
+#include "../../../include/signal_handle.h"
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
-void		exec_disk_in_child(t_simple_cmd *cmd, t_ctx *ctx,
-				t_exec_params exec_params, t_pipes pipes);
-void		disk_command(char **argv, char **envp, t_ctx *ctx);
-bool		has_slash(char *str);
-int			run_path_search_command(char *path_value, char **argv, char **envp);
-
 /*
-	execute disk command(external command), like ls.
-	Fork regardless of whether pipe_in or pipe_out are not a NO_PIPE.
-	(It means whether command is connected by pipe or not doesn't matter.)
-	- fork
-	- in child : exec_disk_command
-	- in parent:
-		-set ctx->already_forked flag
-		- close_pipes(pipe_in, pipe_out)
-		- register_pid(ctx, pid)
+	Say why a command did not run, and give the status a shell gives for
+	it: 127 when there was nothing to run, 126 when there was something
+	but it could not be run. [review D37-07, D37-09]
 */
-t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, int pipe_in,
-		int pipe_out)
+static int	report_exec_error(char *name, int reason)
 {
-	pid_t			pid;
-	t_pipes			pipes;
-	t_exec_params	exec_params;
+	struct stat	info;
+	char		*msg;
 
-	pipes.pipe_in = pipe_in;
-	pipes.pipe_out = pipe_out;
-	if (build_exec_params(&exec_params, cmd->args, ctx->tmp_table,
-			ctx->env_table) == FAILURE)
-		return (ST_FATAL);
-	pid = fork();
-	if (pid < 0)
-		return (free_exec_params(exec_params.argv, exec_params.envp),
-			ST_FAILURE);
-	else if (pid == 0)
-		exec_disk_in_child(cmd, ctx, exec_params, pipes);
-	else
-	{
-		ctx->already_forked = 1;
-		close_pipes(pipe_in, pipe_out);
-		return (free_exec_params(exec_params.argv, exec_params.envp),
-			register_pid(ctx, pid));
-	}
-	return (ST_FATAL);
+	msg = "command not found";
+	if (reason == EACCES && stat(name, &info) == 0 && S_ISDIR(info.st_mode))
+		reason = EISDIR;
+	if (reason != 0)
+		msg = strerror(reason);
+	print_error(name, msg);
+	if (reason == 0 || reason == ENOENT || reason == ENOTDIR)
+		return (127);
+	return (126);
 }
 
 /*
-	Todo left
-	- restore signals
-*/
-void	exec_disk_in_child(t_simple_cmd *cmd, t_ctx *ctx,
-		t_exec_params exec_params, t_pipes pipes)
-{
-	close_fd_bitmap(ctx->bitmap);
-	if (attach_pipe_to_stdio(pipes.pipe_in, pipes.pipe_out) != ST_OK)
-		exit(EXIT_FAILURE);
-	pipes.pipe_in = NO_PIPE;
-	pipes.pipe_out = NO_PIPE;
-	if (apply_redirects(cmd->redirects) != ST_OK)
-		exit(EXIT_FAILURE);
-	if (apply_assigns(ctx->tmp_table, cmd->assigns, TMP) != ST_OK)
-		exit(EXIT_FAILURE);
-	disk_command(exec_params.argv, exec_params.envp, ctx);
-	_exit(EXIT_FAILURE);
-}
-
-/*
-	Todo
-	- disk_command find disk command and execute it.
-	- It returns error, like "command not found", if there is no command.
+	Become the command. A name with a slash is the pathname itself, and
+	so is any name when PATH is unset. Never returns.
 	2.9.1 Simple command
 	> Command Search and Execution
 */
-void	disk_command(char **argv, char **envp, t_ctx *ctx)
+static void	disk_command(char **argv, char **envp, t_ctx *ctx)
 {
-	char	*path_value;
-	int		exit_code;
+	char	*path;
 
-	if (has_slash(argv[0]))
+	if (argv[0][0] == '\0')
+		exit(report_exec_error(argv[0], 0));
+	path = env_lookup(ctx->tmp_table, ctx->env_table, "PATH");
+	if (has_slash(argv[0]) || path == NULL)
 	{
+		set_underscore(envp, argv[0]);
 		execve(argv[0], argv, envp);
-		if (errno == ENOENT)
-			exit(127);
-		exit(126);
+		exit(report_exec_error(argv[0], errno));
 	}
-	else
-	{
-		path_value = extract_path_value(ctx->tmp_table, ctx->env_table);
-		if (path_value == NULL)
-			exit(1);
-		exit_code = run_path_search_command(path_value, argv, envp);
-		exit(exit_code);
-	}
-}
-
-bool	has_slash(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '/')
-			return (true);
-		i++;
-	}
-	return (false);
+	exit(report_exec_error(argv[0], search_path(path, argv, envp)));
 }
 
 /*
-	127 means errno ENOENT("command not found")
+	Apply the redirects of the command and become it. Never returns.
 */
-int	run_path_search_command(char *path_value, char **argv, char **envp)
+static void	run_in_place(t_simple_cmd *cmd, t_ctx *ctx, t_exec_params params)
 {
-	char	*dir;
-	char	*pathname;
-	int		exit_code;
+	reset_signals();
+	if (apply_redirects(cmd->redirects, REDIR_KEEP) != ST_OK)
+		exit(EXIT_FAILURE);
+	disk_command(params.argv, params.envp, ctx);
+	exit(EXIT_FAILURE);
+}
 
-	exit_code = 127;
-	while (*path_value)
-	{
-		dir = extract_path_entry(path_value);
-		if (dir == NULL)
-			return (1);
-		pathname = ft_strjoin(dir, argv[0]);
-		if (pathname == NULL)
-			return (free(dir), 1);
-		execve(pathname, argv, envp);
-		if (errno != ENOENT)
-			exit_code = 126;
-		path_value += ft_strlen(dir);
-		if (*path_value == ':')
-			path_value++;
-	}
-	return (exit_code);
+/*
+	execute disk command(external command), like ls.
+	- EXEC_NO_FORK: this process is only for this command, so take
+	  it over
+	- EXEC_MAY_FORK: fork, run it in the child and wait for it
+*/
+t_status	exec_disk_command(t_simple_cmd *cmd, t_ctx *ctx, t_exec_mode mode)
+{
+	pid_t			pid;
+	t_exec_params	params;
+
+	if (build_exec_params(&params, cmd->args, ctx->tmp_table,
+			ctx->env_table) == FAILURE)
+		return (ST_FATAL);
+	if (mode == EXEC_NO_FORK)
+		run_in_place(cmd, ctx, params);
+	pid = fork();
+	if (pid < 0)
+		return (free_exec_params(params.argv, params.envp), ST_FAILURE);
+	if (pid == 0)
+		run_in_place(cmd, ctx, params);
+	free_exec_params(params.argv, params.envp);
+	return (wait_pid_status(ctx, pid));
 }

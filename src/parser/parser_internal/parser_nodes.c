@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_nodes.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/25 19:35:58 by fendo             #+#    #+#             */
+/*   Updated: 2026/08/25 19:35:59 by fendo            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser_internal.h"
 
 void	ilist_append(void *headp, void *item, size_t next_off)
@@ -44,14 +56,21 @@ t_node	*make_binary(t_parser_state *ps, t_op_connect op, t_node *left,
 	t_node_kind	kind;
 
 	if (ps->status != ST_OK || !left || !right)
+	{
+		free_heredocs(left);
+		free_heredocs(right);
 		return (NULL);
+	}
+	kind = NODE_ANDOR;
 	if (op == CONNECT_PIPE)
 		kind = NODE_PIPE;
-	else
-		kind = NODE_ANDOR;
 	node = new_node(ps, kind);
 	if (!node)
+	{
+		free_heredocs(left);
+		free_heredocs(right);
 		return (NULL);
+	}
 	node->u_node.and_or.op = op;
 	node->left = left;
 	node->right = right;

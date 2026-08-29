@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../include/hashmap.h"
+#include "../../libft/libft.h"
 
 #define FNV_OFFSET 2166136261
 
@@ -39,27 +40,54 @@ int	hash_bucket(unsigned int hash_value, t_hashtable *table)
 }
 
 /*
-	It walk the table and apply func to the entry.
+	The entry whose key comes first after PREV, or NULL when none is
+	left. A table keeps no order of its own, so finding one means looking
+	at every entry; at this size that costs nothing and needs no array to
+	sort.
 */
-void	hash_walk(t_hashtable *table, t_hash_wfunc *func)
+static t_bucket_contents	*next_in_order(t_hashtable *table, char *prev)
 {
-	int					i;
 	t_bucket_contents	*item;
+	t_bucket_contents	*best;
+	int					i;
 
-	if (table == 0 || table->entry_count == 0)
-		return ;
+	best = NULL;
 	i = 0;
 	while (i < table->bucket_size)
 	{
 		item = hash_items(i, table);
 		while (item != NULL)
 		{
-			if ((*func)(item) < 0)
-				return ;
+			if ((prev == NULL || ft_strcmp(item->key, prev) > 0)
+				&& (best == NULL || ft_strcmp(item->key, best->key) < 0))
+				best = item;
 			item = item->next;
 		}
 		i++;
 	}
+	return (best);
+}
+
+/*
+	Walk the table in the order of its keys, applying func. Stops on the
+	first func that answers below zero, and gives that answer back.
+*/
+int	hash_walk_ordered(t_hashtable *table, t_hash_wfunc *func)
+{
+	t_bucket_contents	*item;
+	int					result;
+
+	if (table == NULL || table->entry_count == 0)
+		return (0);
+	item = next_in_order(table, NULL);
+	while (item != NULL)
+	{
+		result = (*func)(item);
+		if (result < 0)
+			return (result);
+		item = next_in_order(table, item->key);
+	}
+	return (0);
 }
 
 /*

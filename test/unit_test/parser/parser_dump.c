@@ -53,12 +53,23 @@ static int	buf_append_char(t_buffer *buf, char c)
 static int	buf_append_int(t_buffer *buf, int n)
 {
 	char	num[12];
-	int		len;
+	int		written;
 
-	len = snprintf(num, sizeof(num), "%d", n);
-	if (len < 0 || (size_t)len >= sizeof(num))
+	written = snprintf(num, sizeof(num), "%d", n);
+	if (written < 0 || (size_t)written >= sizeof(num))
 		return (0);
-	return (buf_append_mem(buf, num, (size_t)len));
+	return (buf_append_mem(buf, num, (size_t)written));
+}
+
+static int	buf_append_size(t_buffer *buf, size_t n)
+{
+	char	num[21];
+	int		written;
+
+	written = snprintf(num, sizeof(num), "%zu", n);
+	if (written < 0 || (size_t)written >= sizeof(num))
+		return (0);
+	return (buf_append_mem(buf, num, (size_t)written));
 }
 
 static int	buf_init(t_buffer *buf)
@@ -225,10 +236,6 @@ static int	buf_append_flags(t_buffer *buf, uint8_t flag)
 	if ((flag & W_APPEND) && !buf_append_str(buf, "APPEND"))
 		return (0);
 	first = (flag & W_APPEND) ? 0 : first;
-	if ((flag & W_ID) && !first && !buf_append_char(buf, '|'))
-		return (0);
-	if ((flag & W_ID) && !buf_append_str(buf, "ID"))
-		return (0);
 	return (1);
 }
 
@@ -372,17 +379,17 @@ static int	dump_redirect_item(t_buffer *buf, const char *prefix, int is_last,
 	{
 		if (!buf_append_str(buf, " hd_len="))
 			return (0);
-		if (!buf_append_int(buf, redir->hd.raw_str.len))
+		if (!buf_append_size(buf, redir->hd.raw_str.len))
 			return (0);
 		if (!buf_append_str(buf, " hd_preview=\""))
 			return (0);
 		if (redir->hd.raw_str.str)
 		{
-			if ((size_t)redir->hd.raw_str.len < preview_len)
+			if (redir->hd.raw_str.len < preview_len)
 				preview_len = redir->hd.raw_str.len;
 			if (!buf_append_escaped_bytes(buf, redir->hd.raw_str.str, preview_len))
 				return (0);
-			if ((size_t)redir->hd.raw_str.len > preview_len
+			if (redir->hd.raw_str.len > preview_len
 				&& !buf_append_str(buf, "..."))
 				return (0);
 		}
@@ -497,6 +504,11 @@ char	*parser_dump_ast_to_string(t_node *node)
 	if (!dump_node_ref(&buf, "", 1, "", node))
 		return (free(buf.data), NULL);
 	return (buf.data);
+}
+
+void	parser_dump_free_string(char *s)
+{
+	free(s);
 }
 
 void	parser_dump_ast(t_node *node)

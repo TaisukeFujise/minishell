@@ -86,12 +86,6 @@ int	setup_ctx(t_ctx *ctx, char **envp)
 {
 	if (init_ctx(ctx, envp) == FAILURE)
 		return (1);
-	ctx->bitmap = new_fd_bitmap(FD_BITMAP_SIZE);
-	if (ctx->bitmap == NULL)
-	{
-		teardown_ctx(ctx);
-		return (1);
-	}
 	return (0);
 }
 
@@ -106,6 +100,4 @@ void	teardown_ctx(t_ctx *ctx)
 		hash_dispose(ctx->tmp_table);
 		ctx->tmp_table = NULL;
 	}
-	dispose_fd_bitmap(ctx->bitmap);
-	ctx->bitmap = NULL;
 }

@@ -15,6 +15,7 @@
 // #include "../../include/builtin.h"
 
 static void	_consume_n_flag(t_word_list **args, bool *nflag);
+static bool	_is_n_option(const char *word);
 
 /*
 	echo [-n] [string...]
@@ -29,33 +30,51 @@ t_status	echo_cmd(t_word_list *args, t_ctx *ctx)
 	n_flag = false;
 	if (args == NULL)
 	{
-		if (write(STDOUT_FILENO, "\n", 1) < 0)
+		if (!write_all(STDOUT_FILENO, "\n", 1))
 			return (ST_FAILURE);
 		return (ST_OK);
 	}
 	_consume_n_flag(&args, &n_flag);
 	while (args)
 	{
-		if (write(STDOUT_FILENO, args->wd->str, ft_strlen(args->wd->str)) < 0)
+		if (!write_all(STDOUT_FILENO, args->wd->str,
+				ft_strlen(args->wd->str)))
 			return (ST_FAILURE);
 		if (args->next != NULL)
-			if (write(STDOUT_FILENO, " ", 1) < 0)
+			if (!write_all(STDOUT_FILENO, " ", 1))
 				return (ST_FAILURE);
 		args = args->next;
 	}
 	if (!n_flag)
-		if (write(STDOUT_FILENO, "\n", 1) < 0)
+		if (!write_all(STDOUT_FILENO, "\n", 1))
 			return (ST_FAILURE);
 	return (ST_OK);
 }
 
 static void	_consume_n_flag(t_word_list **args, bool *nflag)
 {
-	if (ft_strcmp((*args)->wd->str, "-n") == 0)
+	while (*args != NULL && _is_n_option((*args)->wd->str))
 	{
 		*nflag = true;
 		*args = (*args)->next;
 	}
+}
+
+/*
+	A word is the option when it is a dash followed by nothing but n, so
+	"-n -n" and "-nnn" are both the option and "-" and "-nx" are not.
+	[bash-5.3 builtins/echo.def echo_builtin()]
+*/
+static bool	_is_n_option(const char *word)
+{
+	if (*word != '-')
+		return (false);
+	word++;
+	if (*word == '\0')
+		return (false);
+	while (*word == 'n')
+		word++;
+	return (*word == '\0');
 }
 
 // #include <stdio.h>

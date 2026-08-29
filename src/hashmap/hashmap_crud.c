@@ -115,3 +115,24 @@ t_bucket_contents	*hash_insert(char *string, t_hashtable *table)
 	table->entry_count++;
 	return (item);
 }
+
+/*
+	Replace the value of an entry with a copy of "value".
+	The caller keeps ownership of "value". NULL is stored as an empty string.
+	The old value is kept when the copy fails.
+*/
+bool	hash_set_value(t_bucket_contents *item, const char *value)
+{
+	char	*copy;
+
+	if (item == NULL)
+		return (false);
+	if (value == NULL)
+		value = "";
+	copy = ft_strdup(value);
+	if (copy == NULL)
+		return (false);
+	free(item->data.value);
+	item->data.value = copy;
+	return (true);
+}

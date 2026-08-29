@@ -3,95 +3,45 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:41:47 by tafujise          #+#    #+#             */
-/*   Updated: 2026/03/02 23:48:01 by fendo            ###   ########.fr       */
+/*   Updated: 2026/08/28 18:20:00 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
-#include "../include/signal_handle.h"
-#include "../include/execute.h"
-#include "../include/lexer.h"
 #include "../include/parser.h"
-
-volatile sig_atomic_t g_signum = 0;
+#include "../include/shell.h"
+#include "../include/signal_handle.h"
 
 /*
-	handle_command_termination sets ctx->exit_code only when the main process cannot continue.
+	Read a line, run it, and start again. A line read while SIGINT
+	arrived is still run: readline gives back what was typed before it,
+	and the status of the interrupted prompt is 130.
 */
-void	handle_command_termination(t_status status, char *user_input, t_node *node, t_ctx *ctx)
+static void	shell_loop(t_ctx *ctx)
 {
-	(void)user_input;
-	(void)node;
-	/*
-		Here free "user_input" and the member of "node and ctx"(not node and ctx itself)
-		because node and ctx itself are not allocated memory.
-	*/
-	if (status == ST_EXIT)
-	{
-		clear_history();
-		exit(ctx->err.exit_code);
-	}
-	if (status == ST_FATAL)
-	{
-		clear_history();
-		exit(1);
-	}
-}
-
-static t_status	parse_and_execute(char *user_input, t_node *ast, t_ctx *ctx)
-{
-	char		*cursor;
-	t_status	status;
-	t_arenas	arenas;
-
-	cursor = user_input;
-	while (*cursor != '\0')
-	{
-		ft_arena_init(&arenas.ast, ARENA_DEFAULT_CHUNK_SIZE);
-		ft_arena_init(&arenas.tmp, ARENA_DEFAULT_CHUNK_SIZE);
-		ft_arena_init(&arenas.heredoc, ARENA_DEFAULT_CHUNK_SIZE);
-		status = parse(&cursor, ast, ctx, &arenas);
-		if (status == ST_FAILURE)
-		{
-			ft_arena_destroy(&arenas.tmp);
-			ft_arena_destroy(&arenas.heredoc);
-			ft_arena_destroy(&arenas.ast);
-			continue ;
-		}
-		else if (status == ST_EXIT || status == ST_FATAL)
-		{
-			close_heredocs(ast->left);
-			ast->left = NULL;
-			ft_arena_destroy(&arenas.tmp);
-			ft_arena_destroy(&arenas.heredoc);
-			ft_arena_destroy(&arenas.ast);
-			handle_command_termination(status, user_input, ast, ctx);
-		}
-		status = execute(ast, ctx);
-		if (ast->left)
-		{
-			close_heredocs(ast->left);
-			ast->left = NULL;
-		}
-		ft_arena_destroy(&arenas.tmp);
-		ft_arena_destroy(&arenas.heredoc);
-		ft_arena_destroy(&arenas.ast);
-		if (status == ST_FAILURE)
-			continue ;
-		else if (status == ST_EXIT || status == ST_FATAL)
-			handle_command_termination(status, user_input, ast, ctx);
-	}
-	return (ST_OK);
-}
-
-int main(int argc, char **argv, char **envp)
-{
-	t_ctx		ctx;
-	char		*user_input;
+	char		*input;
 	t_node		ast;
+
+	while (1)
+	{
+		g_signum = 0;
+		input = shell_read_line("minishell$ ");
+		if (input == NULL)
+			break ;
+		if (*input)
+			add_history(input);
+		if (g_signum == SIGINT)
+			ctx->err.exit_code = 130;
+		parse_and_execute(input, &ast, ctx);
+		free(input);
+	}
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_ctx	ctx;
 
 	(void)argc;
 	(void)argv;
@@ -99,23 +49,7 @@ int main(int argc, char **argv, char **envp)
 		return (1);
 	if (init_ctx(&ctx, envp) == FAILURE)
 		return (1);
-	while (1)
-	{
-		if (isatty(STDIN_FILENO) == 1) // if user_input is sent by tty.
-			user_input = readline("minishell$ ");
-		else
-			user_input = get_next_line(STDIN_FILENO); // if user_input is sent by pipe
-		if (user_input == NULL)
-			break; // ctrl-D sends EOF, and readline returns NULL receiving EOF.
-		if (*user_input)
-			add_history(user_input);
-		g_signum = 0;
-		parse_and_execute(user_input, &ast, &ctx);
-		/*
-			Here free "user_input" and the member of "node and ctx"(not node and ctx itself)
-			because node and ctx itself are not allocated memory.
-		*/
-	}
-	clear_history();
+	shell_loop(&ctx);
+	dispose_shell(NULL, &ctx);
 	return (ctx.err.exit_code);
 }

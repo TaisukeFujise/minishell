@@ -14,13 +14,29 @@ NAME:=minishell
 
 SRCDIR:=src
 SRCS:=main.c\
+	  shell/init_ctx.c\
+	  shell/init_env.c\
+	  shell/input.c\
+	  shell/run_line.c\
 	  signal/signal_handle.c\
+	  strutil/name.c\
+	  strutil/path_canon.c\
+	  strutil/msg.c\
 	  lexer/lexer.c\
 	  lexer/lexer_internal/lex_ops.c\
 	  lexer/lexer_internal/lex_assign_util.c\
 	  lexer/lexer_internal/lex_word.c\
 	  lexer/lexer_internal/lex_word_util.c\
 	  lexer/lexer_internal/lexer_utils.c\
+	  strutil/strbuf.c\
+	  expand/expand.c\
+	  expand/expand_internal/expand_buffer.c\
+	  expand/expand_internal/expand_cmd.c\
+	  expand/expand_internal/expand_fields.c\
+	  expand/expand_internal/expand_glob.c\
+	  expand/expand_internal/expand_heredoc.c\
+	  expand/expand_internal/expand_param.c\
+	  expand/expand_internal/expand_word.c\
 	  parser/parser_internal/parse_command.c\
 	  parser/parser_internal/parse_connective.c\
 	  parser/parser_internal/parser_assign.c\
@@ -38,33 +54,32 @@ SRCS:=main.c\
 	  builtin/pwd_cmd.c\
 	  builtin/unset_cmd.c\
 	  execute/execute.c\
-	  execute/init_ctx.c\
 	  execute/dispatch/exec_builtin.c\
 	  execute/dispatch/exec_connection.c\
 	  execute/dispatch/exec_disk.c\
-	  execute/dispatch/exec_null.c\
+	  execute/dispatch/exec_pipeline.c\
 	  execute/dispatch/exec_simple.c\
 	  execute/dispatch/exec_subshell.c\
-	  execute/expansion/assigns.c\
-	  execute/expansion/expand.c\
-	  execute/process/fd_bitmap.c\
-	  execute/process/pipe_utils.c\
-	  execute/process/register_pid.c\
+	  execute/environ/env_assign.c\
+	  execute/environ/env_lookup.c\
+	  execute/environ/envp_array.c\
+	  execute/utils/fd_utils.c\
+	  execute/process/procs.c\
 	  execute/process/wait_children.c\
 	  execute/redirect/apply_redirect.c\
 	  execute/redirect/heredoc_tmpfile.c\
-	  execute/redirect/stdio_guard.c\
 	  execute/utils/args_utils.c\
 	  execute/utils/path_utils.c\
-	  execute/utils/envp_utils.c\
 	  hashmap/hashmap_crud.c\
 	  hashmap/hashmap_free.c\
 	  hashmap/hashmap_utils.c
 
 HEADDIR:=include
 HEADERS:=minishell.h\
+		 shell.h\
 		 signal_handle.h\
 		 lexer.h\
+		 expand.h\
 		 execute.h\
 		 parser.h\
 		 hashmap.h

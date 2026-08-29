@@ -14,9 +14,71 @@
 #include "../../include/execute.h"
 #include "../../include/parser.h"
 
-t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table);
-t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
-				char *path);
+static t_status	set_var(t_hashtable *table, char *key, char *value);
+static t_status	update_pwd(t_ctx *ctx);
+static t_status	cd_move(char *target, t_ctx *ctx);
+
+/*
+	Where cd is asked to go. Without an operand it is HOME, and an empty
+	destination is the directory the shell is in already, which is what
+	bash does with cd "" and with an empty HOME. NULL when there is
+	nowhere to go; the reason is reported here.
+*/
+static char	*cd_destination(t_word_list *args, t_ctx *ctx)
+{
+	char	*target;
+
+	if (args != NULL)
+		target = args->wd->str;
+	else
+	{
+		target = env_lookup(ctx->tmp_table, ctx->env_table, "HOME");
+		if (target == NULL)
+		{
+			print_error("cd", "HOME not set");
+			return (NULL);
+		}
+	}
+	if (*target == '\0')
+		return (".");
+	return (target);
+}
+
+/*
+	The move, and the name the shell will know the place by. "." and
+	".." are resolved in the name before chdir() sees it, so "cd
+	link/.." goes back to where the name was written and not to the
+	physical parent of the link, as bash, dash and zsh all do. The
+	shell's own path is the base: a PWD a command overwrote does not
+	steer it. [bash-5.3 builtins/cd.def change_to_directory()]
+*/
+static t_status	cd_move(char *target, t_ctx *ctx)
+{
+	char	*path;
+	int		moved;
+
+	path = NULL;
+	if (ctx->cwd != NULL || *target == '/')
+	{
+		path = path_canon(path_absolute(ctx->cwd, target));
+		if (path == NULL)
+			return (ST_FATAL);
+		moved = chdir(path);
+	}
+	else
+		moved = chdir(target);
+	if (moved < 0)
+	{
+		print_error_at("cd", target, strerror(errno));
+		return (free(path), ST_FAILURE);
+	}
+	if (path != NULL)
+	{
+		free(ctx->cwd);
+		ctx->cwd = path;
+	}
+	return (ST_OK);
+}
 
 /*
 	cd [directory]
@@ -31,103 +93,48 @@ t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
 */
 t_status	cd_cmd(t_word_list *args, t_ctx *ctx)
 {
-	t_bucket_contents	*home;
-	char				*path;
+	char		*target;
+	t_status	status;
 
-	if (args == NULL)
+	if (args != NULL && args->next != NULL)
 	{
-		home = hash_search("HOME", ctx->tmp_table);
-		if (home == NULL)
-		{
-			home = hash_search("HOME", ctx->env_table);
-			if (home == NULL)
-			{
-				ft_putendl_fd("minishell: cd: HOME not set", STDERR_FILENO);
-				return (ST_FAILURE);
-			}
-		}
-		if (chdir(home->data.value) < 0)
-		{
-			perror("minishell: cd");
-			return (ST_FAILURE);
-		}
-		path = ft_strdup(home->data.value);
-		if (path == NULL)
-			return (ST_FATAL);
-		return (update_pwd(ctx->tmp_table, ctx->env_table, path));
-	}
-	if (count_args(args) > 1)
-	{
-		ft_putendl_fd("minishell: cd: too many arguments", STDERR_FILENO);
+		print_error("cd", "too many arguments");
 		return (ST_FAILURE);
 	}
-	if (chdir(args->wd->str) < 0)
-	{
-		perror("minishell: cd");
+	target = cd_destination(args, ctx);
+	if (target == NULL)
 		return (ST_FAILURE);
-	}
-	path = getcwd(NULL, 0);
-	if (path == NULL)
-	{
-		perror("minishell: cd");
-		return (ST_FAILURE);
-	}
-	if (update_pwd(ctx->tmp_table, ctx->env_table, path) != ST_OK)
-		return (free(path), ST_FATAL);
-	return (ST_OK);
+	status = cd_move(target, ctx);
+	if (status != ST_OK)
+		return (status);
+	return (update_pwd(ctx));
 }
 
-t_status	_update_oldpwd(t_hashtable *tmp_table, t_hashtable *env_table)
+/*
+	OLDPWD becomes the value PWD had, and empty when it had none, as
+	bash leaves it. PWD is the name the move settled on, so it tells
+	the place the way the operand did. Neither string is owned here,
+	the table copies what it is given. [review D37-24]
+*/
+static t_status	update_pwd(t_ctx *ctx)
 {
-	t_bucket_contents	*pwd;
-	char				*oldpwd_key;
-	t_bucket_contents	*oldpwd;
+	t_status	status;
 
-	pwd = hash_search("PWD", tmp_table);
-	if (pwd == NULL)
-	{
-		pwd = hash_search("PWD", env_table);
-		if (pwd == NULL)
-			return (ST_OK);
-	}
-	oldpwd_key = ft_strdup("OLDPWD");
-	if (oldpwd_key == NULL)
-		return (ST_FATAL);
-	oldpwd = hash_insert(oldpwd_key, env_table);
-	free(oldpwd_key);
-	if (oldpwd == NULL)
-		return (ST_FATAL);
-	if (oldpwd->data.value != NULL)
-	{
-		free(oldpwd->data.value);
-		oldpwd->data.value = NULL;
-	}
-	oldpwd->data.value = ft_strdup(pwd->data.value);
-	if (oldpwd->data.value == NULL)
-		return (ST_FATAL);
-	return (ST_OK);
+	status = set_var(ctx->env_table, "OLDPWD",
+			env_lookup(ctx->tmp_table, ctx->env_table, "PWD"));
+	if (status != ST_OK)
+		return (status);
+	return (set_var(ctx->env_table, "PWD", ctx->cwd));
 }
 
-t_status	update_pwd(t_hashtable *tmp_table, t_hashtable *env_table,
-		char *path)
+static t_status	set_var(t_hashtable *table, char *key, char *value)
 {
-	t_bucket_contents	*pwd;
-	char				*pwd_key;
+	t_bucket_contents	*item;
 
-	if (_update_oldpwd(tmp_table, env_table) != ST_OK)
+	item = hash_insert(key, table);
+	if (item == NULL)
 		return (ST_FATAL);
-	pwd_key = ft_strdup("PWD");
-	if (pwd_key == NULL)
+	if (!hash_set_value(item, value))
 		return (ST_FATAL);
-	pwd = hash_insert(pwd_key, env_table);
-	free(pwd_key);
-	if (pwd == NULL)
-		return (ST_FATAL);
-	if (pwd->data.value != NULL)
-	{
-		free(pwd->data.value);
-		pwd->data.value = NULL;
-	}
-	pwd->data.value = path;
 	return (ST_OK);
 }

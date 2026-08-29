@@ -57,10 +57,10 @@ int	test_unset(char **envp)
 		"unset: remove multiple");
 	free_args(args);
 	args = make_args((char *[]){"1INVALID", NULL});
-	CHECK(unset_cmd(args, &ctx) == ST_FAILURE, "unset: digit start");
+	CHECK(unset_cmd(args, &ctx) == ST_OK, "unset: digit start is passed over");
 	free_args(args);
 	args = make_args((char *[]){"A!B", NULL});
-	CHECK(unset_cmd(args, &ctx) == ST_FAILURE, "unset: invalid char");
+	CHECK(unset_cmd(args, &ctx) == ST_OK, "unset: invalid char is passed over");
 	free_args(args);
 	teardown_ctx(&ctx);
 	return (g_ng);

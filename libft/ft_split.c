@@ -33,17 +33,6 @@ static size_t	count_words(char const *s, char c)
 	return (count);
 }
 
-char	*ft_strndup(const char *src, size_t word_len)
-{
-	char	*ptr;
-
-	ptr = (char *)malloc(sizeof(char) * (word_len + 1));
-	if (!ptr)
-		return (NULL);
-	ft_strlcpy(ptr, src, word_len + 1);
-	return (ptr);
-}
-
 static void	move_ptr_by_one_word(char const **s, size_t *word_len, char c)
 {
 	while (**s != c && **s)

@@ -19,30 +19,44 @@ CFLAGS := -Wall -Wextra -Werror -I$(ROOT)/include -I$(ROOT)/libft
 LIBFT_DIR := $(ROOT)/libft
 LIBFT := $(LIBFT_DIR)/libft.a
 
-TEST_SRCS := main.c
+TEST_SRCS := msg.c name.c strbuf.c main.c
 EXECUTE_SRCS := \
 	init_ctx.c \
-	fd_bitmap.c\
-	exec_null.c \
 	pipe_utils.c \
-	register_pid.c \
-	stdio_guard.c \
+	procs.c \
 	apply_redirect.c \
 	assigns.c\
 	heredoc_tmpfile.c\
+	envp_utils.c \
+	args_utils.c \
+	path_utils.c \
+	exec_builtin.c \
+	exec_simple.c \
+	exec_disk.c \
+	wait_children.c \
+	signal_handle.c \
 
 HASHMAP_SRCS := $(notdir $(wildcard $(ROOT)/src/hashmap/*.c))
+BUILTIN_SRCS := $(notdir $(wildcard $(ROOT)/src/builtin/*.c))
 
-SRCS := $(TEST_SRCS) $(EXECUTE_SRCS) $(HASHMAP_SRCS)
+EXPAND_SRCS := expand.c $(notdir $(wildcard $(ROOT)/src/expand/expand_internal/*.c))
+
+SRCS := $(TEST_SRCS) $(EXECUTE_SRCS) $(HASHMAP_SRCS) $(BUILTIN_SRCS) $(EXPAND_SRCS)
 
 OBJDIR := obj
 OBJS := $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))
-vpath %.c $(ROOT)/src/hashmap \
+vpath %.c $(ROOT)/src/strutil \
+	$(ROOT)/src/hashmap \
 	$(ROOT)/src/execute \
 	$(ROOT)/src/execute/dispatch \
 	$(ROOT)/src/execute/expansion \
 	$(ROOT)/src/execute/process \
 	$(ROOT)/src/execute/redirect \
+	$(ROOT)/src/execute/utils \
+	$(ROOT)/src/builtin \
+	$(ROOT)/src/expand \
+	$(ROOT)/src/expand/expand_internal \
+	$(ROOT)/src/signal \
 	.
 
 LDLIBS := -lreadline

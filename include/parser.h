@@ -30,6 +30,12 @@
 # define PARSER_MSG_HD_EOF_SUFFIX "')"
 # define PARSER_MSG_HD_MAX "maximum here-document count exceeded"
 # define HEREDOC_MAX 16
+/*
+	What a shell leaves behind when it is asked for more here-documents
+	than it holds: bash reports the syntax error and ends the session with
+	EX_BADUSAGE. [bash parse.y push_heredoc(), shell.h]
+*/
+# define EXIT_BADUSAGE 2
 
 typedef enum e_node_kind
 {
@@ -43,7 +49,6 @@ typedef enum e_node_kind
 typedef struct s_heredoc
 {
 	t_word	raw_str;
-	int		content_fd; // init value is -1
 }	t_heredoc;
 
 typedef struct s_redirect	t_redirect;
@@ -53,6 +58,7 @@ struct s_redirect
 	t_op_redir	op;
 	t_word		target; // filename or delimiter
 	int			io_number;
+	int			saved; // fd holding what io_number had, while applied. 0: none
 	t_heredoc	hd;
 	t_redirect	*next;
 };
@@ -90,6 +96,6 @@ struct s_node
 };
 
 t_status	parse(char **cursor, t_node *ast, t_ctx *ctx, t_arenas *arenas);
-void		close_heredocs(t_node *node);
+void		free_heredocs(t_node *node);
 
 #endif

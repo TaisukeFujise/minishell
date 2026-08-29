@@ -11,87 +11,33 @@
 /* ************************************************************************** */
 
 #include "../../include/builtin.h"
+#include "../../include/execute.h"
 #include "../../include/hashmap.h"
-
-void		print_env_from_envtable(t_hashtable *tmp_table,
-				t_hashtable *env_table);
-void		print_env_from_tmptable(t_hashtable *tmp_table,
-				t_hashtable *env_table);
-void		print_entry(t_bucket_contents *item);
 
 /*
 	env
 	"env" display the env table, and update the ctx->exit_code.
+	It shares the environment of the current command with execve.
+	With operands it is not a builtin at all: exec_simple sends it down
+	the disk command path, where the env of the system runs it.
 */
 t_status	env_cmd(t_word_list *args, t_ctx *ctx)
 {
-	if (args != NULL)
-		return (ST_FAILURE); // env: too many arguments
-	if (args == NULL)
+	char	**envp;
+	int		i;
+
+	(void)args;
+	envp = build_envp(ctx->tmp_table, ctx->env_table);
+	if (envp == NULL)
+		return (ST_FATAL);
+	i = 0;
+	while (envp[i])
 	{
-		print_env_from_envtable(ctx->tmp_table, ctx->env_table);
-		print_env_from_tmptable(ctx->tmp_table, ctx->env_table);
+		if (!write_all(STDOUT_FILENO, envp[i], ft_strlen(envp[i]))
+			|| !write_all(STDOUT_FILENO, "\n", 1))
+			return (free_envp(envp), ST_FAILURE);
+		i++;
 	}
+	free_envp(envp);
 	return (ST_OK);
-}
-
-void	print_env_from_envtable(t_hashtable *tmp_table, t_hashtable *env_table)
-{
-	int					i;
-	t_bucket_contents	*item;
-	t_bucket_contents	*item_tmp;
-
-	if (env_table == 0 || env_table->entry_count == 0)
-		return ;
-	i = 0;
-	while (i < env_table->bucket_size)
-	{
-		item = hash_items(i, env_table);
-		while (item != NULL)
-		{
-			item_tmp = hash_search(item->key, tmp_table);
-			if (item_tmp == NULL)
-				print_entry(item);
-			else
-			{
-				print_entry(item_tmp);
-			}
-			item = item->next;
-		}
-		i++;
-	}
-}
-
-void	print_env_from_tmptable(t_hashtable *tmp_table, t_hashtable *env_table)
-{
-	int					i;
-	t_bucket_contents	*item;
-
-	i = 0;
-	if (tmp_table == NULL)
-		return ;
-	while (i < tmp_table->bucket_size)
-	{
-		item = hash_items(i, tmp_table);
-		while (item != NULL)
-		{
-			if (hash_search(item->key, env_table) == NULL)
-			{
-				print_entry(item);
-			}
-			item = item->next;
-		}
-		i++;
-	}
-}
-
-void	print_entry(t_bucket_contents *item)
-{
-	if (item->data.exported)
-	{
-		if (item->data.value != NULL)
-		{
-			printf("%s=%s\n", item->key, item->data.value);
-		}
-	}
 }

@@ -6,7 +6,7 @@
 /*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 20:40:52 by tafujise          #+#    #+#             */
-/*   Updated: 2026/05/09 00:19:18 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/05/10 21:57:07 by tafujise         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <stdint.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <string.h>
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
@@ -31,39 +32,45 @@
 
 extern volatile sig_atomic_t	g_signum;
 
-typedef struct s_fd_bitmap
-{
-	int							size;
-	char						*bitmap;
-}								t_fd_bitmap;
-
 typedef struct s_arenas
 {
 	t_arena						ast;
 	t_arena						tmp;
-	t_arena						heredoc;
 }								t_arenas;
 
 typedef struct s_error
 {
 	int							exit_code;
-	char						*err_msg;
 }								t_error;
 
 typedef struct s_ctx
 {
 	t_error						err;
-	t_hashtable *env_table; // environment variable table. When execve, this is
-							// converted to envp.
-	// Reset following member on every command.
-	t_hashtable *tmp_table; // tmp environment variable table. This is set by
-							// assignment word in front of cmd.
-	t_fd_bitmap					*bitmap;
-	// It's for managing fd,especially pipe read end fd,when using pipe.
-	pid_t *pids;        // Array of pids.
-	int npid;           // Count of pids.
-	int already_forked; // Flag about whether already forked or not.
+	t_hashtable					*env_table;
+	// environment variable table. When execve,this is converted to envp.
+	/* Reset following member on every command. */
+	t_hashtable					*tmp_table;
+	// tmp environment variable table. This is set by assignment word
+	// in front of cmd.
+	t_arenas					*arenas;
+	// arenas of the current parse iteration. NULL outside of it.
+	bool						interactive;
+	// whether a terminal drives the shell. Decided once at startup, and
+	// cleared in a forked child: a subshell is never the interactive one.
+	char						*cwd;
+	// where the shell is, by the name it got there under. Kept apart
+	// from PWD, which a command is free to overwrite.
 }								t_ctx;
+
+char							*path_absolute(char *base, char *arg);
+char							*path_canon(char *path);
+bool							write_all(int fd, const char *s, size_t len);
+void							print_error(const char *name,
+									const char *reason);
+void							print_error_at(const char *name,
+									const char *arg, const char *reason);
+void							print_error_name(const char *name,
+									const char *word, const char *reason);
 
 typedef enum e_status
 {
@@ -103,8 +110,7 @@ typedef enum e_flag
 	W_DOLL = 1u << 2,
 	W_WILD = 1u << 3,
 	W_ASSIGN = 1u << 4,
-	W_APPEND = 1u << 5,
-	W_ID = 1u << 6
+	W_APPEND = 1u << 5
 }								t_flag;
 
 typedef struct s_word			t_word;
@@ -112,8 +118,8 @@ typedef struct s_word			t_word;
 struct							s_word
 {
 	char						*str;
-	int							len;
-	char						*eq_ptr;
+	size_t						len;
+	size_t						eq_pos;
 	uint8_t						flag;
 	t_word						*next;
 };
@@ -134,5 +140,21 @@ struct							s_word_list
 	t_word						*wd;
 	t_word_list					*next;
 };
+
+typedef struct s_strbuf
+{
+	char						*data;
+	size_t						len;
+	size_t						cap;
+}								t_strbuf;
+
+bool							strbuf_init(t_strbuf *buf);
+bool							strbuf_append(t_strbuf *buf, const char *str,
+									size_t len);
+char							*strbuf_detach(t_strbuf *buf, size_t *len);
+void							strbuf_free(t_strbuf *buf);
+
+size_t							str_name_len(const char *str);
+size_t							str_assign_pos(const char *str, bool *append);
 
 #endif

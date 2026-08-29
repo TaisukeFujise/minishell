@@ -30,6 +30,7 @@ SRCS := ft_isalpha.c\
 		ft_toupper.c\
 		ft_tolower.c\
 		ft_strchr.c\
+		ft_strchrnul.c\
 		ft_strrchr.c\
 		ft_strcmp.c\
 		ft_strncmp.c\
@@ -38,7 +39,9 @@ SRCS := ft_isalpha.c\
 		ft_strnstr.c\
 		ft_atoi.c\
 		ft_calloc.c\
+		ft_realloc.c\
 		ft_strdup.c\
+		ft_strndup.c\
 		ft_substr.c\
 		ft_strjoin.c\
 		ft_strjoin_free.c\
@@ -55,7 +58,6 @@ SRCS := ft_isalpha.c\
 		ft_arena_init.c\
 		ft_arena_alloc.c\
 		ft_arena_calloc.c\
-		ft_arena_realloc.c\
 		ft_arena_strdup.c\
 		ft_arena_strndup.c\
 		ft_arena_reset.c\

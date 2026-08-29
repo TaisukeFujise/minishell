@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 19:27:55 by tafujise          #+#    #+#             */
-/*   Updated: 2026/02/16 02:59:24 by tafujise         ###   ########.fr       */
+/*   Updated: 2026/08/28 19:06:58 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,14 @@
 #include "../../include/parser.h"
 
 /*
-	execute init fd_bitmap and wrap execute_internal.
-	after the func call, dispose the fd_bitmap, and return t_status result.
+	execute wraps execute_internal and returns a t_status result.
 	parse error passes NULL root ast.
 */
 t_status	execute(t_node *root, t_ctx *ctx)
 {
-	t_status	result;
-
 	if (root == NULL)
 		return (ST_OK);
-	ctx->bitmap = new_fd_bitmap(FD_BITMAP_SIZE);
-	if (ctx->bitmap == NULL)
-		return (ST_FATAL);
-	result = execute_internal(root, ctx, NO_PIPE, NO_PIPE);
-	dispose_fd_bitmap(ctx->bitmap);
-	return (result);
+	return (execute_internal(root, ctx, EXEC_MAY_FORK));
 }
 
 /*
@@ -40,30 +32,39 @@ t_status	execute(t_node *root, t_ctx *ctx)
 	- exec_subshell
 	- exec_simple
 	- exec_connection
-*/
-t_status	execute_internal(t_node *node, t_ctx *ctx, int pipe_in,
-		int pipe_out)
-{
-	t_status	result;
 
+	mode says which process this node is evaluated on: the shell itself,
+	or a process that exists only for this node. See t_exec_mode.
+*/
+t_status	execute_internal(t_node *node, t_ctx *ctx, t_exec_mode mode)
+{
 	if (node == NULL)
 		return (ST_OK);
 	if (node->node_kind == NODE_SUBSHELL)
-	{
-		result = exec_subshell(node, ctx, pipe_in, pipe_out);
-		if (pipe_in != NO_PIPE && pipe_out != NO_PIPE)
-			result = collect_child_result(ctx);
-	}
-	else if (node->node_kind == NODE_SIMPLE)
-	{
-		result = exec_simple(node, ctx, pipe_in, pipe_out);
-		if (ctx->already_forked && pipe_out == NO_PIPE)
-			result = collect_child_result(ctx);
-	}
-	else if (node->node_kind == NODE_COMPLETE || node->node_kind == NODE_ANDOR
+		return (exec_subshell(node, ctx, mode));
+	if (node->node_kind == NODE_SIMPLE)
+		return (exec_simple(node, ctx, mode));
+	if (node->node_kind == NODE_COMPLETE || node->node_kind == NODE_ANDOR
 		|| node->node_kind == NODE_PIPE)
-		result = exec_connection(node, ctx, pipe_in, pipe_out);
-	else
-		result = ST_FATAL;
-	return (result);
+		return (exec_connection(node, ctx, mode));
+	return (ST_FATAL);
+}
+
+/*
+	The numeric status of a command comes from the command: from the
+	builtin that ran, or from waiting for the child. This settles the
+	status of what happens around it instead: an expansion, a fork or a
+	redirect the shell could not carry out is a plain failure, and an
+	internal failure that chose no code must not read as success.
+	[review D37-12, D37-17]
+*/
+t_status	set_exit_code(t_ctx *ctx, t_status status)
+{
+	if (status == ST_OK)
+		ctx->err.exit_code = 0;
+	else if (status == ST_FAILURE)
+		ctx->err.exit_code = 1;
+	else if (status == ST_FATAL && ctx->err.exit_code == 0)
+		ctx->err.exit_code = 1;
+	return (status);
 }

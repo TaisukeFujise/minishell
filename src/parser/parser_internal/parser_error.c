@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_error.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/25 19:35:02 by fendo             #+#    #+#             */
+/*   Updated: 2026/08/25 19:36:08 by fendo            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser_internal.h"
 
 static char	*token_text(t_token *tk, size_t *text_len)
@@ -85,5 +97,5 @@ void	parser_fail(t_parser_state *ps, t_status status, char *msg)
 		if (!msg)
 			msg = PARSER_MSG_SYNTAX;
 	}
-	ps->ctx->err.err_msg = msg;
+	print_error(NULL, msg);
 }

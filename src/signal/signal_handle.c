@@ -13,15 +13,35 @@
 #include "../../include/minishell.h"
 #include "../../include/signal_handle.h"
 
-int	handle_readline_signal()
+/*
+	The one global the subject allows: the number of a signal that
+	arrived. Nothing else is stored here and nothing reads through it.
+*/
+
+volatile sig_atomic_t	g_signum;
+
+int	handle_readline_signal(void)
 {
 	if (g_signum == SIGINT)
 	{
-		write(1, "^C", 2);
-		// rl_redisplay();
+		write(STDERR_FILENO, "^C", 2);
+		rl_replace_line("", 0);
 		rl_done = 1;
 	}
 	return (0);
+}
+
+/*
+	A command runs with the dispositions it would have had if the shell
+	had not touched them: the shell ignores SIGQUIT and catches SIGINT
+	for its prompt, and neither belongs to the command it starts. An
+	ignored signal survives execve, so only the child can undo it.
+	[review D37-08]
+*/
+void	reset_signals(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 }
 
 static void	signal_handler(int signum)
@@ -29,12 +49,16 @@ static void	signal_handler(int signum)
 	g_signum = signum;
 }
 
+/*
+	rl_catch_signals: a non-zero value means using the default signal
+	handler, so I set 0 to use the original handler.
+*/
 int	set_signal(void)
 {
 	struct sigaction	sa_sigint;
 	struct sigaction	sa_ignore;
 
-	rl_catch_signals = 0; // non-zero value means using default signal handler, so I set 0 to use original handler.
+	rl_catch_signals = 0;
 	rl_event_hook = handle_readline_signal;
 	ft_bzero(&sa_sigint, sizeof(sa_sigint));
 	ft_bzero(&sa_ignore, sizeof(sa_ignore));
@@ -50,5 +74,3 @@ int	set_signal(void)
 		return (FAILURE);
 	return (SUCCESS);
 }
-
-

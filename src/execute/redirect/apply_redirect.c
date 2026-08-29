@@ -3,98 +3,130 @@
 /*                                                        :::      ::::::::   */
 /*   apply_redirect.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tafujise <tafujise@student.42.jp>          +#+  +:+       +#+        */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 12:31:57 by tafujise          #+#    #+#             */
-/*   Updated: 2026/05/10 21:50:52 by fujisetaisuke    ###   ########.fr       */
+/*   Updated: 2026/08/27 20:33:57 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/execute.h"
+#include <string.h>
 #include "../../../include/minishell.h"
 #include "../../../include/parser.h"
 
-static int	open_tmp_write_fd(char **filename);
-static int	open_heredoc_fd(t_redirect *redirect);
 static int	open_redirect_fd(t_redirect *redirect);
 
 /*
-	apply_redirects call redirect func depending on redirect->op.
-	- apply_redir_great
-	- apply_redir_less
-	- apply_redir_dgreat
-	- apply_redir_dless
+	Copy fd to a number at or above floor. dup() hands out the lowest free
+	fd, which a later redirect of the same command would overwrite, so the
+	low copies are held until a high one comes out. Returns -1 if fd is
+	not open. bash moves backups the same way with fcntl(F_DUPFD).
 */
-t_status	apply_redirects(t_redirect *redirects)
+static int	dup_above(int fd, int floor)
 {
-	t_status	status;
-	int			fd;
+	int	low;
+	int	high;
 
-	status = ST_OK;
+	low = dup(fd);
+	if (low < 0 || low >= floor)
+		return (low);
+	high = dup_above(fd, floor);
+	close(low);
+	return (high);
+}
+
+/*
+	The backup of an io number must sit above every io number this command
+	redirects, or one of them overwrites it. It has to clear the standard
+	fds too: one of them can already be closed when the shell is started,
+	and a backup that takes fd 2 makes the shell report its errors down
+	the output of the command.
+*/
+static int	backup_floor(t_redirect *redirects)
+{
+	int	floor;
+
+	floor = STDERR_FILENO + 1;
 	while (redirects)
 	{
+		if (redirects->io_number >= floor)
+			floor = redirects->io_number + 1;
+		redirects = redirects->next;
+	}
+	return (floor);
+}
+
+/*
+	Apply the redirects of one command, in the order they were written.
+	See t_redir_mode for what mode decides.
+*/
+t_status	apply_redirects(t_redirect *redirects, t_redir_mode mode)
+{
+	int	floor;
+	int	fd;
+
+	floor = 0;
+	if (mode == REDIR_RESTORE)
+		floor = backup_floor(redirects);
+	while (redirects)
+	{
+		if (mode == REDIR_RESTORE)
+		{
+			redirects->saved = dup_above(redirects->io_number, floor);
+			if (redirects->saved < 0)
+				redirects->saved = FD_WAS_CLOSED;
+		}
 		fd = open_redirect_fd(redirects);
 		if (fd < 0)
 			return (ST_FAILURE);
-		if (dup2(fd, redirects->io_number) < 0)
+		if (move_fd(fd, redirects->io_number) != ST_OK)
 			return (close(fd), ST_FAILURE);
-		close(fd);
 		redirects = redirects->next;
 	}
+	return (ST_OK);
+}
+
+/*
+	Put back what this command replaced, last redirect first, so that
+	several redirects of one io number unwind to the state it started in.
+*/
+t_status	undo_redirects(t_redirect *redirects)
+{
+	t_status	status;
+	int			saved;
+
+	if (redirects == NULL)
+		return (ST_OK);
+	status = undo_redirects(redirects->next);
+	saved = redirects->saved;
+	redirects->saved = 0;
+	if (saved == FD_WAS_CLOSED)
+		close(redirects->io_number);
+	else if (saved > 0 && move_fd(saved, redirects->io_number) != ST_OK)
+		return (close(saved), ST_FATAL);
 	return (status);
 }
 
+/*
+	The file a redirect names, or below zero with the reason already
+	reported. A heredoc reports whatever went wrong with its own file.
+*/
 static int	open_redirect_fd(t_redirect *redirect)
-{
-	if (redirect->op == REDIR_GREATER)
-		return (open(redirect->target.str, O_WRONLY | O_CREAT | O_TRUNC, 0644));
-	else if (redirect->op == REDIR_LESS)
-		return (open(redirect->target.str, O_RDONLY, 0644));
-	else if (redirect->op == REDIR_DGREATER)
-		return (open(redirect->target.str, O_WRONLY | O_CREAT | O_APPEND,
-				0644));
-	else if (redirect->op == REDIR_DLESS)
-		return (open_heredoc_fd(redirect));
-	else
-		return (-1);
-}
-
-static int	open_heredoc_fd(t_redirect *redirect)
-{
-	char	*filename;
-	int		write_fd;
-	int		read_fd;
-
-	filename = NULL;
-	write_fd = open_tmp_write_fd(&filename);
-	if (write_fd < 0)
-		return (-1);
-	if (write(write_fd, redirect->hd.raw_str.str, redirect->hd.raw_str.len) < 0)
-		return (free(filename), close(write_fd), -1);
-	close(write_fd);
-	read_fd = open(filename, O_RDONLY);
-	if (read_fd < 0)
-		return (free(filename), -1);
-	if (unlink(filename) < 0)
-		return (free(filename), close(read_fd), -1);
-	redirect->hd.content_fd = read_fd;
-	return (free(filename), read_fd);
-}
-
-static int	open_tmp_write_fd(char **filename)
 {
 	int	fd;
 
-	fd = -1;
-	while (fd < 0)
-	{
-		free(*filename);
-		*filename = create_tmp_filename();
-		if (*filename == NULL)
-			return (-1);
-		fd = open(*filename, O_WRONLY | O_CREAT | O_EXCL, 0644);
-		if (fd < 0 && errno != EEXIST)
-			return (free(*filename), *filename = NULL, -1);
-	}
+	if (redirect->op == REDIR_DLESS)
+		return (open_heredoc_fd(redirect));
+	if (redirect->op == REDIR_GREATER)
+		fd = open(redirect->target.str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else if (redirect->op == REDIR_LESS)
+		fd = open(redirect->target.str, O_RDONLY, 0644);
+	else if (redirect->op == REDIR_DGREATER)
+		fd = open(redirect->target.str, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else
+		return (-1);
+	if (fd < 0)
+		print_error(redirect->target.str, strerror(errno));
 	return (fd);
 }

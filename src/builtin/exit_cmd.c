@@ -14,69 +14,67 @@
 #include "../../include/execute.h"
 #include "../../include/parser.h"
 
-bool		is_valid_number(char *str);
-
-static void	print_numeric_argument_required(char *arg)
+/*
+	The number of "exit n", as bash reads it: the space around it is
+	skipped, a sign is allowed, and the whole of the rest has to be
+	digits. [bash-5.3 general.c valid_number()]
+*/
+static bool	parse_exit_status(char *str, long *out)
 {
-	ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
-	ft_putstr_fd(arg, STDERR_FILENO);
-	ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+	char	*scan;
+	bool	has_digit;
+
+	scan = str;
+	while (ft_isspace(*scan))
+		scan++;
+	if (*scan == '+' || *scan == '-')
+		scan++;
+	has_digit = false;
+	while (ft_isdigit(*scan))
+	{
+		has_digit = true;
+		scan++;
+	}
+	while (ft_isspace(*scan))
+		scan++;
+	if (!has_digit || *scan != '\0')
+		return (false);
+	errno = 0;
+	*out = ft_atol(str);
+	return (errno != ERANGE);
 }
 
 /*
 	exit [n]
-	"exit" exit the process with the args' number,
-		and update the ctx->exit_code.
+	The argument is read before it is counted: "exit abc 1" is a numeric
+	error, not too many arguments, and leaves the shell with 2. Too many
+	arguments is the one case that does not exit at all. With no argument
+	the status of the last command stands.
+	An interactive shell says that it is leaving before it looks at the
+	argument at all, on stderr, so that "exit 0 > file" does not put it
+	in the file.
+	[bash-5.3 builtins/common.c get_exitstat(), builtins/exit.def]
 */
 t_status	exit_cmd(t_word_list *args, t_ctx *ctx)
 {
-	long	arg_num;
+	long	value;
 
+	if (ctx->interactive)
+		write_all(STDERR_FILENO, "exit\n", 5);
 	if (args == NULL)
+		return (ST_EXIT);
+	if (!parse_exit_status(args->wd->str, &value))
 	{
-		ctx->err.exit_code = 0;
+		print_error_at("exit", args->wd->str, "numeric argument required");
+		ctx->err.exit_code = 2;
 		return (ST_EXIT);
 	}
-	if (count_args(args) > 1)
+	if (args->next != NULL)
 	{
-		ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
+		print_error("exit", "too many arguments");
 		ctx->err.exit_code = 1;
 		return (ST_FAILURE);
 	}
-	if (is_valid_number(args->wd->str) == false)
-	{
-		print_numeric_argument_required(args->wd->str);
-		ctx->err.exit_code = 2;
-		return (ST_FATAL);
-	}
-	errno = 0;
-	arg_num = ft_atol(args->wd->str);
-	if (errno == ERANGE)
-	{
-		print_numeric_argument_required(args->wd->str);
-		ctx->err.exit_code = 2;
-		return (ST_FATAL);
-	}
-	write(STDOUT_FILENO, "exit", 4);
-	ctx->err.exit_code = (((arg_num % 256) + 256) % 256);
+	ctx->err.exit_code = (int)(((value % 256) + 256) % 256);
 	return (ST_EXIT);
-}
-
-bool	is_valid_number(char *str)
-{
-	int		i;
-	bool	has_digit;
-
-	i = 0;
-	has_digit = false;
-	if (str[i] == '+' || str[i] == '-')
-		i++;
-	while (str[i])
-	{
-		if (!ft_isdigit(str[i]))
-			return (false);
-		has_digit = true;
-		i++;
-	}
-	return (has_digit);
 }

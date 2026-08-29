@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_command.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fendo <fendo@student.42.jp>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/25 19:36:15 by fendo             #+#    #+#             */
+/*   Updated: 2026/08/25 19:36:16 by fendo            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser_internal.h"
 
 static void	append_simple_word(t_parser_state *ps, t_node *node, t_token tk)
@@ -50,9 +62,10 @@ t_node	*parse_simple(t_parser_state *ps)
 		&& !node->u_node.simple_command.args
 		&& !node->u_node.simple_command.redirects)
 		parser_fail(ps, ST_FAILURE, unexpected_token_msg(ps, peek(ps)));
-	if (ps->status != ST_OK)
-		return (NULL);
-	return (node);
+	if (ps->status == ST_OK)
+		return (node);
+	free_heredocs(node);
+	return (NULL);
 }
 
 /*
@@ -84,9 +97,10 @@ t_node	*parse_subshell(t_parser_state *ps)
 		&& (peek(ps)->token_kind == TK_REDIR
 			|| peek(ps)->token_kind == TK_IO_NUMBER))
 		add_redir(ps, &node->u_node.subshell.redirects);
-	if (ps->status != ST_OK)
-		return (NULL);
-	return (node);
+	if (ps->status == ST_OK)
+		return (node);
+	free_heredocs(node);
+	return (NULL);
 }
 
 /*
@@ -102,10 +116,16 @@ t_node	*parse_compound_list(t_parser_state *ps)
 
 	child = parse_andor(ps);
 	if (ps->status != ST_OK || !child)
+	{
+		free_heredocs(child);
 		return (NULL);
+	}
 	head = new_node(ps, NODE_COMPLETE);
 	if (!head)
+	{
+		free_heredocs(child);
 		return (NULL);
+	}
 	head->left = child;
 	if (ps->status == ST_OK
 		&& skip_newline(ps, SKIP_AND_COLLECT)

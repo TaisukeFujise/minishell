@@ -10,41 +10,88 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../../include/execute.h"
+#include <sys/stat.h>
 #include "../../../include/parser.h"
 
-char	*extract_path_value(t_hashtable *tmp_table, t_hashtable *env_table)
+/*
+	Whether the name is a pathname rather than a name to look up in PATH.
+	[POSIX.1-2024 XCU 2.9.1.1 Command Search and Execution]
+*/
+bool	has_slash(char *str)
 {
-	t_bucket_contents	*item;
-
-	if (env_table == 0 || env_table->entry_count == 0)
-		return (NULL);
-	item = hash_search("PATH", tmp_table);
-	if (item != NULL)
-		return (item->data.value);
-	item = hash_search("PATH", env_table);
-	if (item == NULL)
-		return (NULL);
-	return (item->data.value);
-}
-
-char	*extract_path_entry(char *path_value)
-{
-	int		i;
-	char	*dir;
+	int	i;
 
 	i = 0;
-	while (path_value[i])
+	while (str[i])
 	{
-		if (path_value[i] == ':')
-			break ;
+		if (str[i] == '/')
+			return (true);
 		i++;
 	}
-	if (i == 0)
-		return (ft_strdup("./"));
-	dir = ft_strndup(path_value, i);
+	return (false);
+}
+
+/*
+	The next candidate pathname for name, from the PATH value at *scan.
+	*scan moves past the element that was used, and becomes NULL when the
+	value is exhausted. An empty element means the current directory.
+	[POSIX.1-2024 XCU 2.9.1.1 Command Search and Execution]
+*/
+static char	*next_path_candidate(char **scan, char *name)
+{
+	char	*end;
+	char	*dir;
+
+	end = ft_strchrnul(*scan, ':');
+	dir = ft_substr(*scan, 0, (size_t)(end - *scan));
+	if (*end == ':')
+		*scan = end + 1;
+	else
+		*scan = NULL;
 	if (dir == NULL)
 		return (NULL);
-	if (dir[ft_strlen(dir) - 1] == '/')
-		return (dir);
-	return (ft_strjoin(dir, "/"));
+	if (*dir == '\0')
+	{
+		free(dir);
+		dir = ft_strdup("./");
+	}
+	else if (dir[ft_strlen(dir) - 1] != '/')
+		dir = ft_strjoin_free(dir, "/", 1 << 0);
+	return (ft_strjoin_free(dir, name, 1 << 0));
+}
+
+static bool	is_regular(char *pathname)
+{
+	struct stat	info;
+
+	if (stat(pathname, &info) < 0)
+		return (false);
+	return (S_ISREG(info.st_mode));
+}
+
+/*
+	Try every candidate in PATH. A candidate that is simply not there is
+	not worth reporting, so keep the reason of one that was there and
+	still could not run. Returns 0 when nothing was found at all.
+	[dash shellexec()]
+*/
+int	search_path(char *path, char **argv, char **envp)
+{
+	char	*candidate;
+	int		reason;
+
+	reason = 0;
+	while (path != NULL)
+	{
+		candidate = next_path_candidate(&path, argv[0]);
+		if (candidate == NULL)
+			return (ENOMEM);
+		set_underscore(envp, candidate);
+		execve(candidate, argv, envp);
+		if (errno != ENOENT && errno != ENOTDIR && is_regular(candidate))
+			reason = errno;
+		free(candidate);
+	}
+	return (reason);
 }

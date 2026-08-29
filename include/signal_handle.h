@@ -10,15 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#ifndef HANDLE_H
-# define HANDLE_H
+#ifndef SIGNAL_HANDLE_H
+# define SIGNAL_HANDLE_H
 
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
-int	set_signal(void);
-int	handle_readline_signal(void);
+int		set_signal(void);
+int		handle_readline_signal(void);
+void	reset_signals(void);
 
 #endif

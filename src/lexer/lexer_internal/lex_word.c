@@ -6,7 +6,7 @@
 /*   By: fendo <fendo@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 21:43:37 by fendo             #+#    #+#             */
-/*   Updated: 2026/03/02 23:43:15 by fendo            ###   ########.fr       */
+/*   Updated: 2026/08/15 03:09:23 by fendo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,7 @@ static t_lexer_err	scan_dq(char **line, t_word_builder *wb)
 	- <WORD> \*+       -> part(W_WILD)
 	- <WORD> PLAIN+  -> part(W_NONE)
 */
-static t_lexer_err	scan_unquoted(char **line, t_word_builder *wb,
-									t_assign_info *as)
+static t_lexer_err	scan_unquoted(char **line, t_word_builder *wb)
 {
 	char	*begin;
 	uint8_t	flag;
@@ -96,7 +95,7 @@ static t_lexer_err	scan_unquoted(char **line, t_word_builder *wb,
 	}
 	else
 		while (**line && !is_tk_bound(*line) && !ft_strchr("\'\"$*", **line))
-			validate_assign((*line)++, as);
+			(*line)++;
 	return (commit_part(wb, &begin, *line, flag));
 }
 
@@ -107,8 +106,7 @@ static t_lexer_err	scan_unquoted(char **line, t_word_builder *wb,
 	- <WORD> dispatch: scan_sq / scan_dq / scan_unquoted
 	- <WORD> BOUND|DBOUND|\0 -> emit TK_WORD, BEGIN(INITIAL)
 */
-static t_lexer_err	scan_word(char **line, t_word **head,
-								t_assign_info *as, t_arena *arena)
+static t_lexer_err	scan_word(char **line, t_word **head, t_arena *arena)
 {
 	t_word_builder	wb;
 	t_lexer_err		err;
@@ -117,14 +115,12 @@ static t_lexer_err	scan_word(char **line, t_word **head,
 	wb.tail = head;
 	while (**line && !is_tk_bound(*line))
 	{
-		if (ft_strchr("\'\"$*", **line))
-			validate_assign(*line, as);
 		if (**line == '\'')
 			err = scan_sq(line, &wb);
 		else if (**line == '\"')
 			err = scan_dq(line, &wb);
 		else
-			err = scan_unquoted(line, &wb, as);
+			err = scan_unquoted(line, &wb);
 		if (err)
 			return (err);
 	}
@@ -136,17 +132,17 @@ static t_lexer_err	scan_word(char **line, t_word **head,
 	- read_token_word: entry + got_token (L5305, L5720-L5741)
 	lex rule:
 	- <INITIAL> -> BEGIN(WORD) -> emit TK_WORD
-	- apply_assign_info: Apply the result of side-channel FSM
+	- apply_assign_info: classify a leading NAME= or NAME+=
 */
 t_token_kind	lex_word(char **line, t_token *tk, t_arena *arena)
 {
 	t_word			*head;
-	t_assign_info	as;
+	char			*begin;
 	t_lexer_err		err;
 
 	head = NULL;
-	set_assign_info(&as, AS_INIT, NULL, W_NONE);
-	err = scan_word(line, &head, &as, arena);
+	begin = *line;
+	err = scan_word(line, &head, arena);
 	if (err)
 	{
 		if (err != LEX_ERR_MEMORY_ALLOCATION)
@@ -155,6 +151,6 @@ t_token_kind	lex_word(char **line, t_token *tk, t_arena *arena)
 	}
 	tk->token_kind = TK_WORD;
 	tk->u_token.wd = head;
-	apply_assign_info(head, &as);
+	apply_assign_info(head, begin);
 	return (tk->token_kind);
 }
